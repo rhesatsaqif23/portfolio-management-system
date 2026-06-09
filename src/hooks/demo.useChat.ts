@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react'
+
 import { useLiveQuery } from '@tanstack/react-db'
 
-import { messagesCollection, type Message } from '#/db-collections'
+import { messagesCollection, type Message } from '#/demo/db-collections'
 
 import type { Collection } from '@tanstack/react-db'
 
