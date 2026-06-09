@@ -1,0 +1,32 @@
+{
+  "projectName": "portfolio-management-system",
+  "mode": "file-router",
+  "typescript": true,
+  "packageManager": "npm",
+  "includeExamples": true,
+  "tailwind": true,
+  "addOnOptions": {
+    "drizzle": {
+      "database": "postgresql"
+    }
+  },
+  "envVarValues": {
+    "VITE_CLERK_PUBLISHABLE_KEY": "pk_test_Y2FyZWZ1bC13aGFsZS04NC5jbGVyay5hY2NvdW50cy5kZXYk"
+  },
+  "git": false,
+  "install": true,
+  "routerOnly": false,
+  "version": 1,
+  "framework": "react",
+  "chosenAddOns": [
+    "nitro",
+    "clerk",
+    "db",
+    "drizzle",
+    "form",
+    "shadcn",
+    "table",
+    "tanstack-query",
+    "t3env"
+  ]
+}
