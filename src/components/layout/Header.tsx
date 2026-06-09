@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
-import ClerkHeader from '../integrations/clerk/header-user.tsx'
-import ThemeToggle from './ThemeToggle'
+import { SignedIn, SignedOut } from '@clerk/clerk-react'
+import ClerkHeader from '../../integrations/clerk/header-user.tsx'
+import ThemeToggle from '../shared/ThemeToggle'
 
 export default function Header() {
   return (
@@ -17,18 +18,35 @@ export default function Header() {
         </h2>
 
         <div className="order-3 flex w-full flex-wrap items-center gap-x-4 gap-y-1 pb-1 text-sm font-semibold sm:order-none sm:w-auto sm:flex-nowrap sm:pb-0">
-          <Link
-            to="/"
-            className="nav-link"
-            activeProps={{ className: 'nav-link is-active' }}
-          >
-            Dashboard
-          </Link>
+          <SignedIn>
+            <Link
+              to="/admin/dashboard"
+              className="nav-link"
+              activeProps={{ className: 'nav-link is-active' }}
+            >
+              Dashboard
+            </Link>
+            <Link
+              to="/admin/projects"
+              className="nav-link"
+              activeProps={{ className: 'nav-link is-active' }}
+            >
+              Projects
+            </Link>
+          </SignedIn>
+          <SignedOut>
+            <Link
+              to="/"
+              className="nav-link"
+              activeProps={{ className: 'nav-link is-active' }}
+            >
+              Home
+            </Link>
+          </SignedOut>
         </div>
 
         <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
           <ClerkHeader />
-
           <ThemeToggle />
         </div>
       </nav>

@@ -5,8 +5,8 @@ import {
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
-import Footer from '../components/Footer'
-import Header from '../components/Header'
+import Footer from '../components/layout/Footer'
+import Header from '../components/layout/Header'
 
 import ClerkProvider from '../integrations/clerk/provider'
 
@@ -33,7 +33,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'TanStack Start Starter',
+        title: 'Portfolio CMS',
       },
     ],
     links: [
