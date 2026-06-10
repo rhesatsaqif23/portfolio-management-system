@@ -3,4 +3,5 @@ export type { IProjectRepository, Project, ProjectInsert, CaseStudy, CaseStudyIn
 export type { ISkillRepository, Skill, SkillInsert } from './ISkillRepository'
 export type { IExperienceRepository, Experience, ExperienceInsert } from './IExperienceRepository'
 export type { IAchievementRepository, Achievement, AchievementInsert } from './IAchievementRepository'
+export type { IStatsRepository, Stat, StatInsert } from './IStatsRepository'
 export type { IStorageService } from './IStorageService'

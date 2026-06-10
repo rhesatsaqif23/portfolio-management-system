@@ -51,13 +51,16 @@ export const achievementsTable = pgTable('achievements', {
 export const profilesTable = pgTable('profiles', {
   id: uuid('id').defaultRandom().primaryKey(),
   fullName: text('full_name').notNull(),
-  currentRole: text('current_role').notNull(),
+  currentRoles: text('current_roles').array().notNull().default([]),
   bioShort: varchar('bio_short', { length: 280 }),
   bioLong: text('bio_long'),
   avatarUrl: text('avatar_url'),
   cvUrl: text('cv_url'),
   location: text('location'),
   email: text('email'),
+  github: text('github'),
+  linkedin: text('linkedin'),
+  instagram: text('instagram'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 })
@@ -67,6 +70,17 @@ export const skillsTable = pgTable('skills', {
   name: text('name').notNull(),
   category: skillCategoryEnum('category').notNull(),
   iconUrl: text('icon_url'),
+  sortOrder: integer('sort_order'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+})
+
+export const statsTable = pgTable('stats', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  key: text('key').notNull(),
+  value: text('value').notNull(),
+  category: text('category'),
+  subValue: text('sub_value'),
+  icon: text('icon'),
   sortOrder: integer('sort_order'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 })

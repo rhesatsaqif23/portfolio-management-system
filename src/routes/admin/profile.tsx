@@ -13,13 +13,16 @@ function ProfilePage() {
   const queryClient = useQueryClient()
   const [form, setForm] = useState({
     fullName: '',
-    currentRole: '',
+    currentRoles: [] as string[],
     bioShort: '',
     bioLong: '',
     avatarUrl: '',
     cvUrl: '',
     location: '',
     email: '',
+    github: '',
+    linkedin: '',
+    instagram: '',
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [saved, setSaved] = useState(false)
@@ -33,13 +36,16 @@ function ProfilePage() {
     if (profile) {
       setForm({
         fullName: profile.fullName ?? '',
-        currentRole: profile.currentRole ?? '',
+        currentRoles: profile.currentRoles ?? [],
         bioShort: profile.bioShort ?? '',
         bioLong: profile.bioLong ?? '',
         avatarUrl: profile.avatarUrl ?? '',
         cvUrl: profile.cvUrl ?? '',
         location: profile.location ?? '',
         email: profile.email ?? '',
+        github: profile.github ?? '',
+        linkedin: profile.linkedin ?? '',
+        instagram: profile.instagram ?? '',
       })
     }
   }, [profile])
@@ -57,10 +63,23 @@ function ProfilePage() {
     e.preventDefault()
     const errs: Record<string, string> = {}
     if (!form.fullName.trim()) errs.fullName = 'Full name is required'
-    if (!form.currentRole.trim()) errs.currentRole = 'Current role is required'
     setErrors(errs)
     if (Object.keys(errs).length > 0) return
     updateMutation.mutate(form)
+  }
+
+  function addRole() {
+    setForm({ ...form, currentRoles: [...form.currentRoles, ''] })
+  }
+
+  function updateRole(index: number, value: string) {
+    const roles = [...form.currentRoles]
+    roles[index] = value
+    setForm({ ...form, currentRoles: roles })
+  }
+
+  function removeRole(index: number) {
+    setForm({ ...form, currentRoles: form.currentRoles.filter((_, i) => i !== index) })
   }
 
   if (isLoading) {
@@ -76,17 +95,47 @@ function ProfilePage() {
 
       <form onSubmit={handleSubmit} className="max-w-2xl space-y-4">
         <TextField label="Full Name" name="fullName" value={form.fullName} onChange={(v) => setForm({ ...form, fullName: v })} error={errors.fullName} />
-        <TextField label="Current Role" name="currentRole" value={form.currentRole} onChange={(v) => setForm({ ...form, currentRole: v })} error={errors.currentRole} />
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-[var(--sea-ink)]">Roles (typing rotation)</label>
+          {form.currentRoles.map((role, i) => (
+            <div key={i} className="flex gap-2">
+              <input
+                className="flex h-10 w-full rounded-lg border border-[var(--line)] bg-[var(--card)] px-3 py-2 text-sm text-[var(--sea-ink)] placeholder:text-[var(--muted-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+                value={role}
+                onChange={(e) => updateRole(i, e.target.value)}
+                placeholder="e.g. Full-stack Developer"
+              />
+              <Button type="button" variant="destructive" size="xs" onClick={() => removeRole(i)}>
+                &times;
+              </Button>
+            </div>
+          ))}
+          <Button type="button" variant="outline" size="sm" onClick={addRole}>
+            + Add Role
+          </Button>
+        </div>
+
         <TextField label="Short Bio (max 280 chars)" name="bioShort" value={form.bioShort} onChange={(v) => setForm({ ...form, bioShort: v })} />
         <TextAreaField label="Long Bio" name="bioLong" value={form.bioLong} onChange={(v) => setForm({ ...form, bioLong: v })} rows={6} />
+
         <div className="grid gap-4 sm:grid-cols-2">
           <TextField label="Avatar URL" name="avatarUrl" value={form.avatarUrl} onChange={(v) => setForm({ ...form, avatarUrl: v })} />
           <TextField label="CV URL" name="cvUrl" value={form.cvUrl} onChange={(v) => setForm({ ...form, cvUrl: v })} />
         </div>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <TextField label="Location" name="location" value={form.location} onChange={(v) => setForm({ ...form, location: v })} />
-          <TextField label="Email" name="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} />
+
+        <TextField label="Location" name="location" value={form.location} onChange={(v) => setForm({ ...form, location: v })} />
+
+        <div className="border-t border-[var(--line)] pt-4">
+          <h3 className="mb-3 text-sm font-semibold text-[var(--sea-ink)]">Contact & Social</h3>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <TextField label="Email" name="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} />
+            <TextField label="GitHub URL" name="github" value={form.github} onChange={(v) => setForm({ ...form, github: v })} />
+            <TextField label="LinkedIn URL" name="linkedin" value={form.linkedin} onChange={(v) => setForm({ ...form, linkedin: v })} />
+            <TextField label="Instagram URL" name="instagram" value={form.instagram} onChange={(v) => setForm({ ...form, instagram: v })} />
+          </div>
         </div>
+
         <div className="flex items-center gap-4">
           <Button type="submit" disabled={updateMutation.isPending}>
             {updateMutation.isPending ? 'Saving...' : 'Save Changes'}

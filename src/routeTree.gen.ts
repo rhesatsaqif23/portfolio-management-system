@@ -14,6 +14,7 @@ import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthSsoCallbackRouteImport } from './routes/auth/sso-callback'
 import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
+import { Route as AdminStatsRouteImport } from './routes/admin/stats'
 import { Route as AdminSkillsRouteImport } from './routes/admin/skills'
 import { Route as AdminProjectsRouteImport } from './routes/admin/projects'
 import { Route as AdminProfileRouteImport } from './routes/admin/profile'
@@ -45,6 +46,11 @@ const AuthSignInRoute = AuthSignInRouteImport.update({
   id: '/auth/sign-in',
   path: '/auth/sign-in',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminStatsRoute = AdminStatsRouteImport.update({
+  id: '/stats',
+  path: '/stats',
+  getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminSkillsRoute = AdminSkillsRouteImport.update({
   id: '/skills',
@@ -87,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/admin/profile': typeof AdminProfileRoute
   '/admin/projects': typeof AdminProjectsRoute
   '/admin/skills': typeof AdminSkillsRoute
+  '/admin/stats': typeof AdminStatsRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sso-callback': typeof AuthSsoCallbackRoute
 }
@@ -100,6 +107,7 @@ export interface FileRoutesByTo {
   '/admin/profile': typeof AdminProfileRoute
   '/admin/projects': typeof AdminProjectsRoute
   '/admin/skills': typeof AdminSkillsRoute
+  '/admin/stats': typeof AdminStatsRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sso-callback': typeof AuthSsoCallbackRoute
 }
@@ -114,6 +122,7 @@ export interface FileRoutesById {
   '/admin/profile': typeof AdminProfileRoute
   '/admin/projects': typeof AdminProjectsRoute
   '/admin/skills': typeof AdminSkillsRoute
+  '/admin/stats': typeof AdminStatsRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sso-callback': typeof AuthSsoCallbackRoute
 }
@@ -129,6 +138,7 @@ export interface FileRouteTypes {
     | '/admin/profile'
     | '/admin/projects'
     | '/admin/skills'
+    | '/admin/stats'
     | '/auth/sign-in'
     | '/auth/sso-callback'
   fileRoutesByTo: FileRoutesByTo
@@ -142,6 +152,7 @@ export interface FileRouteTypes {
     | '/admin/profile'
     | '/admin/projects'
     | '/admin/skills'
+    | '/admin/stats'
     | '/auth/sign-in'
     | '/auth/sso-callback'
   id:
@@ -155,6 +166,7 @@ export interface FileRouteTypes {
     | '/admin/profile'
     | '/admin/projects'
     | '/admin/skills'
+    | '/admin/stats'
     | '/auth/sign-in'
     | '/auth/sso-callback'
   fileRoutesById: FileRoutesById
@@ -203,6 +215,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth/sign-in'
       preLoaderRoute: typeof AuthSignInRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/stats': {
+      id: '/admin/stats'
+      path: '/stats'
+      fullPath: '/admin/stats'
+      preLoaderRoute: typeof AdminStatsRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
     '/admin/skills': {
       id: '/admin/skills'
@@ -256,6 +275,7 @@ interface AdminRouteRouteChildren {
   AdminProfileRoute: typeof AdminProfileRoute
   AdminProjectsRoute: typeof AdminProjectsRoute
   AdminSkillsRoute: typeof AdminSkillsRoute
+  AdminStatsRoute: typeof AdminStatsRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
@@ -265,6 +285,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminProfileRoute: AdminProfileRoute,
   AdminProjectsRoute: AdminProjectsRoute,
   AdminSkillsRoute: AdminSkillsRoute,
+  AdminStatsRoute: AdminStatsRoute,
 }
 
 const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(

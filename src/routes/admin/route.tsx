@@ -48,6 +48,7 @@ function AdminShell() {
           <SidebarLink to="/admin/experiences" label="Experiences" />
           <SidebarLink to="/admin/skills" label="Skills" />
           <SidebarLink to="/admin/achievements" label="Achievements" />
+          <SidebarLink to="/admin/stats" label="Stats" />
         </nav>
       </aside>
 
