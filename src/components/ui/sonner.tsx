@@ -4,6 +4,7 @@ import type { ComponentProps } from "react"
 const Toaster = ({ ...props }: ComponentProps<typeof Sonner>) => {
   return (
     <Sonner
+      position="top-center"
       className="toaster group"
       toastOptions={{
         classNames: {
