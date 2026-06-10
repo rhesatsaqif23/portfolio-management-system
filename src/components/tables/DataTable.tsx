@@ -22,7 +22,9 @@ function SkeletonTable({ columns }: { columns: Column<Record<string, unknown>>[]
         <tr key={i} className="border-b border-[var(--line)]">
           {columns.map((col, j) => (
             <td key={String(col.key)} className="px-4 py-3">
-              <Skeleton className={cn("h-4", j === columns.length - 1 ? "w-20" : "w-full max-w-[140px]")} />
+              <div className="flex items-center gap-2">
+                <Skeleton className={cn("h-5", j === columns.length - 1 ? "w-16" : "w-full max-w-[140px]")} />
+              </div>
             </td>
           ))}
         </tr>

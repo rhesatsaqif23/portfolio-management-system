@@ -12,8 +12,8 @@ export const Route = createFileRoute('/admin/dashboard')({
 function StatCardSkeleton() {
   return (
     <div className="island-shell block rounded-2xl p-5">
-      <Skeleton className="h-7 w-16" />
-      <div className="mt-1"><Skeleton className="h-4 w-24" /></div>
+      <Skeleton className="h-8 w-16" />
+      <div className="mt-1"><Skeleton className="h-5 w-24" /></div>
     </div>
   )
 }
