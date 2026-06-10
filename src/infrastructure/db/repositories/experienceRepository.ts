@@ -9,7 +9,7 @@ export const drizzleExperienceRepository: IExperienceRepository = {
   },
 
   async findByType(type: string): Promise<Experience[]> {
-    return db.select().from(experiencesTable).where(eq(experiencesTable.type, type)).orderBy(experiencesTable.sortOrder)
+    return db.select().from(experiencesTable).where(eq(experiencesTable.type, type as 'work' | 'organization' | 'volunteer' | 'education')).orderBy(experiencesTable.sortOrder)
   },
 
   async create(data: ExperienceInsert): Promise<Experience> {

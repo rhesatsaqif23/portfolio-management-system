@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, timestamp, boolean, integer, date, jsonb, pgEnum } from 'drizzle-orm/pg-core'
+import { pgTable, uuid, text, timestamp, boolean, integer, date, jsonb, pgEnum, varchar } from 'drizzle-orm/pg-core'
 
 export const skillCategoryEnum = pgEnum('skill_category', ['mobile', 'web', 'backend', 'devops', 'design', 'other'])
 
@@ -8,7 +8,7 @@ export const profilesTable = pgTable('profiles', {
   id: uuid('id').defaultRandom().primaryKey(),
   fullName: text('full_name').notNull(),
   currentRole: text('current_role').notNull(),
-  bioShort: text('bio_short', { length: 280 }),
+  bioShort: varchar('bio_short', { length: 280 }),
   bioLong: text('bio_long'),
   cvUrl: text('cv_url'),
   createdAt: timestamp('created_at').defaultNow(),
@@ -40,7 +40,7 @@ export const projectsTable = pgTable('projects', {
   id: uuid('id').defaultRandom().primaryKey(),
   title: text('title').notNull(),
   slug: text('slug').notNull().unique(),
-  descriptionShort: text('description_short', { length: 300 }),
+  descriptionShort: varchar('description_short', { length: 300 }),
   thumbnailUrl: text('thumbnail_url'),
   isFeatured: boolean('is_featured').default(false),
   category: text('category'),

@@ -8,11 +8,19 @@ export const clerkClient = createClerkClient({
   publishableKey: PUBLISHABLE_KEY,
 })
 
-export async function getServerAuth(request: Request) {
+interface ServerAuthResult {
+  userId: string | null
+}
+
+export async function getServerAuth(request: Request): Promise<ServerAuthResult> {
   try {
     const authState = await clerkClient.authenticateRequest(request)
-    return authState.toAuth()
+    const auth = authState.toAuth()
+    if (auth && 'userId' in auth) {
+      return { userId: auth.userId }
+    }
+    return { userId: null }
   } catch {
-    return { userId: null, sessionId: null, getToken: undefined, claims: null }
+    return { userId: null }
   }
 }

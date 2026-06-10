@@ -10,7 +10,7 @@ export default function AppClerkProvider({
     <ClerkProvider
       publishableKey={env.VITE_CLERK_PUBLISHABLE_KEY}
       signInFallbackRedirectUrl="/admin/dashboard"
-      signOutFallbackRedirectUrl="/"
+      afterSignOutUrl="/"
     >
       {children}
     </ClerkProvider>

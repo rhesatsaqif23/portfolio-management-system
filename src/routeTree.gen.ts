@@ -12,8 +12,14 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthSsoCallbackRouteImport } from './routes/auth/sso-callback'
 import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
+import { Route as AdminSkillsRouteImport } from './routes/admin/skills'
+import { Route as AdminProjectsRouteImport } from './routes/admin/projects'
+import { Route as AdminProfileRouteImport } from './routes/admin/profile'
+import { Route as AdminExperiencesRouteImport } from './routes/admin/experiences'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
+import { Route as AdminAchievementsRouteImport } from './routes/admin/achievements'
 
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
@@ -30,14 +36,44 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthSsoCallbackRoute = AuthSsoCallbackRouteImport.update({
+  id: '/auth/sso-callback',
+  path: '/auth/sso-callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthSignInRoute = AuthSignInRouteImport.update({
   id: '/auth/sign-in',
   path: '/auth/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminSkillsRoute = AdminSkillsRouteImport.update({
+  id: '/skills',
+  path: '/skills',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminProjectsRoute = AdminProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminProfileRoute = AdminProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminExperiencesRoute = AdminExperiencesRouteImport.update({
+  id: '/experiences',
+  path: '/experiences',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminDashboardRoute = AdminDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAchievementsRoute = AdminAchievementsRouteImport.update({
+  id: '/achievements',
+  path: '/achievements',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 
@@ -45,36 +81,82 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/admin/achievements': typeof AdminAchievementsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/experiences': typeof AdminExperiencesRoute
+  '/admin/profile': typeof AdminProfileRoute
+  '/admin/projects': typeof AdminProjectsRoute
+  '/admin/skills': typeof AdminSkillsRoute
   '/auth/sign-in': typeof AuthSignInRoute
+  '/auth/sso-callback': typeof AuthSsoCallbackRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/admin/achievements': typeof AdminAchievementsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/experiences': typeof AdminExperiencesRoute
+  '/admin/profile': typeof AdminProfileRoute
+  '/admin/projects': typeof AdminProjectsRoute
+  '/admin/skills': typeof AdminSkillsRoute
   '/auth/sign-in': typeof AuthSignInRoute
+  '/auth/sso-callback': typeof AuthSsoCallbackRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/admin/achievements': typeof AdminAchievementsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/experiences': typeof AdminExperiencesRoute
+  '/admin/profile': typeof AdminProfileRoute
+  '/admin/projects': typeof AdminProjectsRoute
+  '/admin/skills': typeof AdminSkillsRoute
   '/auth/sign-in': typeof AuthSignInRoute
+  '/auth/sso-callback': typeof AuthSsoCallbackRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/about' | '/admin/dashboard' | '/auth/sign-in'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/about'
+    | '/admin/achievements'
+    | '/admin/dashboard'
+    | '/admin/experiences'
+    | '/admin/profile'
+    | '/admin/projects'
+    | '/admin/skills'
+    | '/auth/sign-in'
+    | '/auth/sso-callback'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/about' | '/admin/dashboard' | '/auth/sign-in'
+  to:
+    | '/'
+    | '/admin'
+    | '/about'
+    | '/admin/achievements'
+    | '/admin/dashboard'
+    | '/admin/experiences'
+    | '/admin/profile'
+    | '/admin/projects'
+    | '/admin/skills'
+    | '/auth/sign-in'
+    | '/auth/sso-callback'
   id:
     | '__root__'
     | '/'
     | '/admin'
     | '/about'
+    | '/admin/achievements'
     | '/admin/dashboard'
+    | '/admin/experiences'
+    | '/admin/profile'
+    | '/admin/projects'
+    | '/admin/skills'
     | '/auth/sign-in'
+    | '/auth/sso-callback'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -82,6 +164,7 @@ export interface RootRouteChildren {
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   AuthSignInRoute: typeof AuthSignInRoute
+  AuthSsoCallbackRoute: typeof AuthSsoCallbackRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -107,12 +190,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/sso-callback': {
+      id: '/auth/sso-callback'
+      path: '/auth/sso-callback'
+      fullPath: '/auth/sso-callback'
+      preLoaderRoute: typeof AuthSsoCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/sign-in': {
       id: '/auth/sign-in'
       path: '/auth/sign-in'
       fullPath: '/auth/sign-in'
       preLoaderRoute: typeof AuthSignInRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/skills': {
+      id: '/admin/skills'
+      path: '/skills'
+      fullPath: '/admin/skills'
+      preLoaderRoute: typeof AdminSkillsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/projects': {
+      id: '/admin/projects'
+      path: '/projects'
+      fullPath: '/admin/projects'
+      preLoaderRoute: typeof AdminProjectsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/profile': {
+      id: '/admin/profile'
+      path: '/profile'
+      fullPath: '/admin/profile'
+      preLoaderRoute: typeof AdminProfileRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/experiences': {
+      id: '/admin/experiences'
+      path: '/experiences'
+      fullPath: '/admin/experiences'
+      preLoaderRoute: typeof AdminExperiencesRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
     '/admin/dashboard': {
       id: '/admin/dashboard'
@@ -121,15 +239,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/achievements': {
+      id: '/admin/achievements'
+      path: '/achievements'
+      fullPath: '/admin/achievements'
+      preLoaderRoute: typeof AdminAchievementsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
   }
 }
 
 interface AdminRouteRouteChildren {
+  AdminAchievementsRoute: typeof AdminAchievementsRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminExperiencesRoute: typeof AdminExperiencesRoute
+  AdminProfileRoute: typeof AdminProfileRoute
+  AdminProjectsRoute: typeof AdminProjectsRoute
+  AdminSkillsRoute: typeof AdminSkillsRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminAchievementsRoute: AdminAchievementsRoute,
   AdminDashboardRoute: AdminDashboardRoute,
+  AdminExperiencesRoute: AdminExperiencesRoute,
+  AdminProfileRoute: AdminProfileRoute,
+  AdminProjectsRoute: AdminProjectsRoute,
+  AdminSkillsRoute: AdminSkillsRoute,
 }
 
 const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
@@ -141,6 +276,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRouteRoute: AdminRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   AuthSignInRoute: AuthSignInRoute,
+  AuthSsoCallbackRoute: AuthSsoCallbackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

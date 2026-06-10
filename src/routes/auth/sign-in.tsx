@@ -46,7 +46,7 @@ function SignInPage() {
     try {
       await signIn.authenticateWithRedirect({
         strategy: 'oauth_google',
-        redirectUrl: window.location.origin + '/auth/sign-in',
+        redirectUrl: window.location.origin + '/auth/sso-callback',
         redirectUrlComplete: window.location.origin + '/admin/dashboard',
       })
     } catch {

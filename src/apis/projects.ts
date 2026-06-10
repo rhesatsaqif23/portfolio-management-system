@@ -24,10 +24,13 @@ export const createProject = createServerFn({ method: 'POST' })
   })
 
 export const updateProject = createServerFn({ method: 'POST' })
-  .validator((data: unknown) => projectSchema.partial().parse(data))
+  .validator((data: unknown) => {
+    const { id, ...rest } = data as { id: string }
+    return { id, data: projectSchema.partial().parse(rest) }
+  })
   .handler(async ({ data }) => {
     await requireUserId()
-    return updateProjectUseCase(drizzleProjectRepository, data.id, data)
+    return updateProjectUseCase(drizzleProjectRepository, data.id, data.data)
   })
 
 export const deleteProject = createServerFn({ method: 'POST' })
