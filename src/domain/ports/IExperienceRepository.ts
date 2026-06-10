@@ -5,7 +5,6 @@ export type ExperienceInsert = typeof experiencesTable.$inferInsert
 
 export interface IExperienceRepository {
   findAll(): Promise<Experience[]>
-  findByType(type: string): Promise<Experience[]>
   create(data: ExperienceInsert): Promise<Experience>
   update(id: string, data: Partial<ExperienceInsert>): Promise<Experience>
   delete(id: string): Promise<void>

@@ -8,10 +8,6 @@ export const drizzleExperienceRepository: IExperienceRepository = {
     return db.select().from(experiencesTable).orderBy(experiencesTable.sortOrder)
   },
 
-  async findByType(type: string): Promise<Experience[]> {
-    return db.select().from(experiencesTable).where(eq(experiencesTable.type, type as 'work' | 'organization' | 'volunteer' | 'education')).orderBy(experiencesTable.sortOrder)
-  },
-
   async create(data: ExperienceInsert): Promise<Experience> {
     const [created] = await db.insert(experiencesTable).values(data).returning()
     return created

@@ -3,13 +3,14 @@ import { z } from 'zod'
 export const projectSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200),
   slug: z.string().min(1).max(250).regex(/^[a-z0-9-]+$/, 'Slug must be lowercase alphanumeric with hyphens'),
-  descriptionShort: z.string().max(300).optional(),
-  thumbnailUrl: z.string().url().optional().or(z.literal('')),
-  isFeatured: z.boolean().default(false),
+  subtitle: z.string().optional(),
   category: z.string().optional(),
-  githubUrl: z.string().url().optional().or(z.literal('')),
-  liveUrl: z.string().url().optional().or(z.literal('')),
-  additionalLinks: z.array(z.object({ label: z.string(), url: z.string() })).optional(),
+  description: z.string().optional(),
+  thumbnailUrl: z.string().optional(),
+  demoUrl: z.string().optional(),
+  repoUrl: z.string().optional(),
+  techStack: z.array(z.string()).optional(),
+  isFeatured: z.boolean().default(false),
   sortOrder: z.number().int().optional(),
 })
 

@@ -2,7 +2,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
 import { getServerAuth } from '#/infrastructure/auth'
 import { achievementSchema } from '#/domain/schemas'
-import { listAchievementsUseCase, createAchievementUseCase, deleteAchievementUseCase } from '#/domain/use-cases'
+import { listAchievementsUseCase, createAchievementUseCase, updateAchievementUseCase, deleteAchievementUseCase } from '#/domain/use-cases'
 import { drizzleAchievementRepository } from '#/infrastructure/db/repositories/achievementRepository'
 
 async function requireUserId() {
@@ -21,6 +21,16 @@ export const createAchievement = createServerFn({ method: 'POST' })
   .handler(async ({ data }) => {
     await requireUserId()
     return createAchievementUseCase(drizzleAchievementRepository, data)
+  })
+
+export const updateAchievement = createServerFn({ method: 'POST' })
+  .validator((data: unknown) => {
+    const { id, ...rest } = data as { id: string }
+    return { id, data: achievementSchema.partial().parse(rest) }
+  })
+  .handler(async ({ data }) => {
+    await requireUserId()
+    return updateAchievementUseCase(drizzleAchievementRepository, data.id, data.data)
   })
 
 export const deleteAchievement = createServerFn({ method: 'POST' })

@@ -1,5 +1,6 @@
 import { db } from '#/infrastructure/db'
 import { profilesTable } from '#/infrastructure/db/schema'
+import { supabase } from '#/infrastructure/supabase'
 import type { IProfileRepository, Profile, ProfileInsert } from '#/domain/ports'
 
 export const drizzleProfileRepository: IProfileRepository = {
@@ -18,11 +19,20 @@ export const drizzleProfileRepository: IProfileRepository = {
     return updated
   },
 
-  async uploadCV(_fileBuffer: ArrayBuffer, _fileName: string): Promise<string> {
-    throw new Error('Storage adapter not configured')
+  async uploadCV(fileBuffer: ArrayBuffer, fileName: string): Promise<string> {
+    const path = `cv/${fileName}`
+    const { data, error } = await supabase.storage.from('public').upload(path, new Uint8Array(fileBuffer), { upsert: true })
+    if (error) throw new Error(error.message)
+    const { data: publicUrl } = supabase.storage.from('public').getPublicUrl(data.path)
+    return publicUrl.publicUrl
   },
 
   async deleteCV(): Promise<void> {
-    throw new Error('Storage adapter not configured')
+    const [profile] = await db.select({ cvUrl: profilesTable.cvUrl }).from(profilesTable).limit(1)
+    if (!profile?.cvUrl) return
+    const path = profile.cvUrl.split('/').pop()
+    if (path) {
+      await supabase.storage.from('public').remove([`cv/${path}`])
+    }
   },
 }

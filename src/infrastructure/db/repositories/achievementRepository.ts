@@ -5,7 +5,7 @@ import type { IAchievementRepository, Achievement, AchievementInsert } from '#/d
 
 export const drizzleAchievementRepository: IAchievementRepository = {
   async findAll(): Promise<Achievement[]> {
-    return db.select().from(achievementsTable).orderBy(achievementsTable.date)
+    return db.select().from(achievementsTable).orderBy(achievementsTable.sortOrder)
   },
 
   async create(data: AchievementInsert): Promise<Achievement> {
