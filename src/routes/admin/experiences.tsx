@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { DataTable } from '#/components/tables'
-import { TextField } from '#/components/forms'
+import { TextField, TextAreaField, SelectField } from '#/components/forms'
 import { ConfirmDialog } from '#/components/shared'
 import { Button } from '#/components/ui/button'
 import { listExperiences, createExperience, updateExperience, deleteExperience } from '#/apis'
@@ -12,14 +12,20 @@ export const Route = createFileRoute('/admin/experiences')({
   component: ExperiencesPage,
 })
 
+const expTypes = [
+  { value: 'work', label: 'Work' },
+  { value: 'organization', label: 'Organization' },
+  { value: 'volunteer', label: 'Volunteer' },
+  { value: 'education', label: 'Education' },
+]
+
 const initialForm = {
-  title: '',
-  company: '',
-  location: '',
+  orgName: '',
+  role: '',
   startDate: '',
   endDate: '',
-  description: [] as string[],
-  image: '',
+  description: '',
+  type: 'work',
   sortOrder: 0,
 }
 
@@ -61,16 +67,22 @@ function ExperiencesPage() {
     },
   })
 
+  function openCreate() {
+    setEditing(null)
+    setForm(initialForm)
+    setErrors({})
+    setShowForm(true)
+  }
+
   function openEdit(exp: Experience) {
     setEditing(exp)
     setForm({
-      title: exp.title,
-      company: exp.company,
-      location: exp.location,
+      orgName: exp.orgName,
+      role: exp.role,
       startDate: exp.startDate,
       endDate: exp.endDate ?? '',
-      description: exp.description ?? [],
-      image: exp.image ?? '',
+      description: exp.description ?? '',
+      type: exp.type as string,
       sortOrder: exp.sortOrder ?? 0,
     })
     setErrors({})
@@ -87,9 +99,8 @@ function ExperiencesPage() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     const errs: Record<string, string> = {}
-    if (!form.title.trim()) errs.title = 'Title is required'
-    if (!form.company.trim()) errs.company = 'Company is required'
-    if (!form.location.trim()) errs.location = 'Location is required'
+    if (!form.orgName.trim()) errs.orgName = 'Organization name is required'
+    if (!form.role.trim()) errs.role = 'Role is required'
     if (!form.startDate.trim()) errs.startDate = 'Start date is required'
     setErrors(errs)
     if (Object.keys(errs).length > 0) return
@@ -111,29 +122,27 @@ function ExperiencesPage() {
           <h1 className="text-2xl font-bold text-[var(--sea-ink)]">Experiences</h1>
           <p className="mt-1 text-sm text-[var(--sea-ink-soft)]">Manage your career timeline.</p>
         </div>
-        <Button onClick={() => { setEditing(null); setForm(initialForm); setErrors({}); setShowForm(true) }}>
-          Add Experience
-        </Button>
+        <Button onClick={openCreate}>Add Experience</Button>
       </div>
 
       <DataTable
         columns={[
-          { key: 'title', header: 'Title' },
-          { key: 'company', header: 'Company' },
-          { key: 'location', header: 'Location' },
-          { key: 'startDate', header: 'Start Date' },
-          { key: 'endDate', header: 'End Date' },
+          { key: 'orgName' as keyof Experience, header: 'Organization' },
+          { key: 'role' as keyof Experience, header: 'Role' },
+          { key: 'type' as keyof Experience, header: 'Type' },
+          { key: 'startDate' as keyof Experience, header: 'Start Date' },
           {
-            key: 'id',
+            key: 'endDate' as keyof Experience,
+            header: 'End Date',
+            render: (value) => <span>{String(value || 'Present')}</span>,
+          },
+          {
+            key: 'id' as keyof Experience,
             header: 'Actions',
             render: (_, row) => (
               <div className="flex gap-2">
-                <Button size="xs" variant="outline" onClick={() => openEdit(row)}>
-                  Edit
-                </Button>
-                <Button size="xs" variant="destructive" onClick={() => setDeleteId(row.id)}>
-                  Delete
-                </Button>
+                <Button size="xs" variant="outline" onClick={() => openEdit(row)}>Edit</Button>
+                <Button size="xs" variant="destructive" onClick={() => setDeleteId(row.id)}>Delete</Button>
               </div>
             ),
           },
@@ -148,15 +157,16 @@ function ExperiencesPage() {
               {editing ? 'Edit Experience' : 'Add Experience'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <TextField label="Title" name="title" value={form.title} onChange={(v) => setForm({ ...form, title: v })} error={errors.title} />
-              <TextField label="Company" name="company" value={form.company} onChange={(v) => setForm({ ...form, company: v })} error={errors.company} />
-              <TextField label="Location" name="location" value={form.location} onChange={(v) => setForm({ ...form, location: v })} error={errors.location} />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <TextField label="Organization" name="orgName" value={form.orgName} onChange={(v) => setForm({ ...form, orgName: v })} error={errors.orgName} />
+                <TextField label="Role" name="role" value={form.role} onChange={(v) => setForm({ ...form, role: v })} error={errors.role} />
+              </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <TextField label="Start Date" name="startDate" value={form.startDate} onChange={(v) => setForm({ ...form, startDate: v })} error={errors.startDate} placeholder="YYYY-MM-DD" />
                 <TextField label="End Date" name="endDate" value={form.endDate} onChange={(v) => setForm({ ...form, endDate: v })} placeholder="YYYY-MM-DD (leave empty if current)" />
               </div>
-              <TextField label="Description (one item per line)" name="description" value={form.description.join('\n')} onChange={(v) => setForm({ ...form, description: v.split('\n').filter(Boolean) })} />
-              <TextField label="Company Image URL" name="image" value={form.image} onChange={(v) => setForm({ ...form, image: v })} />
+              <SelectField label="Type" name="type" value={form.type} onChange={(v) => setForm({ ...form, type: v })} options={expTypes} />
+              <TextAreaField label="Description" name="description" value={form.description} onChange={(v) => setForm({ ...form, description: v })} rows={4} />
               <TextField label="Sort Order" name="sortOrder" value={String(form.sortOrder)} onChange={(v) => setForm({ ...form, sortOrder: Number(v) || 0 })} />
               <div className="flex justify-end gap-3">
                 <Button type="button" variant="outline" onClick={closeForm}>Cancel</Button>

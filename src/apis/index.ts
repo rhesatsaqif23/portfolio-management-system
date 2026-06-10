@@ -1,6 +1,6 @@
 export { getProfile, updateProfile } from './profile'
 export { listProjects, createProject, updateProject, deleteProject } from './projects'
-export { listSkills, createSkill, deleteSkill } from './skills'
+export { listSkills, createSkill, updateSkill, deleteSkill } from './skills'
 export { listExperiences, createExperience, updateExperience, deleteExperience } from './experiences'
 export { listAchievements, createAchievement, updateAchievement, deleteAchievement } from './achievements'
 export { listStats, createStat, updateStat, deleteStat } from './stats'

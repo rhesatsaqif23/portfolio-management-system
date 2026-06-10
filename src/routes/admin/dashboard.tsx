@@ -1,12 +1,31 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { useQuery } from '@tanstack/react-query'
 import { useUser } from '@clerk/clerk-react'
+import { listProjects, listSkills, listExperiences, listAchievements, listStats } from '#/apis'
+import { getProfile } from '#/apis'
 
 export const Route = createFileRoute('/admin/dashboard')({
   component: DashboardPage,
 })
 
+function StatCard({ label, value, href }: { label: string; value: number | string; href: string }) {
+  return (
+    <a href={href} className="island-shell block rounded-2xl p-5 no-underline transition hover:-translate-y-0.5">
+      <p className="text-2xl font-bold text-[var(--sea-ink)]">{value}</p>
+      <p className="mt-1 text-sm text-[var(--sea-ink-soft)]">{label}</p>
+    </a>
+  )
+}
+
 function DashboardPage() {
   const { user } = useUser()
+
+  const { data: profile } = useQuery({ queryKey: ['profile'], queryFn: () => getProfile() })
+  const { data: projects } = useQuery({ queryKey: ['projects'], queryFn: () => listProjects() })
+  const { data: skills } = useQuery({ queryKey: ['skills'], queryFn: () => listSkills() })
+  const { data: experiences } = useQuery({ queryKey: ['experiences'], queryFn: () => listExperiences() })
+  const { data: achievements } = useQuery({ queryKey: ['achievements'], queryFn: () => listAchievements() })
+  const { data: stats } = useQuery({ queryKey: ['stats'], queryFn: () => listStats() })
 
   return (
     <div className="space-y-6">
@@ -20,40 +39,34 @@ function DashboardPage() {
       {user && (
         <section className="island-shell rounded-2xl p-5">
           <div className="flex items-center gap-4">
-            <img
-              src={user.imageUrl}
-              alt=""
-              className="h-14 w-14 rounded-full object-cover"
-            />
+            <img src={user.imageUrl} alt="" className="h-14 w-14 rounded-full object-cover" />
             <div>
-              <h2 className="text-lg font-semibold text-[var(--sea-ink)]">
-                {user.fullName}
-              </h2>
-              <p className="text-sm text-[var(--sea-ink-soft)]">
-                {user.primaryEmailAddress?.emailAddress}
-              </p>
+              <h2 className="text-lg font-semibold text-[var(--sea-ink)]">{user.fullName}</h2>
+              <p className="text-sm text-[var(--sea-ink-soft)]">{user.primaryEmailAddress?.emailAddress}</p>
             </div>
           </div>
         </section>
       )}
 
+      {profile && (
+        <section className="island-shell rounded-2xl p-5">
+          <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">Profile Summary</h3>
+          <div className="space-y-1 text-sm text-[var(--sea-ink-soft)]">
+            <p><span className="font-medium text-[var(--sea-ink)]">Name:</span> {profile.fullName}</p>
+            <p><span className="font-medium text-[var(--sea-ink)]">Role:</span> {profile.currentRole}</p>
+            {profile.email && <p><span className="font-medium text-[var(--sea-ink)]">Email:</span> {profile.email}</p>}
+            {profile.location && <p><span className="font-medium text-[var(--sea-ink)]">Location:</span> {profile.location}</p>}
+          </div>
+        </section>
+      )}
+
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <QuickActionCard title="Projects" description="Manage your portfolio projects" href="/admin/projects" />
-        <QuickActionCard title="Skills" description="Update your tech stack" href="/admin/skills" />
-        <QuickActionCard title="Experiences" description="Edit your career timeline" href="/admin/experiences" />
+        <StatCard label="Projects" value={projects?.length ?? 0} href="/admin/projects" />
+        <StatCard label="Skills" value={skills?.length ?? 0} href="/admin/skills" />
+        <StatCard label="Experiences" value={experiences?.length ?? 0} href="/admin/experiences" />
+        <StatCard label="Achievements" value={achievements?.length ?? 0} href="/admin/achievements" />
+        <StatCard label="Stats" value={stats?.length ?? 0} href="/admin/stats" />
       </div>
     </div>
-  )
-}
-
-function QuickActionCard({ title, description, href }: { title: string; description: string; href: string }) {
-  return (
-    <a
-      href={href}
-      className="island-shell block rounded-2xl p-5 no-underline transition hover:-translate-y-0.5"
-    >
-      <h3 className="font-semibold text-[var(--sea-ink)]">{title}</h3>
-      <p className="mt-1 text-sm text-[var(--sea-ink-soft)]">{description}</p>
-    </a>
   )
 }

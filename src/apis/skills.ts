@@ -2,7 +2,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
 import { getServerAuth } from '#/infrastructure/auth'
 import { skillSchema } from '#/domain/schemas'
-import { listSkillsUseCase, createSkillUseCase, deleteSkillUseCase } from '#/domain/use-cases'
+import { listSkillsUseCase, createSkillUseCase, updateSkillUseCase, deleteSkillUseCase } from '#/domain/use-cases'
 import { drizzleSkillRepository } from '#/infrastructure/db/repositories/skillRepository'
 
 async function requireUserId() {
@@ -21,6 +21,16 @@ export const createSkill = createServerFn({ method: 'POST' })
   .handler(async ({ data }) => {
     await requireUserId()
     return createSkillUseCase(drizzleSkillRepository, data)
+  })
+
+export const updateSkill = createServerFn({ method: 'POST' })
+  .validator((data: unknown) => {
+    const { id, ...rest } = data as { id: string }
+    return { id, data: skillSchema.partial().parse(rest) }
+  })
+  .handler(async ({ data }) => {
+    await requireUserId()
+    return updateSkillUseCase(drizzleSkillRepository, data.id, data.data)
   })
 
 export const deleteSkill = createServerFn({ method: 'POST' })

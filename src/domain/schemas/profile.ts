@@ -2,13 +2,14 @@ import { z } from 'zod'
 
 export const profileSchema = z.object({
   fullName: z.string().min(1, 'Full name is required').max(200),
-  currentRoles: z.array(z.string().min(1)).min(1, 'At least one role is required'),
+  currentRole: z.string().min(1, 'Current role is required').max(200),
+  currentRoles: z.array(z.string().min(1)).optional(),
   bioShort: z.string().max(280).optional(),
   bioLong: z.string().optional(),
   avatarUrl: z.string().optional(),
   cvUrl: z.string().optional(),
   location: z.string().optional(),
-  email: z.string().email().optional().or(z.literal('')),
+  email: z.string().optional(),
   github: z.string().optional(),
   linkedin: z.string().optional(),
   instagram: z.string().optional(),

@@ -1,13 +1,14 @@
 import { z } from 'zod'
 
+export const expTypeEnum = z.enum(['work', 'organization', 'volunteer', 'education'])
+
 export const experienceSchema = z.object({
-  title: z.string().min(1, 'Title is required').max(200),
-  company: z.string().min(1, 'Company is required').max(200),
-  location: z.string().min(1, 'Location is required').max(200),
+  orgName: z.string().min(1, 'Organization name is required').max(200),
+  role: z.string().min(1, 'Role is required').max(200),
   startDate: z.string().min(1, 'Start date is required'),
   endDate: z.string().optional(),
-  description: z.array(z.string()).optional(),
-  image: z.string().optional(),
+  description: z.string().optional(),
+  type: expTypeEnum,
   sortOrder: z.number().int().optional(),
 })
 
