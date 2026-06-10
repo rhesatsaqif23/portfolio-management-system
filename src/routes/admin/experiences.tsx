@@ -131,7 +131,7 @@ function ExperiencesPage() {
       )}
 
       <AlertDialog open={!!confirm} onOpenChange={(o) => { if (!o) setConfirm(null) }}>
-        <AlertDialogContent className="sm:max-w-sm">
+        <AlertDialogContent size="sm">
           {confirm?.type === 'delete' ? (
             <AlertDialogMedia><Trash2 className="size-6 text-destructive" /></AlertDialogMedia>
           ) : (

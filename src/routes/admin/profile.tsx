@@ -133,7 +133,7 @@ function ProfilePage() {
       </form>
 
       <AlertDialog open={showConfirm} onOpenChange={setShowConfirm}>
-        <AlertDialogContent className="sm:max-w-sm">
+        <AlertDialogContent size="sm">
           <AlertDialogMedia><TriangleAlert className="size-6 text-primary" /></AlertDialogMedia>
           <AlertDialogHeader>
             <AlertDialogTitle>Save Profile</AlertDialogTitle>

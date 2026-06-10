@@ -1,4 +1,3 @@
 export { default as Badge } from './Badge'
 export { default as Card } from './Card'
-export { default as ConfirmDialog } from './ConfirmDialog'
 export { default as ThemeToggle } from './ThemeToggle'
