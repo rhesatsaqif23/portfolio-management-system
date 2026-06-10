@@ -76,8 +76,6 @@ function ExperiencesPage() {
     setConfirm(null)
   }
 
-  if (isLoading) return <p className="text-sm text-muted-foreground">Loading experiences...</p>
-
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
@@ -89,6 +87,7 @@ function ExperiencesPage() {
       </div>
 
       <DataTable
+        loading={isLoading}
         columns={[
           { key: 'orgName' as keyof Experience, header: 'Organization' },
           { key: 'role' as keyof Experience, header: 'Role' },

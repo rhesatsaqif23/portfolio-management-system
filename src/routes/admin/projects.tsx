@@ -110,8 +110,6 @@ function ProjectsPage() {
     setConfirm(null)
   }
 
-  if (isLoading) return <p className="text-sm text-muted-foreground">Loading projects...</p>
-
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
@@ -123,6 +121,7 @@ function ProjectsPage() {
       </div>
 
       <DataTable
+        loading={isLoading}
         columns={[
           { key: 'title' as keyof Project, header: 'Title' },
           { key: 'slug' as keyof Project, header: 'Slug' },

@@ -68,8 +68,6 @@ function StatsPage() {
     setConfirm(null)
   }
 
-  if (isLoading) return <p className="text-sm text-muted-foreground">Loading stats...</p>
-
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
@@ -81,6 +79,7 @@ function StatsPage() {
       </div>
 
       <DataTable
+        loading={isLoading}
         columns={[
           { key: 'key' as keyof Stat, header: 'Key' },
           { key: 'value' as keyof Stat, header: 'Value' },

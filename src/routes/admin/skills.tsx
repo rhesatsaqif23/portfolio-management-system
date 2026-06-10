@@ -74,8 +74,6 @@ function SkillsPage() {
     setConfirm(null)
   }
 
-  if (isLoading) return <p className="text-sm text-muted-foreground">Loading skills...</p>
-
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
@@ -87,6 +85,7 @@ function SkillsPage() {
       </div>
 
       <DataTable
+        loading={isLoading}
         columns={[
           { key: 'name' as keyof Skill, header: 'Name' },
           { key: 'category' as keyof Skill, header: 'Category', render: (v) => <Badge variant="secondary">{String(v)}</Badge> },

@@ -1,7 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState, useEffect } from 'react'
-import { TextField, TextAreaField } from '#/components/forms'
+import { TextField, TextAreaField, FileUpload } from '#/components/forms'
+import { Skeleton } from '#/components/ui/skeleton'
 import { Button } from '#/components/ui/button'
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction, AlertDialogMedia } from '#/components/ui/alert-dialog'
 import { toast } from '#/components/ui/sonner'
@@ -16,6 +17,36 @@ const initialForm = {
   avatarUrl: '', cvUrl: '',
   location: '', email: '',
   github: '', linkedin: '', instagram: '',
+}
+
+function ProfileFormSkeleton() {
+  return (
+    <div className="mx-auto max-w-2xl space-y-4">
+      <Skeleton className="h-10 w-full" />
+      <Skeleton className="h-32 w-full" />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+      <Skeleton className="h-10 w-full" />
+      <Skeleton className="h-10 w-full" />
+      <Skeleton className="h-24 w-full" />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+      <div className="grid gap-4 sm:grid-cols-3">
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+      <Skeleton className="h-10 w-32" />
+    </div>
+  )
 }
 
 function ProfilePage() {
@@ -83,7 +114,15 @@ function ProfilePage() {
     updateMutation.mutate({ ...form, currentRoles: form.currentRoles.filter((r) => r.trim()) })
   }
 
-  if (isLoading) return <p className="text-sm text-muted-foreground">Loading profile...</p>
+  if (isLoading) return (
+    <div>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-[var(--sea-ink)]">Profile</h1>
+        <p className="mt-1 text-sm text-[var(--sea-ink-soft)]">Edit your public profile.</p>
+      </div>
+      <ProfileFormSkeleton />
+    </div>
+  )
 
   return (
     <div>
@@ -92,7 +131,7 @@ function ProfilePage() {
         <p className="mt-1 text-sm text-[var(--sea-ink-soft)]">Edit your public profile.</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="max-w-2xl space-y-4">
+      <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-4">
         <TextField label="Full Name" name="fullName" value={form.fullName} onChange={(v) => setForm({ ...form, fullName: v })} error={errors.fullName} />
 
         <div className="space-y-2">
@@ -114,7 +153,7 @@ function ProfilePage() {
         <TextAreaField label="Long Bio" name="bioLong" value={form.bioLong} onChange={(v) => setForm({ ...form, bioLong: v })} rows={6} />
         <div className="grid gap-4 sm:grid-cols-2">
           <TextField label="Avatar URL" name="avatarUrl" value={form.avatarUrl} onChange={(v) => setForm({ ...form, avatarUrl: v })} />
-          <TextField label="CV URL" name="cvUrl" value={form.cvUrl} onChange={(v) => setForm({ ...form, cvUrl: v })} />
+          <FileUpload label="CV (PDF)" value={form.cvUrl} onChange={(url) => setForm({ ...form, cvUrl: url })} />
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <TextField label="Location" name="location" value={form.location} onChange={(v) => setForm({ ...form, location: v })} />

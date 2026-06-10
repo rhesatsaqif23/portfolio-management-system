@@ -68,8 +68,6 @@ function AchievementsPage() {
     setConfirm(null)
   }
 
-  if (isLoading) return <p className="text-sm text-muted-foreground">Loading achievements...</p>
-
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
@@ -81,6 +79,7 @@ function AchievementsPage() {
       </div>
 
       <DataTable
+        loading={isLoading}
         columns={[
           { key: 'title' as keyof Achievement, header: 'Title' },
           { key: 'eventName' as keyof Achievement, header: 'Event' },

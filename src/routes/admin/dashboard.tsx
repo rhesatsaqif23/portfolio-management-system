@@ -1,12 +1,22 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { useUser } from '@clerk/clerk-react'
+import { Skeleton } from '#/components/ui/skeleton'
 import { listProjects, listSkills, listExperiences, listAchievements, listStats } from '#/apis'
 import { getProfile } from '#/apis'
 
 export const Route = createFileRoute('/admin/dashboard')({
   component: DashboardPage,
 })
+
+function StatCardSkeleton() {
+  return (
+    <div className="island-shell rounded-2xl p-5">
+      <Skeleton className="mb-2 h-7 w-16" />
+      <Skeleton className="h-4 w-24" />
+    </div>
+  )
+}
 
 function StatCard({ label, value, href }: { label: string; value: number | string; href: string }) {
   return (
@@ -20,12 +30,12 @@ function StatCard({ label, value, href }: { label: string; value: number | strin
 function DashboardPage() {
   const { user } = useUser()
 
-  const { data: profile } = useQuery({ queryKey: ['profile'], queryFn: () => getProfile() })
-  const { data: projects } = useQuery({ queryKey: ['projects'], queryFn: () => listProjects() })
-  const { data: skills } = useQuery({ queryKey: ['skills'], queryFn: () => listSkills() })
-  const { data: experiences } = useQuery({ queryKey: ['experiences'], queryFn: () => listExperiences() })
-  const { data: achievements } = useQuery({ queryKey: ['achievements'], queryFn: () => listAchievements() })
-  const { data: stats } = useQuery({ queryKey: ['stats'], queryFn: () => listStats() })
+  const { data: profile, isLoading: profileLoading } = useQuery({ queryKey: ['profile'], queryFn: () => getProfile() })
+  const { data: projects, isLoading: projectsLoading } = useQuery({ queryKey: ['projects'], queryFn: () => listProjects() })
+  const { data: skills, isLoading: skillsLoading } = useQuery({ queryKey: ['skills'], queryFn: () => listSkills() })
+  const { data: experiences, isLoading: experiencesLoading } = useQuery({ queryKey: ['experiences'], queryFn: () => listExperiences() })
+  const { data: achievements, isLoading: achievementsLoading } = useQuery({ queryKey: ['achievements'], queryFn: () => listAchievements() })
+  const { data: stats, isLoading: statsLoading } = useQuery({ queryKey: ['stats'], queryFn: () => listStats() })
 
   return (
     <div className="space-y-6">
@@ -48,7 +58,16 @@ function DashboardPage() {
         </section>
       )}
 
-      {profile && (
+      {profileLoading ? (
+        <section className="island-shell rounded-2xl p-5">
+          <Skeleton className="mb-3 h-4 w-32" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-48" />
+            <Skeleton className="h-4 w-36" />
+            <Skeleton className="h-4 w-40" />
+          </div>
+        </section>
+      ) : profile ? (
         <section className="island-shell rounded-2xl p-5">
           <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">Profile Summary</h3>
           <div className="space-y-1 text-sm text-[var(--sea-ink-soft)]">
@@ -58,14 +77,14 @@ function DashboardPage() {
             {profile.location && <p><span className="font-medium text-[var(--sea-ink)]">Location:</span> {profile.location}</p>}
           </div>
         </section>
-      )}
+      ) : null}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <StatCard label="Projects" value={projects?.length ?? 0} href="/admin/projects" />
-        <StatCard label="Skills" value={skills?.length ?? 0} href="/admin/skills" />
-        <StatCard label="Experiences" value={experiences?.length ?? 0} href="/admin/experiences" />
-        <StatCard label="Achievements" value={achievements?.length ?? 0} href="/admin/achievements" />
-        <StatCard label="Stats" value={stats?.length ?? 0} href="/admin/stats" />
+        {projectsLoading ? <StatCardSkeleton /> : <StatCard label="Projects" value={projects?.length ?? 0} href="/admin/projects" />}
+        {skillsLoading ? <StatCardSkeleton /> : <StatCard label="Skills" value={skills?.length ?? 0} href="/admin/skills" />}
+        {experiencesLoading ? <StatCardSkeleton /> : <StatCard label="Experiences" value={experiences?.length ?? 0} href="/admin/experiences" />}
+        {achievementsLoading ? <StatCardSkeleton /> : <StatCard label="Achievements" value={achievements?.length ?? 0} href="/admin/achievements" />}
+        {statsLoading ? <StatCardSkeleton /> : <StatCard label="Stats" value={stats?.length ?? 0} href="/admin/stats" />}
       </div>
     </div>
   )
