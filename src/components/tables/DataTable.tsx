@@ -20,9 +20,9 @@ function SkeletonTable({ columns }: { columns: Column<Record<string, unknown>>[]
     <Fragment>
       {Array.from({ length: 5 }).map((_, i) => (
         <tr key={i} className="border-b border-[var(--line)]">
-          {columns.map((col) => (
+          {columns.map((col, j) => (
             <td key={String(col.key)} className="px-4 py-3">
-              <Skeleton className="h-4 w-full max-w-[160px]" />
+              <Skeleton className={cn("h-4", j === columns.length - 1 ? "w-20" : "w-full max-w-[140px]")} />
             </td>
           ))}
         </tr>

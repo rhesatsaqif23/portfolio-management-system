@@ -11,9 +11,9 @@ export const Route = createFileRoute('/admin/dashboard')({
 
 function StatCardSkeleton() {
   return (
-    <div className="island-shell rounded-2xl p-5">
-      <Skeleton className="mb-2 h-7 w-16" />
-      <Skeleton className="h-4 w-24" />
+    <div className="island-shell block rounded-2xl p-5">
+      <Skeleton className="h-7 w-16" />
+      <div className="mt-1"><Skeleton className="h-4 w-24" /></div>
     </div>
   )
 }
@@ -60,11 +60,14 @@ function DashboardPage() {
 
       {profileLoading ? (
         <section className="island-shell rounded-2xl p-5">
-          <Skeleton className="mb-3 h-4 w-32" />
-          <div className="space-y-2">
-            <Skeleton className="h-4 w-48" />
-            <Skeleton className="h-4 w-36" />
-            <Skeleton className="h-4 w-40" />
+          <Skeleton className="mb-3 h-3.5 w-32" />
+          <div className="space-y-1">
+            {['Name', 'Role', 'Email', 'Location'].map((l) => (
+              <p key={l} className="text-sm">
+                <Skeleton className="mr-1 inline-block h-4 w-12 align-text-bottom" />
+                <Skeleton className="inline-block h-4 w-28 align-text-bottom" />
+              </p>
+            ))}
           </div>
         </section>
       ) : profile ? (

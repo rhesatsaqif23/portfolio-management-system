@@ -19,31 +19,51 @@ const initialForm = {
   github: '', linkedin: '', instagram: '',
 }
 
+function SkeletonField({ labelWidth, inputHeight = 'h-10', inputWidth = 'w-full' }: { labelWidth: string; inputHeight?: string; inputWidth?: string }) {
+  return (
+    <div className="space-y-1">
+      <Skeleton className={`h-3.5 ${labelWidth}`} />
+      <Skeleton className={`${inputHeight} ${inputWidth}`} />
+    </div>
+  )
+}
+
 function ProfileFormSkeleton() {
   return (
     <div className="mx-auto max-w-2xl space-y-4">
-      <Skeleton className="h-10 w-full" />
-      <Skeleton className="h-32 w-full" />
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-10 w-full" />
+      <SkeletonField labelWidth="w-16" />
+
+      <div className="space-y-2">
+        <Skeleton className="h-3.5 w-48" />
+        <div className="flex gap-2">
+          <Skeleton className="h-10 flex-1" />
+        </div>
+        <Skeleton className="h-8 w-20" />
       </div>
-      <Skeleton className="h-10 w-full" />
-      <Skeleton className="h-10 w-full" />
-      <Skeleton className="h-24 w-full" />
+
+      <SkeletonField labelWidth="w-20" />
+      <SkeletonField labelWidth="w-36" />
+      <SkeletonField labelWidth="w-16" inputHeight="h-36" />
+
       <div className="grid gap-4 sm:grid-cols-2">
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-10 w-full" />
+        <SkeletonField labelWidth="w-16" />
+        <div className="space-y-1">
+          <Skeleton className="h-3.5 w-14" />
+          <Skeleton className="h-9 w-32" />
+        </div>
       </div>
+
       <div className="grid gap-4 sm:grid-cols-2">
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-10 w-full" />
+        <SkeletonField labelWidth="w-14" />
+        <SkeletonField labelWidth="w-10" />
       </div>
+
       <div className="grid gap-4 sm:grid-cols-3">
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-10 w-full" />
+        <SkeletonField labelWidth="w-12" />
+        <SkeletonField labelWidth="w-14" />
+        <SkeletonField labelWidth="w-16" />
       </div>
+
       <Skeleton className="h-10 w-32" />
     </div>
   )
