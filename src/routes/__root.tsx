@@ -10,6 +10,7 @@ import Footer from '../components/layout/Footer'
 import Header from '../components/layout/Header'
 
 import ClerkProvider from '../integrations/clerk/provider'
+import { Toaster } from '#/components/ui/sonner'
 
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 
@@ -88,6 +89,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             ]}
           />
         </ClerkProvider>
+        <Toaster />
         <Scripts />
       </body>
     </html>
