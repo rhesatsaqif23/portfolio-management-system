@@ -44,7 +44,7 @@ const stats = [
   },
   {
     key: 'work_experience',
-    value: '4',
+    value: '2',
     category: 'general',
     subValue: 'positions',
     icon: 'building',

@@ -39,7 +39,7 @@ const experiences = [
     endDate: '2026-06-01',
     description:
       'Developed OctoSight, an end-to-end anti-phishing and fraud detection prototype for digital banking as a capstone project. Built the frontend with Next.js and the backend with FastAPI, integrated a hybrid AI detection engine combining rule-based heuristics with ML prediction, and implemented a full admin triage workflow with analytics dashboards and SLA monitoring.',
-    type: 'work',
+    type: 'education',
     sortOrder: 4,
   },
   {
@@ -63,16 +63,6 @@ const experiences = [
     sortOrder: 6,
   },
   {
-    orgName: 'LWU (Learning With Us)',
-    role: 'Front-End Developer',
-    startDate: '2025-10-01',
-    endDate: '2025-10-01',
-    description:
-      'Built a premium, high-performance website for an online English education platform within a 24-hour sprint. Architected the site using Next.js 14, TypeScript, and Tailwind CSS with Framer Motion animations, implementing a responsive mobile-first design and SEO-ready metadata strategy.',
-    type: 'work',
-    sortOrder: 7,
-  },
-  {
     orgName: 'Optiik Photography & Design',
     role: 'Lead of Photography & Videography Division',
     startDate: '2025-01-01',
@@ -80,7 +70,7 @@ const experiences = [
     description:
       "Designed and delivered photography and videography training programs to enhance members' skills. Organized and scheduled group photo hunting sessions to strengthen members' portfolios. Encouraged member participation in photography competitions, producing award-winning works.",
     type: 'organization',
-    sortOrder: 8,
+    sortOrder: 7,
   },
   {
     orgName: 'Optiik Photography & Design',
@@ -90,7 +80,7 @@ const experiences = [
     description:
       'Led and coordinated 37+ members to execute 3 events including class sharing, photo hunting, and exhibitions. Managed cross-division coordination to ensure smooth execution and on-time event delivery. Served as a speaker delivering introductory photography fundamentals.',
     type: 'organization',
-    sortOrder: 9,
+    sortOrder: 8,
   },
   {
     orgName: 'Faculty of Computer Science (FILKOM) University of Brawijaya',
@@ -100,7 +90,7 @@ const experiences = [
     description:
       'Assisted in conducting database laboratory sessions using Microsoft SQL Server (MSSQL). Guided 43 students in understanding relational database concepts and SQL fundamentals. Designed enrichment tasks and practical exams, and evaluated students\' SQL queries and database designs.',
     type: 'education',
-    sortOrder: 10,
+    sortOrder: 9,
   },
   {
     orgName: 'HOLOGY UB',
@@ -110,7 +100,7 @@ const experiences = [
     description:
       'Produced 4 video contents including teasers, throwbacks, and aftermovies for a national-scale IT competition. Executed video production as a cinematographer, collaborating with actors and production team members. Documented 7 competition categories with finalists from universities across Indonesia.',
     type: 'organization',
-    sortOrder: 11,
+    sortOrder: 10,
   },
   {
     orgName: 'GDSC University of Brawijaya (UB)',
@@ -118,9 +108,9 @@ const experiences = [
     startDate: '2023-09-01',
     endDate: '2024-09-01',
     description:
-      'Participated in webinars, workshops, and developer community activities. Engaged in discussions and learning sessions related to software development.',
+      'Participated in webinars, workshops, and developer community activities. Engaging in discussions and learning sessions related to software development.',
     type: 'organization',
-    sortOrder: 12,
+    sortOrder: 11,
   },
 ]
 
