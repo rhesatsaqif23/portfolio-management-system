@@ -20,6 +20,7 @@ import { Route as AdminProjectsRouteImport } from './routes/admin/projects'
 import { Route as AdminProfileRouteImport } from './routes/admin/profile'
 import { Route as AdminExperiencesRouteImport } from './routes/admin/experiences'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
+import { Route as AdminCaseStudiesRouteImport } from './routes/admin/case-studies'
 import { Route as AdminAchievementsRouteImport } from './routes/admin/achievements'
 
 const AboutRoute = AboutRouteImport.update({
@@ -77,6 +78,11 @@ const AdminDashboardRoute = AdminDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminCaseStudiesRoute = AdminCaseStudiesRouteImport.update({
+  id: '/case-studies',
+  path: '/case-studies',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminAchievementsRoute = AdminAchievementsRouteImport.update({
   id: '/achievements',
   path: '/achievements',
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/admin/achievements': typeof AdminAchievementsRoute
+  '/admin/case-studies': typeof AdminCaseStudiesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/experiences': typeof AdminExperiencesRoute
   '/admin/profile': typeof AdminProfileRoute
@@ -102,6 +109,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/admin/achievements': typeof AdminAchievementsRoute
+  '/admin/case-studies': typeof AdminCaseStudiesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/experiences': typeof AdminExperiencesRoute
   '/admin/profile': typeof AdminProfileRoute
@@ -117,6 +125,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/admin/achievements': typeof AdminAchievementsRoute
+  '/admin/case-studies': typeof AdminCaseStudiesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/experiences': typeof AdminExperiencesRoute
   '/admin/profile': typeof AdminProfileRoute
@@ -133,6 +142,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/about'
     | '/admin/achievements'
+    | '/admin/case-studies'
     | '/admin/dashboard'
     | '/admin/experiences'
     | '/admin/profile'
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/about'
     | '/admin/achievements'
+    | '/admin/case-studies'
     | '/admin/dashboard'
     | '/admin/experiences'
     | '/admin/profile'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/about'
     | '/admin/achievements'
+    | '/admin/case-studies'
     | '/admin/dashboard'
     | '/admin/experiences'
     | '/admin/profile'
@@ -258,6 +270,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/case-studies': {
+      id: '/admin/case-studies'
+      path: '/case-studies'
+      fullPath: '/admin/case-studies'
+      preLoaderRoute: typeof AdminCaseStudiesRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/achievements': {
       id: '/admin/achievements'
       path: '/achievements'
@@ -270,6 +289,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteRouteChildren {
   AdminAchievementsRoute: typeof AdminAchievementsRoute
+  AdminCaseStudiesRoute: typeof AdminCaseStudiesRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminExperiencesRoute: typeof AdminExperiencesRoute
   AdminProfileRoute: typeof AdminProfileRoute
@@ -280,6 +300,7 @@ interface AdminRouteRouteChildren {
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminAchievementsRoute: AdminAchievementsRoute,
+  AdminCaseStudiesRoute: AdminCaseStudiesRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminExperiencesRoute: AdminExperiencesRoute,
   AdminProfileRoute: AdminProfileRoute,

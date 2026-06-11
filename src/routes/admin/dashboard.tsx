@@ -4,6 +4,7 @@ import { useUser } from '@clerk/clerk-react'
 import { Skeleton } from '#/components/ui/skeleton'
 import { listProjects, listSkills, listExperiences, listAchievements, listStats } from '#/apis'
 import { getProfile } from '#/apis'
+import { useEffect } from 'react'
 
 export const Route = createFileRoute('/admin/dashboard')({
   component: DashboardPage,
@@ -30,12 +31,15 @@ function StatCard({ label, value, href }: { label: string; value: number | strin
 function DashboardPage() {
   const { user } = useUser()
 
-  const { data: profile, isLoading: profileLoading } = useQuery({ queryKey: ['profile'], queryFn: () => getProfile() })
-  const { data: projects, isLoading: projectsLoading } = useQuery({ queryKey: ['projects'], queryFn: () => listProjects() })
-  const { data: skills, isLoading: skillsLoading } = useQuery({ queryKey: ['skills'], queryFn: () => listSkills() })
-  const { data: experiences, isLoading: experiencesLoading } = useQuery({ queryKey: ['experiences'], queryFn: () => listExperiences() })
-  const { data: achievements, isLoading: achievementsLoading } = useQuery({ queryKey: ['achievements'], queryFn: () => listAchievements() })
-  const { data: stats, isLoading: statsLoading } = useQuery({ queryKey: ['stats'], queryFn: () => listStats() })
+  const { data: profile, isLoading: profileLoading, error: profileError } = useQuery({ queryKey: ['profile'], queryFn: () => getProfile() })
+  const { data: projects, isLoading: projectsLoading, error: projectsError } = useQuery({ queryKey: ['projects'], queryFn: () => listProjects() })
+  const { data: skills, isLoading: skillsLoading, error: skillsError } = useQuery({ queryKey: ['skills'], queryFn: () => listSkills() })
+  const { data: experiences, isLoading: experiencesLoading, error: experiencesError } = useQuery({ queryKey: ['experiences'], queryFn: () => listExperiences() })
+  const { data: achievements, isLoading: achievementsLoading, error: achievementsError } = useQuery({ queryKey: ['achievements'], queryFn: () => listAchievements() })
+  const { data: stats, isLoading: statsLoading, error: statsError } = useQuery({ queryKey: ['stats'], queryFn: () => listStats() })
+
+  const queryErrors = [profileError, projectsError, skillsError, experiencesError, achievementsError, statsError].filter(Boolean)
+  useEffect(() => { queryErrors.forEach(e => console.error('Query error:', e)) }, [queryErrors])
 
   return (
     <div className="space-y-6">
@@ -63,10 +67,10 @@ function DashboardPage() {
           <Skeleton className="mb-3 h-3.5 w-32" />
           <div className="space-y-1">
             {['Name', 'Role', 'Email', 'Location'].map((l) => (
-              <p key={l} className="text-sm">
+              <div key={l} className="text-sm">
                 <Skeleton className="mr-1 inline-block h-4 w-12 align-text-bottom" />
                 <Skeleton className="inline-block h-4 w-28 align-text-bottom" />
-              </p>
+              </div>
             ))}
           </div>
         </section>

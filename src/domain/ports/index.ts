@@ -1,5 +1,6 @@
 export type { IProfileRepository, Profile, ProfileInsert } from './IProfileRepository'
-export type { IProjectRepository, Project, ProjectInsert, CaseStudy, CaseStudyInsert } from './IProjectRepository'
+export type { IProjectRepository, Project, ProjectInsert } from './IProjectRepository'
+export type { ICaseStudyRepository, CaseStudy, CaseStudyInsert } from './ICaseStudyRepository'
 export type { ISkillRepository, Skill, SkillInsert } from './ISkillRepository'
 export type { IExperienceRepository, Experience, ExperienceInsert } from './IExperienceRepository'
 export type { IAchievementRepository, Achievement, AchievementInsert } from './IAchievementRepository'

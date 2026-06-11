@@ -11,6 +11,23 @@ async function requireUserId() {
   return userId
 }
 
+export const ping = createServerFn({ method: 'GET' }).handler(async () => {
+  console.log('[ping] handler called')
+  return { ok: true, time: Date.now() }
+})
+
+export const testDb = createServerFn({ method: 'GET' }).handler(async () => {
+  console.log('[testDb] handler called')
+  try {
+    const result = await listProjectsUseCase(drizzleProjectRepository)
+    console.log('[testDb] result:', typeof result, result?.length)
+    return { ok: true, count: result?.length ?? 0, data: result ?? [] }
+  } catch (e) {
+    console.error('[testDb] ERROR:', e)
+    return { ok: false, error: String(e) }
+  }
+})
+
 export const listProjects = createServerFn({ method: 'GET' }).handler(async () => {
   await requireUserId()
   return listProjectsUseCase(drizzleProjectRepository)

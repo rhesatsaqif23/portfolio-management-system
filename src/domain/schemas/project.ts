@@ -5,6 +5,7 @@ export const projectSchema = z.object({
   slug: z.string().min(1).max(250).regex(/^[a-z0-9-]+$/, 'Slug must be lowercase alphanumeric with hyphens'),
   descriptionShort: z.string().max(300).optional(),
   thumbnailUrl: z.string().optional(),
+  techStacks: z.array(z.string()).optional(),
   isFeatured: z.boolean().default(false),
   category: z.string().optional(),
   githubUrl: z.string().optional(),
@@ -13,10 +14,4 @@ export const projectSchema = z.object({
   sortOrder: z.number().int().optional(),
 })
 
-export const caseStudySchema = z.object({
-  contentMarkdown: z.string().min(1, 'Content is required'),
-  galleryJsonb: z.array(z.object({ url: z.string(), caption: z.string() })).default([]),
-})
-
 export type ProjectInput = z.infer<typeof projectSchema>
-export type CaseStudyInput = z.infer<typeof caseStudySchema>

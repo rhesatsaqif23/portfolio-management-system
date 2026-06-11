@@ -8,6 +8,7 @@ export const projectsTable = pgTable('projects', {
   slug: text('slug').notNull().unique(),
   descriptionShort: varchar('description_short', { length: 300 }),
   thumbnailUrl: text('thumbnail_url'),
+  techStacks: text('tech_stacks').array(),
   isFeatured: boolean('is_featured').default(false),
   category: text('category'),
   githubUrl: text('github_url'),

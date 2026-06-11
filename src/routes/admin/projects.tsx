@@ -15,9 +15,16 @@ export const Route = createFileRoute('/admin/projects')({
   component: ProjectsPage,
 })
 
+function slugify(text: string) {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
 const initialForm = {
   title: '',
-  slug: '',
   descriptionShort: '',
   thumbnailUrl: '',
   isFeatured: false,
@@ -74,7 +81,7 @@ function ProjectsPage() {
           }).filter((l) => l.label && l.url)
         })()
       : []
-    return { ...form, additionalLinks: links }
+    return { ...form, additionalLinks: links, slug: slugify(form.title) || form.title }
   }
 
   function openCreate() { setEditing(null); setForm(initialForm); setErrors({}); setShowForm(true) }
@@ -82,7 +89,7 @@ function ProjectsPage() {
   function openEdit(project: Project) {
     setEditing(project)
     setForm({
-      title: project.title, slug: project.slug, descriptionShort: project.descriptionShort ?? '',
+      title: project.title, descriptionShort: project.descriptionShort ?? '',
       thumbnailUrl: project.thumbnailUrl ?? '', isFeatured: project.isFeatured ?? false,
       category: project.category ?? '', githubUrl: project.githubUrl ?? '', liveUrl: project.liveUrl ?? '',
       additionalLinks: project.additionalLinks ? JSON.stringify(project.additionalLinks) : '', sortOrder: project.sortOrder ?? 0,
@@ -96,7 +103,6 @@ function ProjectsPage() {
     e.preventDefault()
     const errs: Record<string, string> = {}
     if (!form.title.trim()) errs.title = 'Title is required'
-    if (!form.slug.trim()) errs.slug = 'Slug is required'
     setErrors(errs)
     if (Object.keys(errs).length > 0) return
     setConfirm(editing ? { type: 'update', id: editing.id } : { type: 'create' })
@@ -143,9 +149,8 @@ function ProjectsPage() {
           <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border bg-card p-6 shadow-lg">
             <h2 className="mb-4 text-lg font-semibold">{editing ? 'Edit Project' : 'Create Project'}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div>
                 <TextField label="Title" name="title" value={form.title} onChange={(v) => setForm({ ...form, title: v })} error={errors.title} />
-                <TextField label="Slug" name="slug" value={form.slug} onChange={(v) => setForm({ ...form, slug: v })} error={errors.slug} />
               </div>
               <TextAreaField label="Short Description" name="descriptionShort" value={form.descriptionShort} onChange={(v) => setForm({ ...form, descriptionShort: v })} rows={3} />
               <div className="grid gap-4 sm:grid-cols-2">

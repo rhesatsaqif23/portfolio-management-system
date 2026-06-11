@@ -37,7 +37,7 @@ function AdminShell() {
 
   return (
     <div className="flex min-h-[calc(100vh-8rem)]">
-      <aside className="hidden w-64 flex-shrink-0 border-r border-[var(--line)] bg-[var(--card)] p-4 sm:block">
+      <aside className="fixed bottom-0 left-0 top-16 z-30 hidden w-64 border-r border-[var(--line)] bg-[var(--card)] p-4 sm:block">
         <nav className="space-y-1">
           <p className="mb-4 px-3 text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">
             Management
@@ -47,12 +47,13 @@ function AdminShell() {
           <SidebarLink to="/admin/projects" label="Projects" />
           <SidebarLink to="/admin/experiences" label="Experiences" />
           <SidebarLink to="/admin/skills" label="Skills" />
+          <SidebarLink to="/admin/case-studies" label="Case Studies" />
           <SidebarLink to="/admin/achievements" label="Achievements" />
           <SidebarLink to="/admin/stats" label="Stats" />
         </nav>
       </aside>
 
-      <main className="flex-1 overflow-auto">
+      <main className="ml-64 flex-1 overflow-auto">
         <div className="flex items-center justify-between border-b border-[var(--line)] px-6 py-3">
           <h2 className="text-sm font-semibold text-[var(--sea-ink)]">
             Welcome, {user?.fullName || user?.primaryEmailAddress?.emailAddress || 'User'}

@@ -11,7 +11,7 @@ export default function Badge({ children, variant = 'default', className }: Badg
     <span
       className={cn(
         'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold',
-        variant === 'default' && 'bg-[var(--sea-ink)] text-white',
+        variant === 'default' && 'bg-primary text-primary-foreground',
         variant === 'secondary' && 'bg-[var(--secondary)] text-[var(--secondary-foreground)]',
         variant === 'outline' && 'border border-[var(--line)] text-[var(--sea-ink-soft)]',
         className,
