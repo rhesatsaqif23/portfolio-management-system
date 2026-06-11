@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { DataTable } from '#/components/tables'
+import { DataTable, usePagination } from '#/components/tables'
 import { TextField, TextAreaField } from '#/components/forms'
 import { Button } from '#/components/ui/button'
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction, AlertDialogMedia } from '#/components/ui/alert-dialog'
@@ -25,6 +25,7 @@ function CaseStudiesPage() {
   const [confirm, setConfirm] = useState<ConfirmAction>(null)
 
   const { data: caseStudies = [], isLoading } = useQuery({ queryKey: ['caseStudies'], queryFn: () => listCaseStudies() })
+  const pag = usePagination(caseStudies, 10)
 
   const createMutation = useMutation({
     mutationFn: () => createCaseStudy({ data: buildPayload() }),
@@ -109,7 +110,10 @@ function CaseStudiesPage() {
             </div>
           )},
         ]}
-        data={caseStudies}
+        data={pag.paginatedData}
+        page={pag.page}
+        totalPages={pag.totalPages}
+        onPageChange={pag.setPage}
       />
 
       {showForm && (

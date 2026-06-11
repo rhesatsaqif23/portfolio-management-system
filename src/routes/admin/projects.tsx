@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { DataTable } from '#/components/tables'
+import { DataTable, usePagination } from '#/components/tables'
 import { TextField, TextAreaField } from '#/components/forms'
 import { Badge } from '#/components/shared'
 import { Button } from '#/components/ui/button'
@@ -53,6 +53,7 @@ function ProjectsPage() {
     queryKey: ['projects'],
     queryFn: () => listProjects(),
   })
+  const pag = usePagination(projects, 10)
 
   const createMutation = useMutation({
     mutationFn: () => createProject({ data: buildPayload() }),
@@ -141,7 +142,10 @@ function ProjectsPage() {
             </div>
           )},
         ]}
-        data={projects}
+        data={pag.paginatedData}
+        page={pag.page}
+        totalPages={pag.totalPages}
+        onPageChange={pag.setPage}
       />
 
       {showForm && (

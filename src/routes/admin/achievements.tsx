@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { DataTable } from '#/components/tables'
+import { DataTable, usePagination } from '#/components/tables'
 import { TextField, TextAreaField } from '#/components/forms'
 import { Button } from '#/components/ui/button'
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction, AlertDialogMedia } from '#/components/ui/alert-dialog'
@@ -25,6 +25,7 @@ function AchievementsPage() {
   const [confirm, setConfirm] = useState<ConfirmAction>(null)
 
   const { data: achievements = [], isLoading } = useQuery({ queryKey: ['achievements'], queryFn: () => listAchievements() })
+  const pag = usePagination(achievements, 10)
 
   const createMutation = useMutation({
     mutationFn: () => createAchievement({ data: form }),
@@ -92,7 +93,10 @@ function AchievementsPage() {
             </div>
           )},
         ]}
-        data={achievements}
+        data={pag.paginatedData}
+        page={pag.page}
+        totalPages={pag.totalPages}
+        onPageChange={pag.setPage}
       />
 
       {showForm && (
