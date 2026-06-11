@@ -10,6 +10,7 @@ import Footer from '../components/layout/Footer'
 import Header from '../components/layout/Header'
 
 import ClerkProvider from '../integrations/clerk/provider'
+import TanstackQueryProvider from '../integrations/tanstack-query/root-provider'
 import { Toaster } from '#/components/ui/sonner'
 
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
@@ -73,9 +74,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body className="font-sans antialiased [overflow-wrap:anywhere] selection:bg-[rgba(79,184,178,0.24)]">
         <ClerkProvider>
-          <Header />
-          {children}
-          <Footer />
+          <TanstackQueryProvider>
+            <Header />
+            {children}
+            <Footer />
+          </TanstackQueryProvider>
           <TanStackDevtools
             config={{
               position: 'bottom-right',

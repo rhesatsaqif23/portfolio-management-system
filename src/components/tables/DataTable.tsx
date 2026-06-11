@@ -1,6 +1,7 @@
 import { cn } from '#/lib/utils'
 import { Skeleton } from '#/components/ui/skeleton'
 import { Fragment } from 'react'
+import Pagination from './Pagination'
 
 type Column<T> = {
   key: keyof T
@@ -13,6 +14,9 @@ type DataTableProps<T> = {
   data: T[]
   loading?: boolean
   onRowClick?: (row: T) => void
+  page?: number
+  totalPages?: number
+  onPageChange?: (page: number) => void
 }
 
 function SkeletonTable({ columns }: { columns: Column<Record<string, unknown>>[] }) {
@@ -33,7 +37,7 @@ function SkeletonTable({ columns }: { columns: Column<Record<string, unknown>>[]
   )
 }
 
-export default function DataTable<T extends Record<string, unknown>>({ columns, data, loading, onRowClick }: DataTableProps<T>) {
+export default function DataTable<T extends Record<string, unknown>>({ columns, data, loading, onRowClick, page, totalPages, onPageChange }: DataTableProps<T>) {
   return (
     <div className="overflow-x-auto rounded-lg border border-[var(--line)]">
       <table className="w-full text-sm">
@@ -76,6 +80,9 @@ export default function DataTable<T extends Record<string, unknown>>({ columns, 
           )}
         </tbody>
       </table>
+      {page !== undefined && totalPages !== undefined && onPageChange && (
+        <Pagination page={page} totalPages={totalPages} onPageChange={onPageChange} />
+      )}
     </div>
   )
 }

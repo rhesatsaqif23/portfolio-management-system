@@ -30,8 +30,9 @@ export function FileUpload({ accept = '.pdf', value, onChange, label, maxSizeMB 
     setUploading(true)
     try {
       const buffer = await file.arrayBuffer()
+      const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
       const { uploadFile: upload } = await import('#/apis')
-      const result = await upload({ data: { bucket: 'cvs', path: `profiles/${Date.now()}-${file.name}`, file: buffer } })
+      const result = await upload({ data: { bucket: 'cvs', path: `profiles/${Date.now()}-${safeName}`, file: buffer } })
       onChange(result.url)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Upload failed')

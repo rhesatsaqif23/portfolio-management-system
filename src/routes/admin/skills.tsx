@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { DataTable } from '#/components/tables'
+import { DataTable, usePagination } from '#/components/tables'
 import { TextField, SelectField } from '#/components/forms'
 import { Badge } from '#/components/shared'
 import { Button } from '#/components/ui/button'
@@ -35,6 +35,7 @@ function SkillsPage() {
   const [confirm, setConfirm] = useState<ConfirmAction>(null)
 
   const { data: skills = [], isLoading } = useQuery({ queryKey: ['skills'], queryFn: () => listSkills() })
+  const pag = usePagination(skills, 10)
 
   const createMutation = useMutation({
     mutationFn: () => createSkill({ data: form }),
@@ -97,7 +98,10 @@ function SkillsPage() {
             </div>
           )},
         ]}
-        data={skills}
+        data={pag.paginatedData}
+        page={pag.page}
+        totalPages={pag.totalPages}
+        onPageChange={pag.setPage}
       />
 
       {showForm && (
