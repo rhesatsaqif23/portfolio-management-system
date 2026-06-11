@@ -37,7 +37,7 @@ const projects = [
     isFeatured: true,
     category: 'Web App',
     githubUrl: 'https://github.com/Raion-Community/raion-web-migrate',
-    liveUrl: null,
+    liveUrl: 'https://raion-web.vercel.app/',
     additionalLinks: null,
     sortOrder: 3,
   },

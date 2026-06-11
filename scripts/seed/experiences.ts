@@ -73,16 +73,6 @@ const experiences = [
     sortOrder: 7,
   },
   {
-    orgName: 'Optiik Photography & Design',
-    role: 'Event Chairperson of Optiik Young Impact 2025',
-    startDate: '2025-01-01',
-    endDate: '2025-04-01',
-    description:
-      'Led and coordinated 37+ members to execute 3 events including class sharing, photo hunting, and exhibitions. Managed cross-division coordination to ensure smooth execution and on-time event delivery. Served as a speaker delivering introductory photography fundamentals.',
-    type: 'organization',
-    sortOrder: 8,
-  },
-  {
     orgName: 'Faculty of Computer Science (FILKOM) University of Brawijaya',
     role: 'Laboratory Assistant of Database Systems',
     startDate: '2025-02-01',
@@ -90,7 +80,7 @@ const experiences = [
     description:
       'Assisted in conducting database laboratory sessions using Microsoft SQL Server (MSSQL). Guided 43 students in understanding relational database concepts and SQL fundamentals. Designed enrichment tasks and practical exams, and evaluated students\' SQL queries and database designs.',
     type: 'education',
-    sortOrder: 9,
+    sortOrder: 8,
   },
   {
     orgName: 'HOLOGY UB',
@@ -100,7 +90,7 @@ const experiences = [
     description:
       'Produced 4 video contents including teasers, throwbacks, and aftermovies for a national-scale IT competition. Executed video production as a cinematographer, collaborating with actors and production team members. Documented 7 competition categories with finalists from universities across Indonesia.',
     type: 'organization',
-    sortOrder: 10,
+    sortOrder: 9,
   },
   {
     orgName: 'GDSC University of Brawijaya (UB)',
@@ -110,7 +100,7 @@ const experiences = [
     description:
       'Participated in webinars, workshops, and developer community activities. Engaging in discussions and learning sessions related to software development.',
     type: 'organization',
-    sortOrder: 11,
+    sortOrder: 10,
   },
 ]
 
