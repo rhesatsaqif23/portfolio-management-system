@@ -7,7 +7,8 @@ const experiences = [
     role: 'Front-End Developer Intern',
     startDate: '2026-06-01',
     endDate: null,
-    description: 'Working as a Front-End Developer Intern in a hybrid setup in Malang.',
+    description:
+      'Contributing to gamified EdTech platforms and interactive web solutions for B2B clients at a creative tech studio. Building gamification dashboards and integrating XR interfaces into spatial computing experiences.',
     type: 'work',
     sortOrder: 1,
   },
@@ -16,7 +17,8 @@ const experiences = [
     role: 'Software Engineer Intern',
     startDate: '2026-04-01',
     endDate: null,
-    description: 'Working as a Software Engineer Intern remotely.',
+    description:
+      'Participating in the Linkupcareer.id Talent Recruitment Program, contributing to an integrated education and career platform. Supporting the development of scholarship information systems, career mentoring tools, and certification management features.',
     type: 'work',
     sortOrder: 2,
   },
@@ -25,8 +27,9 @@ const experiences = [
     role: 'Mobile Research and Development Staff',
     startDate: '2026-03-01',
     endDate: null,
-    description: 'Contract role focusing on mobile research and development in Malang.',
-    type: 'work',
+    description:
+      'Conducting research and development of mobile applications and information systems under the Media, Game, and Mobile Laboratory at FILKOM UB. Focused on Android and iOS app development, mobile performance optimization, and system integration for handheld devices.',
+    type: 'education',
     sortOrder: 3,
   },
   {
