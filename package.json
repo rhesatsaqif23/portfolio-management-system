@@ -21,6 +21,8 @@
     "db:seed:experiences": "tsx -e 'import { pool } from \"./scripts/seed/db\"; import { seedExperiences } from \"./scripts/seed/experiences\"; seedExperiences().then(() => pool.end())'",
     "db:seed:projects": "tsx -e 'import { pool } from \"./scripts/seed/db\"; import { seedProjects } from \"./scripts/seed/projects\"; seedProjects().then(() => pool.end())'",
     "db:seed:achievements": "tsx -e 'import { pool } from \"./scripts/seed/db\"; import { seedAchievements } from \"./scripts/seed/achievements\"; seedAchievements().then(() => pool.end())'",
+    "db:seed:profile": "tsx -e 'import { pool } from \"./scripts/seed/db\"; import { seedProfile } from \"./scripts/seed/profile\"; seedProfile().then(() => pool.end())'",
+    "db:seed:stats": "tsx -e 'import { pool } from \"./scripts/seed/db\"; import { seedStats } from \"./scripts/seed/stats\"; seedStats().then(() => pool.end())'",
     "db:setup-storage": "tsx scripts/setup-storage.ts"
   },
   "dependencies": {
