@@ -15,11 +15,21 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:pull": "drizzle-kit pull",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "db:seed": "tsx scripts/seed.ts",
+    "db:seed:skills": "tsx -e 'import { pool } from \"./scripts/seed/db\"; import { seedSkills } from \"./scripts/seed/skills\"; seedSkills().then(() => pool.end())'",
+    "db:seed:experiences": "tsx -e 'import { pool } from \"./scripts/seed/db\"; import { seedExperiences } from \"./scripts/seed/experiences\"; seedExperiences().then(() => pool.end())'",
+    "db:seed:projects": "tsx -e 'import { pool } from \"./scripts/seed/db\"; import { seedProjects } from \"./scripts/seed/projects\"; seedProjects().then(() => pool.end())'",
+    "db:seed:achievements": "tsx -e 'import { pool } from \"./scripts/seed/db\"; import { seedAchievements } from \"./scripts/seed/achievements\"; seedAchievements().then(() => pool.end())'",
+    "db:seed:profile": "tsx -e 'import { pool } from \"./scripts/seed/db\"; import { seedProfile } from \"./scripts/seed/profile\"; seedProfile().then(() => pool.end())'",
+    "db:seed:stats": "tsx -e 'import { pool } from \"./scripts/seed/db\"; import { seedStats } from \"./scripts/seed/stats\"; seedStats().then(() => pool.end())'",
+    "db:setup-storage": "tsx scripts/setup-storage.ts"
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.61.3",
+    "@clerk/tanstack-react-start": "^1.4.1",
     "@faker-js/faker": "^10.3.0",
+    "@supabase/supabase-js": "^2.108.1",
     "@t3-oss/env-core": "^0.13.10",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/match-sorter-utils": "latest",
@@ -44,6 +54,7 @@
     "radix-ui": "^1.5.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "sonner": "^2.0.7",
     "tailwind-merge": "^3.0.2",
     "tailwindcss": "^4.1.18",
     "tw-animate-css": "^1.3.6",
@@ -68,6 +79,10 @@
     "typescript": "^6.0.2",
     "vite": "^8.0.0",
     "vitest": "^4.1.8"
+  },
+  "overrides": {
+    "@tanstack/store": "0.9.3",
+    "@tanstack/react-store": "0.9.3"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

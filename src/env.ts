@@ -1,39 +1,43 @@
 import { createEnv } from '@t3-oss/env-core'
 import { z } from 'zod'
 
+const isServer = typeof process !== 'undefined' && process.env?.CLERK_SECRET_KEY
+
 export const env = createEnv({
   server: {
-    SERVER_URL: z.string().url().optional(),
+    CLERK_SECRET_KEY: isServer
+      ? z.string().min(1, 'CLERK_SECRET_KEY is required')
+      : z.string().optional(),
+    DATABASE_URL: isServer
+      ? z.string().url('DATABASE_URL must be a valid connection string')
+      : z.string().optional(),
+    SUPABASE_URL: isServer
+      ? z.string().url()
+      : z.string().optional(),
+    SUPABASE_SERVICE_KEY: isServer
+      ? z.string().min(1)
+      : z.string().optional(),
   },
 
-  /**
-   * The prefix that client-side variables must have. This is enforced both at
-   * a type-level and at runtime.
-   */
   clientPrefix: 'VITE_',
 
   client: {
+    VITE_CLERK_PUBLISHABLE_KEY: z.string().min(1, 'VITE_CLERK_PUBLISHABLE_KEY is required'),
+    VITE_SUPABASE_URL: z.string().url().optional(),
+    VITE_SUPABASE_ANON_KEY: z.string().min(1).optional(),
     VITE_APP_TITLE: z.string().min(1).optional(),
   },
 
-  /**
-   * What object holds the environment variables at runtime. This is usually
-   * `process.env` or `import.meta.env`.
-   */
-  runtimeEnv: import.meta.env,
+  runtimeEnv: {
+    CLERK_SECRET_KEY: isServer ? process.env.CLERK_SECRET_KEY : undefined,
+    DATABASE_URL: isServer ? process.env.DATABASE_URL : undefined,
+    SUPABASE_URL: isServer ? process.env.SUPABASE_URL : undefined,
+    SUPABASE_SERVICE_KEY: isServer ? process.env.SUPABASE_SERVICE_KEY : undefined,
+    VITE_CLERK_PUBLISHABLE_KEY: import.meta.env.VITE_CLERK_PUBLISHABLE_KEY,
+    VITE_SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL,
+    VITE_SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY,
+    VITE_APP_TITLE: import.meta.env.VITE_APP_TITLE,
+  },
 
-  /**
-   * By default, this library will feed the environment variables directly to
-   * the Zod validator.
-   *
-   * This means that if you have an empty string for a value that is supposed
-   * to be a number (e.g. `PORT=` in a ".env" file), Zod will incorrectly flag
-   * it as a type mismatch violation. Additionally, if you have an empty string
-   * for a value that is supposed to be a string with a default value (e.g.
-   * `DOMAIN=` in an ".env" file), the default value will never be applied.
-   *
-   * In order to solve these issues, we recommend that all new projects
-   * explicitly specify this option as true.
-   */
   emptyStringAsUndefined: true,
 })
