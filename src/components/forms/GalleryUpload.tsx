@@ -1,5 +1,4 @@
-import { Button } from '#/components/ui/button'
-import { Upload, X, Loader2 } from 'lucide-react'
+import { Upload, X } from 'lucide-react'
 
 export type GalleryItem = { url: string; caption: string }
 

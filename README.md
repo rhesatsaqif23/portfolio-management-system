@@ -245,4 +245,4 @@ Compatible with Render, Fly.io, Railway, or any Node.js VPS.
 
 ---
 
-*Mentored by Ryuko and Syahrul (Ariverse). Last updated: 2026-06-13.*
+*Last updated: 2026-06-13.*

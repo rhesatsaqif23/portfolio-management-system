@@ -1,7 +1,12 @@
 import { db } from './db'
 import { skillsTable } from '../../src/infrastructure/db/schema'
 
-const skills = [
+const skills: {
+  name: string
+  category: 'mobile' | 'web' | 'frontend' | 'backend' | 'database' | 'devops' | 'deployment' | 'cloud' | 'design' | 'tools' | 'other'
+  iconUrl: string
+  sortOrder: number
+}[] = [
   // ── Frontend ──
   { name: 'React', category: 'frontend', iconUrl: 'https://skillicons.dev/icons?i=react', sortOrder: 1 },
   { name: 'Next.js', category: 'frontend', iconUrl: 'https://skillicons.dev/icons?i=nextjs', sortOrder: 2 },
