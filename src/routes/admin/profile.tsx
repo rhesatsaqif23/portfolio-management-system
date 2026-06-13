@@ -196,8 +196,8 @@ function ProfilePage() {
         <TextField label="Short Bio (max 280 chars)" name="bioShort" value={form.bioShort} onChange={(v) => setForm({ ...form, bioShort: v })} />
         <TextAreaField label="Long Bio" name="bioLong" value={form.bioLong} onChange={(v) => setForm({ ...form, bioLong: v })} rows={6} />
         <div className="grid gap-4 sm:grid-cols-2">
-          <TextField label="Avatar URL" name="avatarUrl" value={form.avatarUrl} onChange={(v) => setForm({ ...form, avatarUrl: v })} />
-          <FileUpload label="CV (PDF)" value={form.cvUrl} onChange={(url) => setForm({ ...form, cvUrl: url })} />
+          <FileUpload label="Avatar Image" value={form.avatarUrl} onChange={(url) => setForm({ ...form, avatarUrl: url })} accept="image/*" maxSizeMB={5} bucket="avatars" getPath={(f) => `${Date.now()}-${f.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`} />
+          <FileUpload label="CV (PDF)" value={form.cvUrl} onChange={(url) => setForm({ ...form, cvUrl: url })} bucket="cv" getPath={() => 'CV_Rhesa_Tsaqif_Adyatma.pdf'} />
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <TextField label="Location" name="location" value={form.location} onChange={(v) => setForm({ ...form, location: v })} />

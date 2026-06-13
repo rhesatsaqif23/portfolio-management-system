@@ -2,7 +2,8 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { DataTable, usePagination } from '#/components/tables'
-import { TextField, TextAreaField } from '#/components/forms'
+import { TextField, TextAreaField, GalleryUpload } from '#/components/forms'
+import type { GalleryItem } from '#/components/forms/GalleryUpload'
 import { Button } from '#/components/ui/button'
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction, AlertDialogMedia } from '#/components/ui/alert-dialog'
 import { toast } from '#/components/ui/sonner'
@@ -12,7 +13,7 @@ import { Plus, Trash2 } from 'lucide-react'
 
 export const Route = createFileRoute('/admin/case-studies')({ component: CaseStudiesPage })
 
-const initialForm = { projectId: '', contentMarkdown: '', galleryJsonb: '' }
+const initialForm = { projectId: '', contentMarkdown: '', galleryJsonb: [] as GalleryItem[] }
 
 type ConfirmAction = { type: 'create' } | { type: 'update'; id: string } | { type: 'delete'; id: string } | null
 
@@ -44,27 +45,14 @@ function CaseStudiesPage() {
   })
 
   function buildPayload() {
-    const gallery = form.galleryJsonb
-      ? (() => {
-          try { const p = JSON.parse(form.galleryJsonb); if (Array.isArray(p)) return p } catch {}
-          return form.galleryJsonb.split('\n').map((l) => l.trim()).filter(Boolean).map((l) => {
-            const sep = l.includes('|') ? '|' : ','
-            const [url, caption] = l.split(sep).map((s) => s.trim())
-            return { url: url ?? '', caption: caption ?? '' }
-          }).filter((l) => l.url)
-        })()
-      : []
-    return { projectId: form.projectId, contentMarkdown: form.contentMarkdown, galleryJsonb: gallery }
+    return { projectId: form.projectId, contentMarkdown: form.contentMarkdown, galleryJsonb: form.galleryJsonb }
   }
 
   function openCreate() { setEditing(null); setForm(initialForm); setErrors({}); setShowForm(true) }
 
   function openEdit(cs: CaseStudy) {
     setEditing(cs)
-    setForm({
-      projectId: cs.projectId, contentMarkdown: cs.contentMarkdown,
-      galleryJsonb: cs.galleryJsonb ? JSON.stringify(cs.galleryJsonb) : '',
-    })
+    setForm({ projectId: cs.projectId, contentMarkdown: cs.contentMarkdown, galleryJsonb: cs.galleryJsonb ?? [] })
     setErrors({}); setShowForm(true)
   }
 
@@ -118,12 +106,12 @@ function CaseStudiesPage() {
 
       {showForm && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-lg rounded-2xl border bg-card p-6 shadow-lg">
+          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border bg-card p-6 shadow-lg">
             <h2 className="mb-4 text-lg font-semibold">{editing ? 'Edit Case Study' : 'Create Case Study'}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <TextField label="Project ID" name="projectId" value={form.projectId} onChange={(v) => setForm({ ...form, projectId: v })} error={errors.projectId} />
               <TextAreaField label="Content (Markdown)" name="contentMarkdown" value={form.contentMarkdown} onChange={(v) => setForm({ ...form, contentMarkdown: v })} rows={8} error={errors.contentMarkdown} />
-              <TextAreaField label="Gallery (JSON or url|caption per line)" name="galleryJsonb" value={form.galleryJsonb} onChange={(v) => setForm({ ...form, galleryJsonb: v })} rows={3} />
+              <GalleryUpload items={form.galleryJsonb} onChange={(items) => setForm({ ...form, galleryJsonb: items })} />
               <div className="flex justify-end gap-3">
                 <Button type="button" variant="outline" onClick={closeForm}>Cancel</Button>
                 <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>{editing ? 'Update' : 'Create'}</Button>

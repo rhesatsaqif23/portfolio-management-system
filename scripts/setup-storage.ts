@@ -9,8 +9,14 @@ const supabase = createClient(
 )
 
 const buckets = [
-  { id: 'cvs', public: true, description: 'CV/resume uploads from FileUpload component' },
-  { id: 'public', public: true, description: 'Profile CV storage used by profile repository' },
+  { id: 'cvs', public: true, description: 'CV/resume uploads from FileUpload component (legacy)' },
+  { id: 'cv', public: true, description: 'CV/resume uploads — single fixed filename' },
+  { id: 'public', public: true, description: 'Profile CV storage used by profile repository (legacy)' },
+  { id: 'project-images', public: true, description: 'Project thumbnail images' },
+  { id: 'company-images', public: true, description: 'Company/organization logo images' },
+  { id: 'tech-stack', public: true, description: 'Skill icon / technology logo images' },
+  { id: 'avatars', public: true, description: 'Profile avatar images' },
+  { id: 'case-study-images', public: true, description: 'Case study project screenshot images' },
 ]
 
 async function main() {

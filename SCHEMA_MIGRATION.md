@@ -12,7 +12,7 @@
 |-------|--------|-------------|
 | `profiles` | Modified | Added `current_roles`, `avatar_url`, social links, `location`, `email` |
 | `skills` | Unchanged | — |
-| `experiences` | Modified | Column renames + `type` changed from enum to plain text |
+| `experiences` | Modified | Column renames + `type` changed from enum to plain text + added `image_url` |
 | `projects` | Modified | Column renames, added `tech_stacks`, `github_url`, `live_url`, `additional_links` |
 | `achievements` | Modified | Column renames, `date` now NOT NULL, added `sort_order` |
 | `case_studies` | Unchanged | — |
@@ -56,16 +56,19 @@ FROM profiles LIMIT 1;
 - description      text[]           →  description  text  (single string)
 - image            text             (removed)
 + type             text  NOT NULL   (was pgEnum, now plain text)
++ image_url        text             (company/organization logo)
 + updated_at       timestamp
 ```
 
 **Valid `type` values:** `work`, `organization`, `volunteer`, `education` (plain text, no longer a PostgreSQL enum)
 
-**Current columns:** `id` (uuid PK), `org_name`, `role`, `start_date`, `end_date`, `description`, `type`, `sort_order`, `created_at`, `updated_at`
+**`image_url`** stores a logo/photo URL for the organization. Images are in the `company-images` Supabase storage bucket.
+
+**Current columns:** `id` (uuid PK), `org_name`, `role`, `start_date`, `end_date`, `description`, `type`, `image_url`, `sort_order`, `created_at`, `updated_at`
 
 **Example SELECT:**
 ```sql
-SELECT org_name, role, start_date, end_date, description, type, sort_order
+SELECT org_name, role, start_date, end_date, description, type, image_url, sort_order
 FROM experiences
 ORDER BY sort_order ASC;
 ```
@@ -163,7 +166,7 @@ CREATE TABLE stats (
 | key | value | category | sub_value |
 |-----|-------|----------|-----------|
 | `years_experience` | `3+` | general | — |
-| `projects_shipped` | `18` | general | — |
+| `projects_shipped` | `16` | general | — |
 | `technologies_explored` | `27` | general | — |
 | `main_focus` | `Front-end / Mobile / Full-stack` | general | — |
 | `github_total_contributions` | `630` | general | `2023–2026` |
@@ -197,6 +200,22 @@ ORDER BY sort_order ASC;
 
 ---
 
+---
+
+## Supabase Storage Buckets
+
+| Bucket | Public | Contents | Base URL Path |
+|--------|--------|----------|---------------|
+| `cv` | Yes | CV/resume PDF (single fixed filename) | `/storage/v1/object/public/cv/` |
+| `cvs` | Yes | Legacy CV uploads (from old FileUpload) | `/storage/v1/object/public/cvs/profiles/` |
+| `public` | Yes | Legacy profile CV storage | `/storage/v1/object/public/public/` |
+| `project-images` | Yes | Project thumbnail images (.png/.jpg) | `/storage/v1/object/public/project-images/` |
+| `company-images` | Yes | Company/organization logo images (.png/.jpg) | `/storage/v1/object/public/company-images/` |
+
+All buckets are **public** (no auth required for reads). Writes require a valid Clerk session token.
+
+---
+
 ## Common Migration Pitfalls
 
 1. **`description` on experiences** — was `text[]` (array of paragraphs), now single `text`. If the old code reads `description[0]`, change to `description` directly.
@@ -204,4 +223,6 @@ ORDER BY sort_order ASC;
 3. **Project `tech_stacks`** — was `tech_stack` (same type, renamed). Update any `SELECT tech_stack` → `tech_stacks`.
 4. **Achievement `date`** — was nullable `date`, now `NOT NULL`. Every achievement row has a date.
 5. **Profile social links** — if the old query didn't select `github`, `linkedin`, `instagram`, they're now available as nullable text columns.
-6. **`stats` table** — is new. The about/stats page will 404 or show no data until the query is added.
+6. **Experience `image_url`** — new column for organization logos. Images stored in the `company-images` bucket. Not all rows have an image (`OctoSight` experience is null — it's a capstone project, not an org with a logo).
+7. **Project `thumbnail_url`** — now populated from the `project-images` bucket. Previously was null for all projects.
+8. **`stats` table** — is new. The about/stats page will show no data until the query is added.

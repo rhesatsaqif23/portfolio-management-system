@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { DataTable, usePagination } from '#/components/tables'
-import { TextField, TextAreaField, SelectField } from '#/components/forms'
+import { TextField, TextAreaField, SelectField, DateField, FileUpload } from '#/components/forms'
 import { Button } from '#/components/ui/button'
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction, AlertDialogMedia } from '#/components/ui/alert-dialog'
 import { toast } from '#/components/ui/sonner'
@@ -19,7 +19,7 @@ const expTypes = [
   { value: 'education', label: 'Education' },
 ]
 
-const initialForm = { orgName: '', role: '', startDate: '', endDate: '', description: '', type: 'work', sortOrder: 0 }
+const initialForm = { orgName: '', role: '', startDate: '', endDate: '', description: '', type: 'work', imageUrl: '', sortOrder: 0 }
 
 type ConfirmAction = { type: 'create' } | { type: 'update'; id: string } | { type: 'delete'; id: string } | null
 
@@ -53,7 +53,7 @@ function ExperiencesPage() {
   function openCreate() { setEditing(null); setForm(initialForm); setErrors({}); setShowForm(true) }
   function openEdit(exp: Experience) {
     setEditing(exp)
-    setForm({ orgName: exp.orgName, role: exp.role, startDate: exp.startDate, endDate: exp.endDate ?? '', description: exp.description ?? '', type: exp.type as string, sortOrder: exp.sortOrder ?? 0 })
+    setForm({ orgName: exp.orgName, role: exp.role, startDate: exp.startDate, endDate: exp.endDate ?? '', description: exp.description ?? '', type: exp.type as string, imageUrl: exp.imageUrl ?? '', sortOrder: exp.sortOrder ?? 0 })
     setErrors({}); setShowForm(true)
   }
   function closeForm() { setShowForm(false); setEditing(null); setForm(initialForm); setErrors({}) }
@@ -110,7 +110,7 @@ function ExperiencesPage() {
 
       {showForm && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-lg rounded-2xl border bg-card p-6 shadow-lg">
+          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border bg-card p-6 shadow-lg">
             <h2 className="mb-4 text-lg font-semibold">{editing ? 'Edit Experience' : 'Add Experience'}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
@@ -118,11 +118,12 @@ function ExperiencesPage() {
                 <TextField label="Role" name="role" value={form.role} onChange={(v) => setForm({ ...form, role: v })} error={errors.role} />
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
-                <TextField label="Start Date" name="startDate" value={form.startDate} onChange={(v) => setForm({ ...form, startDate: v })} error={errors.startDate} placeholder="YYYY-MM-DD" />
-                <TextField label="End Date" name="endDate" value={form.endDate} onChange={(v) => setForm({ ...form, endDate: v })} placeholder="YYYY-MM-DD (leave empty if current)" />
+                <DateField label="Start Date" name="startDate" value={form.startDate} onChange={(v) => setForm({ ...form, startDate: v })} error={errors.startDate} />
+                <DateField label="End Date" name="endDate" value={form.endDate} onChange={(v) => setForm({ ...form, endDate: v })} placeholder={form.endDate ? 'Pick a date' : 'Leave empty if current'} />
               </div>
               <SelectField label="Type" name="type" value={form.type} onChange={(v) => setForm({ ...form, type: v })} options={expTypes} />
               <TextAreaField label="Description" name="description" value={form.description} onChange={(v) => setForm({ ...form, description: v })} rows={4} />
+              <FileUpload label="Organization Logo" value={form.imageUrl} onChange={(url) => setForm({ ...form, imageUrl: url })} accept="image/*" maxSizeMB={5} bucket="company-images" getPath={(f) => `${Date.now()}-${f.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`} />
               <TextField label="Sort Order" name="sortOrder" value={String(form.sortOrder)} onChange={(v) => setForm({ ...form, sortOrder: Number(v) || 0 })} />
               <div className="flex justify-end gap-3">
                 <Button type="button" variant="outline" onClick={closeForm}>Cancel</Button>

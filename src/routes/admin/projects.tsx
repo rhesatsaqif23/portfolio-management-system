@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { DataTable, usePagination } from '#/components/tables'
-import { TextField, TextAreaField } from '#/components/forms'
+import { TextField, TextAreaField, SelectField, FileUpload } from '#/components/forms'
 import { Badge } from '#/components/shared'
 import { Button } from '#/components/ui/button'
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction, AlertDialogMedia } from '#/components/ui/alert-dialog'
@@ -131,7 +131,7 @@ function ProjectsPage() {
         loading={isLoading}
         columns={[
           { key: 'title' as keyof Project, header: 'Title' },
-          { key: 'slug' as keyof Project, header: 'Slug' },
+          { key: 'descriptionShort' as keyof Project, header: 'Description', render: (v) => <span className="line-clamp-2 max-w-xs">{String(v ?? '')}</span> },
           { key: 'isFeatured' as keyof Project, header: 'Featured', render: (v) => <Badge variant={v ? 'default' : 'outline'}>{v ? 'Featured' : 'No'}</Badge> },
           { key: 'category' as keyof Project, header: 'Category' },
           { key: 'sortOrder' as keyof Project, header: 'Order' },
@@ -150,7 +150,7 @@ function ProjectsPage() {
 
       {showForm && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50">
-          <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border bg-card p-6 shadow-lg">
+          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border bg-card p-6 shadow-lg">
             <h2 className="mb-4 text-lg font-semibold">{editing ? 'Edit Project' : 'Create Project'}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -158,14 +158,16 @@ function ProjectsPage() {
               </div>
               <TextAreaField label="Short Description" name="descriptionShort" value={form.descriptionShort} onChange={(v) => setForm({ ...form, descriptionShort: v })} rows={3} />
               <div className="grid gap-4 sm:grid-cols-2">
-                <TextField label="Thumbnail URL" name="thumbnailUrl" value={form.thumbnailUrl} onChange={(v) => setForm({ ...form, thumbnailUrl: v })} />
-                <TextField label="Category" name="category" value={form.category} onChange={(v) => setForm({ ...form, category: v })} />
-              </div>
-              <div className="grid gap-4 sm:grid-cols-2">
                 <TextField label="GitHub URL" name="githubUrl" value={form.githubUrl} onChange={(v) => setForm({ ...form, githubUrl: v })} />
                 <TextField label="Live URL" name="liveUrl" value={form.liveUrl} onChange={(v) => setForm({ ...form, liveUrl: v })} />
               </div>
-              <TextAreaField label="Additional Links" name="additionalLinks" value={form.additionalLinks} onChange={(v) => setForm({ ...form, additionalLinks: v })} rows={3} />
+              <SelectField label="Category" name="category" value={form.category} onChange={(v) => setForm({ ...form, category: v })} options={[
+                { value: 'Web App', label: 'Web App' },
+                { value: 'Mobile App', label: 'Mobile App' },
+                { value: 'Others', label: 'Others' },
+              ]} placeholder="Select category" />
+              <TextField label="Additional Links" name="additionalLinks" value={form.additionalLinks} onChange={(v) => setForm({ ...form, additionalLinks: v })} placeholder="Paste URL here" />
+              <FileUpload label="Thumbnail Image" value={form.thumbnailUrl} onChange={(url) => setForm({ ...form, thumbnailUrl: url })} accept="image/*" maxSizeMB={5} bucket="project-images" getPath={(f) => `${Date.now()}-${f.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`} />
               <div className="flex items-center gap-2">
                 <input type="checkbox" id="isFeatured" checked={form.isFeatured} onChange={(e) => setForm({ ...form, isFeatured: e.target.checked })} className="h-4 w-4" />
                 <label htmlFor="isFeatured" className="text-sm font-medium">Featured</label>

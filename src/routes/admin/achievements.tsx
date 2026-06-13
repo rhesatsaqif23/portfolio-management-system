@@ -101,7 +101,7 @@ function AchievementsPage() {
 
       {showForm && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-lg rounded-2xl border bg-card p-6 shadow-lg">
+          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border bg-card p-6 shadow-lg">
             <h2 className="mb-4 text-lg font-semibold">{editing ? 'Edit Achievement' : 'Add Achievement'}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <TextField label="Title" name="title" value={form.title} onChange={(v) => setForm({ ...form, title: v })} error={errors.title} />
