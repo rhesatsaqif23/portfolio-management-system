@@ -1,6 +1,0 @@
-{
-  "framework": "tanstack-start",
-  "buildCommand": "vite build",
-  "outputDirectory": "dist",
-  "installCommand": "npm install"
-}
