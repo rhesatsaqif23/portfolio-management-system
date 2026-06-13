@@ -4,7 +4,7 @@
 
 The Portfolio CMS Dashboard is a standalone, private administrative application designed to serve as the "Back-Office" for a professional portfolio website. It allows the owner to dynamically manage all professional data—including projects, experiences, and technical skills—without modifying the frontend code of the public portfolio.
 
-This system is built using the "King Je Es" stack, a high-performance modern web ecosystem recommended for building robust full-stack applications. The stack is curated from the Ariverse mentorship program under mentor Ryuko and Syahrul, emphasizing type safety, developer experience, and runtime performance.
+This system is built using a modern full-stack web ecosystem curated from the Ariverse mentorship program under mentor Ryuko and Syahrul, emphasizing type safety, developer experience, and runtime performance.
 
 ### 1.1. Core Philosophy
 
@@ -72,7 +72,7 @@ This system is built using the "King Je Es" stack, a high-performance modern web
 
 ---
 
-## 4. System Architecture (The "King Je Es" Stack)
+## 4. System Architecture
 
 ### 4.1. High-Level Architecture Diagram (Textual)
 

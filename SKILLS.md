@@ -1,6 +1,6 @@
 # Core Skills & Instructions for AI Agents
 
-This document defines the granular skills (system prompt instructions) assigned to each AI agent in the Portfolio Management System. Skills are the atomic building blocks of agent behavior — each skill encapsulates a specific technical constraint, workflow pattern, or coding rule derived from the "King Je Es" mentorship guidelines.
+This document defines the granular skills (system prompt instructions) assigned to each AI agent in the Portfolio Management System. Skills are the atomic building blocks of agent behavior — each skill encapsulates a specific technical constraint, workflow pattern, or coding rule derived from the project's tech stack and mentorship guidelines.
 
 ---
 
@@ -100,7 +100,7 @@ export const drizzleProfileRepository: IProfileRepository = {
 
 ## 2. Skill: TanStack RPC & Server Functions
 
-**Assigned To:** The Full-Stack Specialist (King Je Es Expert)
+**Assigned To:** The Full-Stack Specialist
 
 ### 2.1. Core Instruction
 

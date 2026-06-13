@@ -1,6 +1,6 @@
 # AI Agent Definitions — Portfolio Management System
 
-This document defines the AI agent personas configured for the Portfolio Management System. Each agent has a distinct role, responsibility scope, and behavioral constraints aligned with the "King Je Es" stack and Hexagonal Architecture principles.
+This document defines the AI agent personas configured for the Portfolio Management System. Each agent has a distinct role, responsibility scope, and behavioral constraints aligned with Hexagonal Architecture principles and the project's tech stack.
 
 ---
 
@@ -8,7 +8,7 @@ This document defines the AI agent personas configured for the Portfolio Managem
 
 1. [Agent Framework Overview](#1-agent-framework-overview)
 2. [The Architect (Governor)](#2-the-architect-governor)
-3. [The Full-Stack Specialist (King Je Es Expert)](#3-the-full-stack-specialist-king-je-es-expert)
+3. [The Full-Stack Specialist](#3-the-full-stack-specialist)
 4. [The Performance Enforcer (Oxc/Vitest)](#4-the-performance-enforcer-oxcvitest)
 5. [The Data Steward (Drizzle/Zod)](#5-the-data-steward-drizzlezod)
 6. [The UI Artisan (shadcn/ui)](#6-the-ui-artisan-shadcnui)
@@ -25,7 +25,7 @@ The Portfolio CMS uses a multi-agent system where each AI agent specializes in a
 | Agent | Codename | Primary Focus | Invocation Trigger |
 |---|---|---|---|
 | The Architect | Governor | Hexagonal Architecture, Ports & Adapters, code organization | Structural changes, new modules, refactoring |
-| Full-Stack Specialist | King Je Es Expert | TanStack Start, RPC, Server Functions, data flow | Route creation, server function implementation, UI-data binding |
+| Full-Stack Specialist | TanStack Expert | TanStack Start, RPC, Server Functions, data flow | Route creation, server function implementation, UI-data binding |
 | Performance Enforcer | Oxc/Vitest | Linting, formatting, testing, build optimization | Code quality, test writing, performance audits |
 | Data Steward | Drizzle/Zod | Database schema, migrations, validation | Schema changes, migration generation, validation logic |
 | UI Artisan | shadcn/ui | Component design, accessibility, theming | UI component creation, layout design, style changes |
@@ -42,7 +42,7 @@ The Architect (Governor)
     │  Validates structural placement
     │  Assigns layers and ports
     ▼
-Full-Stack Specialist (King Je Es Expert)
+Full-Stack Specialist
     │  Implements server functions and routes
     │  Wires data flow
     ▼
@@ -110,7 +110,7 @@ When given a task, The Architect responds with:
 
 ---
 
-## 3. The Full-Stack Specialist (King Je Es Expert)
+## 3. The Full-Stack Specialist
 
 ### 3.1. Persona
 
@@ -530,7 +530,7 @@ Agents are invoked by prefixing a task request with the agent codename:
 
 ```
 @governor     — The Architect
-@kje          — The Full-Stack Specialist (King Je Es Expert)
+@kje          — The Full-Stack Specialist
 @enforcer     — The Performance Enforcer (Oxc/Vitest)
 @steward      — The Data Steward (Drizzle/Zod)
 @artisan      — The UI Artisan (shadcn/ui)

@@ -1,6 +1,6 @@
 # Portfolio Content Management System (CMS)
 
-A private admin dashboard for managing professional portfolio data — projects, experiences, skills, and case studies — built with the **King Je Es** stack. The CMS serves as the back-office for a personal portfolio website, allowing dynamic content management without modifying frontend code.
+A private admin dashboard for managing professional portfolio data — projects, experiences, skills, and case studies. The CMS serves as the back-office for a personal portfolio website, allowing dynamic content management without modifying frontend code.
 
 ---
 
@@ -245,4 +245,4 @@ Compatible with Render, Fly.io, Railway, or any Node.js VPS.
 
 ---
 
-*Built with the King Je Es stack. Mentored by Ryuko and Syahrul (Ariverse). Last updated: 2026-06-13.*
+*Mentored by Ryuko and Syahrul (Ariverse). Last updated: 2026-06-13.*
