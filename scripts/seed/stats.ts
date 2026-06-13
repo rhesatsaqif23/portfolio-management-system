@@ -12,7 +12,7 @@ const stats = [
   },
   {
     key: 'projects_shipped',
-    value: '18',
+    value: '16',
     category: 'general',
     subValue: null,
     icon: 'code',
