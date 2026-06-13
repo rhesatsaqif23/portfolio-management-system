@@ -1,4 +1,3 @@
-import { useState, useRef } from 'react'
 import { Button } from '#/components/ui/button'
 import { Upload, X, Loader2 } from 'lucide-react'
 
@@ -12,29 +11,23 @@ type GalleryUploadProps = {
 }
 
 export function GalleryUpload({ items, onChange, maxItems = 10, bucket = 'case-study-images' }: GalleryUploadProps) {
-  const ref = useRef<HTMLInputElement>(null)
-  const [uploading, setUploading] = useState(false)
-
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files
     if (!files?.length) return
-    setUploading(true)
+
     try {
-      const newItems = [...items]
       for (const file of files) {
-        if (newItems.length >= maxItems) break
         const buffer = await file.arrayBuffer()
+        const bytes = Array.from(new Uint8Array(buffer))
         const path = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
         const { uploadFile } = await import('#/apis')
-        const result = await uploadFile({ data: { bucket, path, file: buffer } })
-        newItems.push({ url: result.url, caption: '' })
+        const result = await uploadFile({ data: { bucket, path, file: bytes } })
+        onChange([...items, { url: result.url, caption: '' }])
       }
-      onChange(newItems)
     } catch (err) {
       console.error('Upload failed', err)
     } finally {
-      setUploading(false)
-      if (ref.current) ref.current.value = ''
+      if (e.target) e.target.value = ''
     }
   }
 
@@ -81,13 +74,12 @@ export function GalleryUpload({ items, onChange, maxItems = 10, bucket = 'case-s
       </div>
 
       {items.length < maxItems && (
-        <Button type="button" variant="outline" size="sm" disabled={uploading} onClick={() => ref.current?.click()}>
-          {uploading ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />}
-          {uploading ? 'Uploading...' : `Add Image${items.length === 0 ? '' : ` (${maxItems - items.length} left)`}`}
-        </Button>
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-3 py-1.5 text-sm font-medium shadow-xs hover:bg-accent hover:text-accent-foreground">
+          <Upload className="size-4" />
+          Add Image ({maxItems - items.length} left)
+          <input type="file" accept="image/*" multiple onChange={handleUpload} className="hidden" />
+        </label>
       )}
-
-      <input ref={ref} type="file" accept="image/*" multiple onChange={handleUpload} className="hidden" />
     </div>
   )
 }

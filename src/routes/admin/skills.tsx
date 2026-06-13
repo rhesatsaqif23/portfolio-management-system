@@ -31,6 +31,7 @@ function SkillsPage() {
   const [showForm, setShowForm] = useState(false)
   const [editing, setEditing] = useState<Skill | null>(null)
   const [form, setForm] = useState(initialForm)
+  const [pendingIcon, setPendingIcon] = useState<File | null>(null)
   const [error, setError] = useState('')
   const [confirm, setConfirm] = useState<ConfirmAction>(null)
 
@@ -38,12 +39,12 @@ function SkillsPage() {
   const pag = usePagination(skills, 10)
 
   const createMutation = useMutation({
-    mutationFn: () => createSkill({ data: form }),
+    mutationFn: (payload: Record<string, unknown>) => createSkill({ data: payload }),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['skills'] }); toast.success('Skill created'); closeForm() },
     onError: (err) => toast.error(err instanceof Error ? err.message : 'Failed'),
   })
   const updateMutation = useMutation({
-    mutationFn: () => updateSkill({ data: { id: editing!.id, data: form } }),
+    mutationFn: (payload: { id: string; data: Record<string, unknown> }) => updateSkill({ data: payload }),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['skills'] }); toast.success('Skill updated'); closeForm() },
     onError: (err) => toast.error(err instanceof Error ? err.message : 'Failed'),
   })
@@ -53,13 +54,26 @@ function SkillsPage() {
     onError: (err) => toast.error(err instanceof Error ? err.message : 'Failed'),
   })
 
-  function openCreate() { setEditing(null); setForm(initialForm); setError(''); setShowForm(true) }
+  async function uploadPending(iconUrl: string) {
+    if (!pendingIcon) return iconUrl
+    const buffer = await pendingIcon.arrayBuffer()
+    const bytes = Array.from(new Uint8Array(buffer))
+    const path = `${Date.now()}-${pendingIcon.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
+    const { replaceFile } = await import('#/apis')
+    const result = await replaceFile({
+      data: { bucket: 'tech-stack', path, oldPath: iconUrl ? iconUrl.split('/').pop() : undefined, file: bytes },
+    })
+    setPendingIcon(null)
+    return result.url
+  }
+
+  function openCreate() { setEditing(null); setForm(initialForm); setPendingIcon(null); setError(''); setShowForm(true) }
   function openEdit(skill: Skill) {
     setEditing(skill)
     setForm({ name: skill.name, category: skill.category as string, iconUrl: skill.iconUrl ?? '', sortOrder: skill.sortOrder ?? 0 })
-    setError(''); setShowForm(true)
+    setPendingIcon(null); setError(''); setShowForm(true)
   }
-  function closeForm() { setShowForm(false); setEditing(null); setForm(initialForm); setError('') }
+  function closeForm() { setShowForm(false); setEditing(null); setForm(initialForm); setPendingIcon(null); setError('') }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -67,11 +81,12 @@ function SkillsPage() {
     setConfirm(editing ? { type: 'update', id: editing.id } : { type: 'create' })
   }
 
-  function executeConfirm() {
+  async function executeConfirm() {
     if (!confirm) return
-    if (confirm.type === 'create') createMutation.mutate()
-    else if (confirm.type === 'update') updateMutation.mutate()
-    else deleteMutation.mutate(confirm.id)
+    if (confirm.type === 'delete') { deleteMutation.mutate(confirm.id); setConfirm(null); return }
+    const iconUrl = await uploadPending(form.iconUrl)
+    if (confirm.type === 'create') createMutation.mutate({ ...form, iconUrl })
+    else updateMutation.mutate({ id: editing!.id, data: { ...form, iconUrl } })
     setConfirm(null)
   }
 
@@ -111,7 +126,7 @@ function SkillsPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <TextField label="Skill Name" name="name" value={form.name} onChange={(v) => setForm({ ...form, name: v })} error={error} />
               <SelectField label="Category" name="category" value={form.category} onChange={(v) => setForm({ ...form, category: v })} options={categories} />
-              <FileUpload label="Icon / Logo" value={form.iconUrl} onChange={(url) => setForm({ ...form, iconUrl: url })} accept="image/*" maxSizeMB={5} bucket="tech-stack" getPath={(f) => `${Date.now()}-${f.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`} />
+              <FileUpload label="Icon / Logo" value={form.iconUrl} onChange={(url) => setForm({ ...form, iconUrl: url })} accept="image/*" maxSizeMB={5} bucket="tech-stack" deferUpload pendingFile={pendingIcon} onPendingFile={setPendingIcon} />
               <TextField label="Sort Order" name="sortOrder" value={String(form.sortOrder)} onChange={(v) => setForm({ ...form, sortOrder: Number(v) || 0 })} />
               <div className="flex justify-end gap-3">
                 <Button type="button" variant="outline" onClick={closeForm}>Cancel</Button>

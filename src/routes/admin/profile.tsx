@@ -96,6 +96,8 @@ function ProfileFormSkeleton() {
 function ProfilePage() {
   const queryClient = useQueryClient()
   const [form, setForm] = useState(initialForm)
+  const [pendingAvatar, setPendingAvatar] = useState<File | null>(null)
+  const [pendingCv, setPendingCv] = useState<File | null>(null)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [showConfirm, setShowConfirm] = useState(false)
 
@@ -121,7 +123,7 @@ function ProfilePage() {
   }, [profile])
 
   const updateMutation = useMutation({
-    mutationFn: (data: typeof form) => updateProfile({ data }),
+    mutationFn: (data: Record<string, unknown>) => updateProfile({ data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['profile'] })
       toast.success('Profile saved')
@@ -142,6 +144,18 @@ function ProfilePage() {
     setForm({ ...form, currentRoles: roles.length ? roles : [''] })
   }
 
+  async function uploadPending(url: string, file: File | null, bucket: string) {
+    if (!file) return url
+    const buffer = await file.arrayBuffer()
+    const bytes = Array.from(new Uint8Array(buffer))
+    const path = bucket === 'cv' ? 'CV_Rhesa_Tsaqif_Adyatma.pdf' : `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
+    const { replaceFile } = await import('#/apis')
+    const result = await replaceFile({
+      data: { bucket, path, oldPath: url ? url.split('/').pop() : undefined, file: bytes },
+    })
+    return result.url
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     const errs: Record<string, string> = {}
@@ -153,9 +167,12 @@ function ProfilePage() {
     setShowConfirm(true)
   }
 
-  function executeSave() {
+  async function executeSave() {
     setShowConfirm(false)
-    updateMutation.mutate({ ...form, currentRoles: form.currentRoles.filter((r) => r.trim()) })
+    const avatarUrl = await uploadPending(form.avatarUrl, pendingAvatar, 'avatars')
+    const cvUrl = await uploadPending(form.cvUrl, pendingCv, 'cv')
+    setPendingAvatar(null); setPendingCv(null)
+    updateMutation.mutate({ ...form, avatarUrl, cvUrl, currentRoles: form.currentRoles.filter((r) => r.trim()) })
   }
 
   if (isLoading) return (
@@ -196,8 +213,8 @@ function ProfilePage() {
         <TextField label="Short Bio (max 280 chars)" name="bioShort" value={form.bioShort} onChange={(v) => setForm({ ...form, bioShort: v })} />
         <TextAreaField label="Long Bio" name="bioLong" value={form.bioLong} onChange={(v) => setForm({ ...form, bioLong: v })} rows={6} />
         <div className="grid gap-4 sm:grid-cols-2">
-          <FileUpload label="Avatar Image" value={form.avatarUrl} onChange={(url) => setForm({ ...form, avatarUrl: url })} accept="image/*" maxSizeMB={5} bucket="avatars" getPath={(f) => `${Date.now()}-${f.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`} />
-          <FileUpload label="CV (PDF)" value={form.cvUrl} onChange={(url) => setForm({ ...form, cvUrl: url })} bucket="cv" getPath={() => 'CV_Rhesa_Tsaqif_Adyatma.pdf'} />
+          <FileUpload label="Avatar Image" value={form.avatarUrl} onChange={(url) => setForm({ ...form, avatarUrl: url })} accept="image/*" maxSizeMB={5} bucket="avatars" deferUpload pendingFile={pendingAvatar} onPendingFile={setPendingAvatar} />
+          <FileUpload label="CV (PDF)" value={form.cvUrl} onChange={(url) => setForm({ ...form, cvUrl: url })} bucket="cv" deferUpload pendingFile={pendingCv} onPendingFile={setPendingCv} />
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <TextField label="Location" name="location" value={form.location} onChange={(v) => setForm({ ...form, location: v })} />
