@@ -83,10 +83,10 @@ function StatsPage() {
         loading={isLoading}
         columns={[
           { key: 'key' as keyof Stat, header: 'Key' },
-          { key: 'value' as keyof Stat, header: 'Value' },
-          { key: 'category' as keyof Stat, header: 'Category' },
+          { key: 'value' as keyof Stat, header: 'Value', className: 'w-20' },
+          { key: 'category' as keyof Stat, header: 'Category', className: 'w-36' },
           { key: 'subValue' as keyof Stat, header: 'Sub Value' },
-          { key: 'sortOrder' as keyof Stat, header: 'Order' },
+          { key: 'sortOrder' as keyof Stat, header: 'Order', className: 'w-28' },
           { key: 'id' as keyof Stat, header: 'Actions', render: (_, r) => (
             <div className="flex gap-2">
               <Button size="xs" variant="outline" onClick={() => openEdit(r)}>Edit</Button>

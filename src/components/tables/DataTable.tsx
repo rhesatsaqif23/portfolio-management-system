@@ -6,6 +6,7 @@ import Pagination from './Pagination'
 type Column<T> = {
   key: keyof T
   header: string
+  className?: string
   render?: (value: T[keyof T], row: T) => React.ReactNode
 }
 
@@ -44,7 +45,7 @@ export default function DataTable<T extends Record<string, unknown>>({ columns, 
         <thead>
           <tr>
             {columns.map((col) => (
-              <th key={String(col.key)}>
+              <th key={String(col.key)} className={col.className}>
                 {col.header}
               </th>
             ))}
@@ -64,7 +65,7 @@ export default function DataTable<T extends Record<string, unknown>>({ columns, 
                 )}
               >
                 {columns.map((col) => (
-                  <td key={String(col.key)}>
+                  <td key={String(col.key)} className={col.className}>
                     {col.render ? col.render(row[col.key], row) : String(row[col.key] ?? '')}
                   </td>
                 ))}
