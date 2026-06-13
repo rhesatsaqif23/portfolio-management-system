@@ -19,6 +19,10 @@ export const drizzleCaseStudyRepository: ICaseStudyRepository = {
   },
 
   async update(id: string, data: Partial<CaseStudyInsert>): Promise<CaseStudy> {
+    if (Object.keys(data).length === 0) {
+      const [existing] = await db.select().from(caseStudiesTable).where(eq(caseStudiesTable.id, id)).limit(1)
+      return existing!
+    }
     const [updated] = await db.update(caseStudiesTable).set(data).where(eq(caseStudiesTable.id, id)).returning()
     return updated
   },

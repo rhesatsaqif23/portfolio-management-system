@@ -24,6 +24,10 @@ export const drizzleProjectRepository: IProjectRepository = {
   },
 
   async update(id: string, data: Partial<ProjectInsert>): Promise<Project> {
+    if (Object.keys(data).length === 0) {
+      const [existing] = await db.select().from(projectsTable).where(eq(projectsTable.id, id)).limit(1)
+      return existing!
+    }
     const [updated] = await db.update(projectsTable).set(data).where(eq(projectsTable.id, id)).returning()
     return updated
   },
@@ -43,6 +47,7 @@ export const drizzleProjectRepository: IProjectRepository = {
       const [created] = await db.insert(caseStudiesTable).values({ ...data, projectId } as CaseStudyInsert).returning()
       return created
     }
+    if (Object.keys(data).length === 0) return existing
     const [updated] = await db.update(caseStudiesTable).set(data).where(eq(caseStudiesTable.projectId, projectId)).returning()
     return updated
   },

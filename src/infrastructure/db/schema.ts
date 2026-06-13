@@ -1,6 +1,6 @@
 import { pgTable, uuid, text, timestamp, boolean, integer, date, jsonb, pgEnum, varchar } from 'drizzle-orm/pg-core'
 
-export const skillCategoryEnum = pgEnum('skill_category', ['mobile', 'web', 'backend', 'devops', 'design', 'other'])
+export const skillCategoryEnum = pgEnum('skill_category', ['mobile', 'web', 'frontend', 'backend', 'database', 'devops', 'deployment', 'cloud', 'design', 'tools', 'other'])
 
 export const projectsTable = pgTable('projects', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -25,7 +25,7 @@ export const experiencesTable = pgTable('experiences', {
   role: text('role').notNull(),
   startDate: date('start_date').notNull(),
   endDate: date('end_date'),
-  description: text('description'),
+  description: text('description').array(),
   type: text('type').notNull(),
   imageUrl: text('image_url'),
   sortOrder: integer('sort_order'),

@@ -14,11 +14,15 @@ import { Plus, Trash2 } from 'lucide-react'
 export const Route = createFileRoute('/admin/skills')({ component: SkillsPage })
 
 const categories = [
+  { value: 'frontend', label: 'Frontend' },
   { value: 'mobile', label: 'Mobile' },
-  { value: 'web', label: 'Web' },
   { value: 'backend', label: 'Backend' },
+  { value: 'database', label: 'Database' },
   { value: 'devops', label: 'DevOps' },
+  { value: 'deployment', label: 'Deployment' },
+  { value: 'cloud', label: 'Cloud' },
   { value: 'design', label: 'Design' },
+  { value: 'tools', label: 'Tools' },
   { value: 'other', label: 'Other' },
 ]
 

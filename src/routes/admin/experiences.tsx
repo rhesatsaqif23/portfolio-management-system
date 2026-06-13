@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { DataTable, usePagination } from '#/components/tables'
-import { TextField, TextAreaField, SelectField, DateField, FileUpload } from '#/components/forms'
+import { TextField, SelectField, DateField, FileUpload } from '#/components/forms'
 import { Button } from '#/components/ui/button'
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction, AlertDialogMedia } from '#/components/ui/alert-dialog'
 import { toast } from '#/components/ui/sonner'
@@ -19,7 +19,7 @@ const expTypes = [
   { value: 'education', label: 'Education' },
 ]
 
-const initialForm = { orgName: '', role: '', startDate: '', endDate: '', description: '', type: 'work', imageUrl: '', sortOrder: 0 }
+const initialForm = { orgName: '', role: '', startDate: '', endDate: '', description: [''] as string[], type: 'work', imageUrl: '', sortOrder: 0 }
 
 type ConfirmAction = { type: 'create' } | { type: 'update'; id: string } | { type: 'delete'; id: string } | null
 
@@ -51,6 +51,19 @@ function ExperiencesPage() {
     onError: (err) => toast.error(err instanceof Error ? err.message : 'Failed'),
   })
 
+  function updateDescription(index: number, value: string) {
+    const desc = [...form.description]
+    desc[index] = value
+    setForm({ ...form, description: desc })
+  }
+
+  function addDescription() { setForm({ ...form, description: [...form.description, ''] }) }
+
+  function removeDescription(index: number) {
+    const desc = form.description.filter((_, i) => i !== index)
+    setForm({ ...form, description: desc.length ? desc : [''] })
+  }
+
   async function uploadPending(imageUrl: string) {
     if (!pendingImage) return imageUrl
     const buffer = await pendingImage.arrayBuffer()
@@ -67,7 +80,7 @@ function ExperiencesPage() {
   function openCreate() { setEditing(null); setForm(initialForm); setPendingImage(null); setErrors({}); setShowForm(true) }
   function openEdit(exp: Experience) {
     setEditing(exp)
-    setForm({ orgName: exp.orgName, role: exp.role, startDate: exp.startDate, endDate: exp.endDate ?? '', description: exp.description ?? '', type: exp.type as string, imageUrl: exp.imageUrl ?? '', sortOrder: exp.sortOrder ?? 0 })
+    setForm({ orgName: exp.orgName, role: exp.role, startDate: exp.startDate, endDate: exp.endDate ?? '', description: (exp.description?.length ? exp.description : ['']) as string[], type: exp.type as string, imageUrl: exp.imageUrl ?? '', sortOrder: exp.sortOrder ?? 0 })
     setPendingImage(null); setErrors({}); setShowForm(true)
   }
   function closeForm() { setShowForm(false); setEditing(null); setForm(initialForm); setPendingImage(null); setErrors({}) }
@@ -137,7 +150,18 @@ function ExperiencesPage() {
                 <DateField label="End Date" name="endDate" value={form.endDate} onChange={(v) => setForm({ ...form, endDate: v })} placeholder={form.endDate ? 'Pick a date' : 'Leave empty if current'} />
               </div>
               <SelectField label="Type" name="type" value={form.type} onChange={(v) => setForm({ ...form, type: v })} options={expTypes} />
-              <TextAreaField label="Description" name="description" value={form.description} onChange={(v) => setForm({ ...form, description: v })} rows={4} />
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Key Points</label>
+                {form.description.map((point, i) => (
+                  <div key={i} className="flex gap-2">
+                    <input value={point} onChange={(e) => updateDescription(i, e.target.value)} placeholder="• Bullet point" className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50" />
+                    {form.description.length > 1 && (
+                      <Button type="button" size="xs" variant="destructive" onClick={() => removeDescription(i)}>X</Button>
+                    )}
+                  </div>
+                ))}
+                <Button type="button" size="xs" variant="outline" onClick={addDescription}>+ Add Point</Button>
+              </div>
               <FileUpload label="Organization Logo" value={form.imageUrl} onChange={(url) => setForm({ ...form, imageUrl: url })} accept="image/*" maxSizeMB={5} bucket="company-images" deferUpload pendingFile={pendingImage} onPendingFile={setPendingImage} />
               <TextField label="Sort Order" name="sortOrder" value={String(form.sortOrder)} onChange={(v) => setForm({ ...form, sortOrder: Number(v) || 0 })} />
               <div className="flex justify-end gap-3">

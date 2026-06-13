@@ -8,12 +8,21 @@ export const drizzleStatsRepository: IStatsRepository = {
     return db.select().from(statsTable).orderBy(statsTable.sortOrder)
   },
 
+  async findByKey(key: string): Promise<Stat | null> {
+    const [stat] = await db.select().from(statsTable).where(eq(statsTable.key, key)).limit(1)
+    return stat ?? null
+  },
+
   async create(data: StatInsert): Promise<Stat> {
     const [created] = await db.insert(statsTable).values(data).returning()
     return created
   },
 
   async update(id: string, data: Partial<StatInsert>): Promise<Stat> {
+    if (Object.keys(data).length === 0) {
+      const [existing] = await db.select().from(statsTable).where(eq(statsTable.id, id)).limit(1)
+      return existing!
+    }
     const [updated] = await db.update(statsTable).set(data).where(eq(statsTable.id, id)).returning()
     return updated
   },
