@@ -4,11 +4,9 @@
 
 @import 'tw-animate-css';
 
-@custom-variant dark (&:is(.dark *));
-
 :root {
-  --sea-ink: #e0e8f0;
-  --sea-ink-soft: #8fa8c8;
+  --sea-ink: #ffffff;
+  --sea-ink-soft: #d1d5db;
   --lagoon: #4a9eff;
   --lagoon-deep: #3a7bef;
   --palm: #5a8fc9;
@@ -18,7 +16,7 @@
   --surface-strong: rgba(16, 28, 50, 0.9);
   --line: rgba(100, 150, 220, 0.18);
   --inset-glint: rgba(80, 140, 220, 0.14);
-  --kicker: rgba(74, 158, 255, 0.85);
+  --kicker: #ffffff;
   --bg-base: #070e18;
   --header-bg: rgba(7, 14, 24, 0.84);
   --chip-bg: rgba(10, 18, 32, 0.9);
@@ -28,19 +26,19 @@
   --hero-b: rgba(20, 60, 120, 0.15);
 
   --background: #0a1220;
-  --foreground: #e0e8f0;
+  --foreground: #ffffff;
   --card: #0d1628;
-  --card-foreground: #e0e8f0;
+  --card-foreground: #ffffff;
   --popover: #0d1628;
-  --popover-foreground: #e0e8f0;
+  --popover-foreground: #ffffff;
   --primary: #4a9eff;
   --primary-foreground: #ffffff;
   --secondary: #1a2a44;
-  --secondary-foreground: #e0e8f0;
+  --secondary-foreground: #ffffff;
   --muted: #1a2a44;
-  --muted-foreground: #8fa8c8;
+  --muted-foreground: #a3a3a3;
   --accent: #1a2a44;
-  --accent-foreground: #e0e8f0;
+  --accent-foreground: #ffffff;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
   --border: #1e3450;
@@ -53,11 +51,11 @@
   --chart-5: #2a6ac0;
   --radius: 0.625rem;
   --sidebar: #0a1220;
-  --sidebar-foreground: #e0e8f0;
+  --sidebar-foreground: #ffffff;
   --sidebar-primary: #4a9eff;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #1a2a44;
-  --sidebar-accent-foreground: #e0e8f0;
+  --sidebar-accent-foreground: #ffffff;
   --sidebar-border: #1e3450;
   --sidebar-ring: #4a9eff;
 }
@@ -115,7 +113,9 @@ body {
   color: var(--sea-ink);
   font-family: var(--font-sans);
   background-color: #070e18;
-  background-image: url('/background.png');
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
+    url('/background.png');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -162,6 +162,39 @@ pre code {
 .page-wrap {
   width: min(1080px, calc(100% - 2rem));
   margin-inline: auto;
+}
+
+.glass-table {
+  background: rgba(13, 22, 40, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.glass-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.glass-table th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  color: var(--sea-ink);
+  border-bottom: 1px solid var(--line);
+  background: rgba(26, 42, 68, 0.5);
+}
+
+.glass-table td {
+  padding: 0.75rem 1rem;
+  color: var(--sea-ink-soft);
+  border-bottom: 1px solid rgba(100, 150, 220, 0.08);
+}
+
+.glass-table tbody tr:hover {
+  background: rgba(20, 36, 60, 0.6);
 }
 
 .display-title {

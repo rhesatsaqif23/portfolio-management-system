@@ -39,12 +39,12 @@ function SkeletonTable({ columns }: { columns: Column<Record<string, unknown>>[]
 
 export default function DataTable<T extends Record<string, unknown>>({ columns, data, loading, onRowClick, page, totalPages, onPageChange }: DataTableProps<T>) {
   return (
-    <div className="overflow-x-auto rounded-lg border border-[var(--line)]">
+    <div className="glass-table">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-[var(--line)] bg-[var(--muted)]">
+          <tr>
             {columns.map((col) => (
-              <th key={String(col.key)} className="px-4 py-3 text-left font-semibold text-[var(--sea-ink)]">
+              <th key={String(col.key)}>
                 {col.header}
               </th>
             ))}
@@ -59,12 +59,12 @@ export default function DataTable<T extends Record<string, unknown>>({ columns, 
                 key={i}
                 onClick={() => onRowClick?.(row)}
                 className={cn(
-                  'border-b border-[var(--line)] transition hover:bg-[var(--link-bg-hover)]',
+                  'cursor-pointer transition',
                   onRowClick && 'cursor-pointer',
                 )}
               >
                 {columns.map((col) => (
-                  <td key={String(col.key)} className="px-4 py-3 text-[var(--sea-ink-soft)]">
+                  <td key={String(col.key)}>
                     {col.render ? col.render(row[col.key], row) : String(row[col.key] ?? '')}
                   </td>
                 ))}
