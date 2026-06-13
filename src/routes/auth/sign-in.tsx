@@ -61,7 +61,7 @@ function SignInPage() {
           <p className="text-[var(--sea-ink-soft)]">You are already signed in.</p>
           <a
             href="/admin/dashboard"
-            className="mt-4 inline-block rounded-full bg-[var(--sea-ink)] px-6 py-2 text-sm font-semibold text-white no-underline"
+            className="mt-4 inline-block rounded-full bg-[var(--sea-ink)] px-6 py-2 text-sm font-semibold text-[var(--sand)] no-underline"
           >
             Go to Dashboard
           </a>
@@ -120,7 +120,7 @@ function SignInPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-full bg-[var(--sea-ink)] px-6 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+            className="w-full rounded-full bg-[var(--sea-ink)] px-6 py-2 text-sm font-semibold text-[var(--sand)] transition hover:opacity-90 disabled:opacity-50"
           >
             {loading ? 'Signing in...' : 'Sign In'}
           </button>

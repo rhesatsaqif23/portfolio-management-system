@@ -33,7 +33,7 @@ function AdminLayout() {
             </p>
             <a
               href="/auth/sign-in"
-              className="mt-4 inline-block rounded-full bg-[var(--sea-ink)] px-6 py-2 text-sm font-semibold text-white no-underline"
+              className="mt-4 inline-block rounded-full bg-[var(--sea-ink)] px-6 py-2 text-sm font-semibold text-[var(--sand)] no-underline"
             >
               Sign In
             </a>
@@ -59,7 +59,7 @@ function AdminGate() {
           </p>
           <a
             href="/"
-            className="mt-4 inline-block rounded-full bg-[var(--sea-ink)] px-6 py-2 text-sm font-semibold text-white no-underline"
+            className="mt-4 inline-block rounded-full bg-[var(--sea-ink)] px-6 py-2 text-sm font-semibold text-[var(--sand)] no-underline"
           >
             Go Home
           </a>
