@@ -27,6 +27,7 @@ export const experiencesTable = pgTable('experiences', {
   endDate: date('end_date'),
   description: text('description'),
   type: text('type').notNull(),
+  imageUrl: text('image_url'),
   sortOrder: integer('sort_order'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),

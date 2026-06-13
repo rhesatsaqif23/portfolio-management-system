@@ -1,6 +1,8 @@
 import { db } from './db'
 import { experiencesTable } from '../../src/infrastructure/db/schema'
 
+const IMG = 'https://ipkrjpftddtxwzmylxtf.supabase.co/storage/v1/object/public/company-images'
+
 const experiences = [
   {
     orgName: 'Ariverse Studio',
@@ -10,6 +12,7 @@ const experiences = [
     description:
       'Contributing to gamified EdTech platforms and interactive web solutions for B2B clients at a creative tech studio. Building gamification dashboards and integrating XR interfaces into spatial computing experiences.',
     type: 'work',
+    imageUrl: `${IMG}/ariverse.jpg`,
     sortOrder: 1,
   },
   {
@@ -20,6 +23,7 @@ const experiences = [
     description:
       'Participating in the Linkupcareer.id Talent Recruitment Program, contributing to an integrated education and career platform. Supporting the development of scholarship information systems, career mentoring tools, and certification management features.',
     type: 'work',
+    imageUrl: `${IMG}/linkupcareer.png`,
     sortOrder: 2,
   },
   {
@@ -30,6 +34,7 @@ const experiences = [
     description:
       'Conducting research and development of mobile applications and information systems under the Media, Game, and Mobile Laboratory at FILKOM UB. Focused on Android and iOS app development, mobile performance optimization, and system integration for handheld devices.',
     type: 'education',
+    imageUrl: `${IMG}/mgm.jpg`,
     sortOrder: 3,
   },
   {
@@ -40,6 +45,7 @@ const experiences = [
     description:
       'Developed OctoSight, an end-to-end anti-phishing and fraud detection prototype for digital banking as a capstone project. Built the frontend with Next.js and the backend with FastAPI, integrated a hybrid AI detection engine combining rule-based heuristics with ML prediction, and implemented a full admin triage workflow with analytics dashboards and SLA monitoring.',
     type: 'education',
+    imageUrl: null,
     sortOrder: 4,
   },
   {
@@ -50,6 +56,7 @@ const experiences = [
     description:
       'Led front-end development for website enhancement, collaborating with cross-functional teams under an Agile workflow. Built admin CMS dashboard for event management including CRUD and API integration. Transformed static website into a dynamic, centralized platform for event publication and registration.',
     type: 'organization',
+    imageUrl: `${IMG}/raion.png`,
     sortOrder: 5,
   },
   {
@@ -60,6 +67,7 @@ const experiences = [
     description:
       'Actively involved in mobile application development through regular workshops and hands-on practices. Continued development of ZELOW application using Flutter and Firebase. Developed HearMe, an application integrating Gemini API and FastAPI during Raion Hackjam.',
     type: 'organization',
+    imageUrl: `${IMG}/raion.png`,
     sortOrder: 6,
   },
   {
@@ -70,6 +78,7 @@ const experiences = [
     description:
       "Designed and delivered photography and videography training programs to enhance members' skills. Organized and scheduled group photo hunting sessions to strengthen members' portfolios. Encouraged member participation in photography competitions, producing award-winning works.",
     type: 'organization',
+    imageUrl: `${IMG}/optiik.png`,
     sortOrder: 7,
   },
   {
@@ -80,6 +89,7 @@ const experiences = [
     description:
       'Assisted in conducting database laboratory sessions using Microsoft SQL Server (MSSQL). Guided 43 students in understanding relational database concepts and SQL fundamentals. Designed enrichment tasks and practical exams, and evaluated students\' SQL queries and database designs.',
     type: 'education',
+    imageUrl: `${IMG}/filkom.png`,
     sortOrder: 8,
   },
   {
@@ -90,6 +100,7 @@ const experiences = [
     description:
       'Produced 4 video contents including teasers, throwbacks, and aftermovies for a national-scale IT competition. Executed video production as a cinematographer, collaborating with actors and production team members. Documented 7 competition categories with finalists from universities across Indonesia.',
     type: 'organization',
+    imageUrl: `${IMG}/hology.png`,
     sortOrder: 9,
   },
   {
@@ -100,6 +111,7 @@ const experiences = [
     description:
       'Participated in webinars, workshops, and developer community activities. Engaging in discussions and learning sessions related to software development.',
     type: 'organization',
+    imageUrl: `${IMG}/gdsc.png`,
     sortOrder: 10,
   },
 ]
@@ -109,7 +121,7 @@ export async function seedExperiences() {
   await db.delete(experiencesTable)
   for (const exp of experiences) {
     await db.insert(experiencesTable).values(exp)
-    console.log(`  ✓ ${exp.role} @ ${exp.orgName}`)
+    console.log(`  \u2713 ${exp.role} @ ${exp.orgName}`)
   }
-  console.log(`  → ${experiences.length} experiences inserted\n`)
+  console.log(`  \u2192 ${experiences.length} experiences inserted\n`)
 }
