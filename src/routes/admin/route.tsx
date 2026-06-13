@@ -91,7 +91,7 @@ function AdminShell() {
 
       <main className="ml-64 flex-1 overflow-auto">
         <div className="flex items-center justify-between border-b border-[var(--line)] px-6 py-3">
-          <h2 className="text-sm font-semibold text-[var(--sea-ink)]">
+          <h2 className="text-sm font-semibold text-white">
             Welcome, {user?.fullName || user?.primaryEmailAddress?.emailAddress || 'User'}
           </h2>
         </div>
@@ -107,8 +107,8 @@ function SidebarLink({ to, label, icon: Icon }: { to: string; label: string; ico
   return (
     <Link
       to={to}
-      className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-[var(--sea-ink-soft)] no-underline transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
-      activeProps={{ className: 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm no-underline bg-[var(--link-bg-hover)] text-[var(--sea-ink)] font-semibold' }}
+      className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-white no-underline transition hover:bg-[var(--link-bg-hover)]"
+      activeProps={{ className: 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm no-underline bg-[var(--link-bg-hover)] text-white font-semibold' }}
     >
       <Icon className="size-4" />
       {label}

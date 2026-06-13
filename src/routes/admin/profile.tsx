@@ -21,7 +21,7 @@ const initialForm = {
 
 function ProfileFormSkeleton() {
   return (
-    <div className="mx-auto max-w-2xl space-y-4">
+    <div className="mx-auto max-w-4xl space-y-4">
 
       <div className="space-y-1">
         <Skeleton className="h-3.5 w-16" />
@@ -192,7 +192,7 @@ function ProfilePage() {
         <p className="mt-1 text-sm text-[var(--sea-ink-soft)]">Edit your public profile.</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-4">
+      <form onSubmit={handleSubmit} className="mx-auto max-w-4xl space-y-4">
         <TextField label="Full Name" name="fullName" value={form.fullName} onChange={(v) => setForm({ ...form, fullName: v })} error={errors.fullName} />
 
         <div className="space-y-2">

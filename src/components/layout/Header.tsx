@@ -9,7 +9,7 @@ export default function Header() {
         <h2 className="flex-shrink-0">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 text-[var(--sea-ink)] no-underline"
+            className="inline-flex items-center gap-2 text-white no-underline"
           >
             <img src="/logo.png" alt="" className="h-7 w-7" />
             <span className="text-lg font-extrabold tracking-tight">Portfolio CMS</span>
@@ -18,17 +18,17 @@ export default function Header() {
 
         <div className="flex flex-1 items-center justify-center gap-x-5 text-sm font-semibold">
           <SignedIn>
-            <Link to="/admin/dashboard" className="nav-link" activeProps={{ className: 'nav-link is-active' }}>Dashboard</Link>
-            <Link to="/admin/profile" className="nav-link" activeProps={{ className: 'nav-link is-active' }}>Profile</Link>
-            <Link to="/admin/projects" className="nav-link" activeProps={{ className: 'nav-link is-active' }}>Projects</Link>
-            <Link to="/admin/experiences" className="nav-link" activeProps={{ className: 'nav-link is-active' }}>Experiences</Link>
-            <Link to="/admin/skills" className="nav-link" activeProps={{ className: 'nav-link is-active' }}>Skills</Link>
-            <Link to="/admin/case-studies" className="nav-link" activeProps={{ className: 'nav-link is-active' }}>Case Studies</Link>
-            <Link to="/admin/achievements" className="nav-link" activeProps={{ className: 'nav-link is-active' }}>Achievements</Link>
-            <Link to="/admin/stats" className="nav-link" activeProps={{ className: 'nav-link is-active' }}>Stats</Link>
+            <Link to="/admin/dashboard" className="nav-link text-white" activeProps={{ className: 'nav-link is-active text-white' }}>Dashboard</Link>
+            <Link to="/admin/profile" className="nav-link text-white" activeProps={{ className: 'nav-link is-active text-white' }}>Profile</Link>
+            <Link to="/admin/projects" className="nav-link text-white" activeProps={{ className: 'nav-link is-active text-white' }}>Projects</Link>
+            <Link to="/admin/experiences" className="nav-link text-white" activeProps={{ className: 'nav-link is-active text-white' }}>Experiences</Link>
+            <Link to="/admin/skills" className="nav-link text-white" activeProps={{ className: 'nav-link is-active text-white' }}>Skills</Link>
+            <Link to="/admin/case-studies" className="nav-link text-white" activeProps={{ className: 'nav-link is-active text-white' }}>Case Studies</Link>
+            <Link to="/admin/achievements" className="nav-link text-white" activeProps={{ className: 'nav-link is-active text-white' }}>Achievements</Link>
+            <Link to="/admin/stats" className="nav-link text-white" activeProps={{ className: 'nav-link is-active text-white' }}>Stats</Link>
           </SignedIn>
           <SignedOut>
-            <Link to="/" className="nav-link" activeProps={{ className: 'nav-link is-active' }}>Home</Link>
+            <Link to="/" className="nav-link text-white" activeProps={{ className: 'nav-link is-active text-white' }}>Home</Link>
           </SignedOut>
         </div>
 
