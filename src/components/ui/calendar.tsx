@@ -16,11 +16,11 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         button_previous: "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
         button_next: "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
         day: "h-9 w-9 text-center text-sm p-0 relative rounded-md hover:bg-accent focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-selected:opacity-100",
-        day_today: "bg-accent text-accent-foreground",
-        day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus-visible:bg-primary focus-visible:text-primary-foreground",
-        day_outside: "text-muted-foreground opacity-50",
-        day_disabled: "text-muted-foreground opacity-50",
-        day_hidden: "invisible",
+        today: "bg-accent text-accent-foreground",
+        selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus-visible:bg-primary focus-visible:text-primary-foreground",
+        outside: "text-muted-foreground opacity-50",
+        disabled: "text-muted-foreground opacity-50",
+        hidden: "invisible",
         ...classNames,
       }}
       {...props}

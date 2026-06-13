@@ -4,7 +4,7 @@
 
 The Portfolio CMS Dashboard is a standalone, private administrative application designed to serve as the "Back-Office" for a professional portfolio website. It allows the owner to dynamically manage all professional data—including projects, experiences, and technical skills—without modifying the frontend code of the public portfolio.
 
-This system is built using the "King Je Es" stack, a high-performance modern web ecosystem recommended for building robust full-stack applications. The stack is curated from the Ariverse mentorship program under mentor Ryuko and Syahrul, emphasizing type safety, developer experience, and runtime performance.
+This system is built using a modern full-stack web ecosystem curated from the Ariverse mentorship program under mentor Ryuko and Syahrul, emphasizing type safety, developer experience, and runtime performance.
 
 ### 1.1. Core Philosophy
 
@@ -72,7 +72,7 @@ This system is built using the "King Je Es" stack, a high-performance modern web
 
 ---
 
-## 4. System Architecture (The "King Je Es" Stack)
+## 4. System Architecture
 
 ### 4.1. High-Level Architecture Diagram (Textual)
 
@@ -297,80 +297,93 @@ The Case-Study Builder is the core feature, enabling rich, blog-style technical 
 ### 6.1. Entity Relationship Diagram (Textual)
 
 ```
- profiles
- ┌─────────────────────────────────────┐
- │ id (uuid, PK)                       │
- │ full_name (text, not null)           │────┐
- │ current_role (text, not null)        │    │
- │ bio_short (varchar(280))             │    │
- │ bio_long (text)                      │    │
- │ cv_url (text)                        │    │
- │ created_at (timestamp, default now()) │    │
- │ updated_at (timestamp, default now()) │    │
- └─────────────────────────────────────┘    │
-                                            │
- skills                                     │
- ┌─────────────────────────────────────┐    │
- │ id (uuid, PK)                       │    │
- │ name (text, not null)               │    │
- │ category (skill_category, not null) │    │
- │ icon_url (text)                     │    │
- │ sort_order (integer)                │    │
- │ created_at (timestamp, default now()) │    │
- └─────────────────────────────────────┘    │
-                                            │
- experiences                                │
- ┌─────────────────────────────────────┐    │
- │ id (uuid, PK)                       │    │
- │ org_name (text, not null)           │    │
- │ role (text, not null)               │    │
- │ start_date (date, not null)         │    │
- │ end_date (date)                     │    │
- │ description (text)                  │    │
- │ type (exp_type, not null)           │    │
- │ sort_order (integer)                │    │
- │ created_at (timestamp, default now()) │    │
- └─────────────────────────────────────┘    │
-                                            │
- projects                                   │
- ┌─────────────────────────────────────┐    │
- │ id (uuid, PK)                       │    │
- │ title (text, not null)              │    │
- │ slug (text, not null, unique)       │    │
- │ description_short (varchar(300))    │    │
- │ thumbnail_url (text)                │    │
- │ is_featured (boolean, default false) │    │
- │ category (text)                     │    │
- │ github_url (text)                   │    │
- │ live_url (text)                     │    │
- │ additional_links (jsonb)            │    │
- │ sort_order (integer)                │    │
- │ created_at (timestamp, default now()) │    │
- │ updated_at (timestamp, default now()) │    │
- └──────────────┬──────────────────────┘    │
-                │ 1:1                       │
-                │                           │
- case_studies   │                           │
- ┌──────────────┴──────────────────────┐    │
- │ id (uuid, PK)                       │    │
- │ project_id (uuid, FK -> projects.id) │────┘
- │ content_markdown (text, not null)    │
- │ gallery_jsonb (jsonb, default '[]')  │
- │ created_at (timestamp, default now()) │
- │ updated_at (timestamp, default now()) │
- └─────────────────────────────────────┘
+ profiles (singleton)
+ ┌────────────────────────────────────────┐
+ │ id (uuid, PK)                          │
+ │ full_name (text, not null)             │
+ │ current_role (text, not null)          │
+ │ bio_short (varchar(280))               │
+ │ bio_long (text)                        │
+ │ cv_url (text)                          │
+ │ image_url (text, nullable)             │
+ │ created_at (timestamp, default now())  │
+ │ updated_at (timestamp, default now())  │
+ └────────────────────────────────────────┘
+
+ skills
+ ┌────────────────────────────────────────┐
+ │ id (uuid, PK)                          │
+ │ name (text, not null)                  │
+ │ category (skill_category, not null)    │
+ │ icon_url (text)                        │
+ │ sort_order (integer)                   │
+ │ created_at (timestamp, default now())  │
+ └────────────────────────────────────────┘
+
+ experiences
+ ┌────────────────────────────────────────┐
+ │ id (uuid, PK)                          │
+ │ org_name (text, not null)              │
+ │ role (text, not null)                  │
+ │ start_date (date, not null)            │
+ │ end_date (date, nullable)              │
+ │ description (text[], nullable)         │
+ │ type (exp_type, not null)              │
+ │ image_url (text, nullable)             │
+ │ sort_order (integer)                   │
+ │ created_at (timestamp, default now())  │
+ └────────────────────────────────────────┘
+
+ projects
+ ┌────────────────────────────────────────┐
+ │ id (uuid, PK)                          │
+ │ title (text, not null)                 │
+ │ slug (text, not null, unique)          │
+ │ description_short (varchar(300))       │
+ │ thumbnail_url (text)                   │
+ │ is_featured (boolean, default false)   │
+ │ category (text)                        │
+ │ github_url (text)                      │
+ │ live_url (text)                        │
+ │ additional_links (jsonb)               │
+ │ sort_order (integer)                   │
+ │ created_at (timestamp, default now())  │
+ │ updated_at (timestamp, default now())  │
+ └──────────────┬─────────────────────────┘
+                │ 1:1
+                │
+ case_studies   │
+ ┌──────────────┴─────────────────────────┐
+ │ id (uuid, PK)                          │
+ │ project_id (uuid, FK -> projects.id)   │
+ │ content_markdown (text, not null)       │
+ │ gallery_jsonb (jsonb, default '[]')    │
+ │ created_at (timestamp, default now())  │
+ │ updated_at (timestamp, default now())  │
+ └────────────────────────────────────────┘
 
  achievements
- ┌─────────────────────────────────────┐
- │ id (uuid, PK)                       │
- │ title (text, not null)              │
- │ event_name (text)                   │
- │ organizer (text)                    │
- │ date (date, not null)               │
- │ description (text)                  │
- │ url (text)                          │
- │ created_at (timestamp, default now()) │
- └─────────────────────────────────────┘
+ ┌────────────────────────────────────────┐
+ │ id (uuid, PK)                          │
+ │ title (text, not null)                 │
+ │ event_name (text)                      │
+ │ organizer (text)                       │
+ │ date (date, not null)                  │
+ │ description (text)                     │
+ │ url (text)                             │
+ │ created_at (timestamp, default now())  │
+ └────────────────────────────────────────┘
+
+ stats
+ ┌────────────────────────────────────────┐
+ │ id (uuid, PK)                          │
+ │ key (text, not null, unique)           │
+ │ value (text, not null)                 │
+ │ category (text)                        │
+ │ sub_value (text, nullable)             │
+ │ icon (text)                            │
+ │ sort_order (integer)                   │
+ └────────────────────────────────────────┘
 ```
 
 ### 6.2. PostgreSQL Enums
@@ -379,7 +392,7 @@ The following custom enum types are used in the database schema:
 
 | Enum Name | Values | Used By |
 |---|---|---|
-| `skill_category` | `'mobile'`, `'web'`, `'backend'`, `'devops'`, `'design'`, `'other'` | `skills.category` |
+| `skill_category` | `'mobile'`, `'web'`, `'backend'`, `'devops'`, `'design'`, `'other'`, `'frontend'`, `'database'`, `'deployment'`, `'cloud'`, `'tools'` | `skills.category` |
 | `exp_type` | `'work'`, `'organization'`, `'volunteer'`, `'education'` | `experiences.type` |
 
 ### 6.3. Indexing Strategy

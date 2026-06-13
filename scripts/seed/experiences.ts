@@ -57,7 +57,7 @@ const experiences = [
       'Implemented a full admin triage workflow with analytics dashboards and SLA monitoring.',
     ],
     type: 'education',
-    imageUrl: null,
+    imageUrl: `${IMG}/octosight.png`,
     sortOrder: 4,
   },
   {

@@ -1,280 +1,248 @@
-Welcome to your new TanStack Start app! 
+# Portfolio Content Management System (CMS)
 
-# Getting Started
+A private admin dashboard for managing professional portfolio data — projects, experiences, skills, and case studies. The CMS serves as the back-office for a personal portfolio website, allowing dynamic content management without modifying frontend code.
 
-To run this application:
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | [TanStack Start](https://tanstack.com/start) (React + Vite + SSR) |
+| Routing | [TanStack Router](https://tanstack.com/router) (file-based) |
+| Database | Supabase PostgreSQL + [Drizzle ORM](https://orm.drizzle.team) |
+| Validation | [Zod](https://zod.dev) (shared client/server) |
+| Auth | [Clerk](https://clerk.com) (login-only, no public registration) |
+| Storage | Supabase Storage (CV, images, icons) |
+| UI | [shadcn/ui](https://ui.shadcn.com) + [Radix UI](https://radix-ui.com) + [Tailwind CSS v4](https://tailwindcss.com) |
+| State | [Zustand](https://zustand.docs.pmnd.rs) |
+| Forms | [TanStack Form](https://tanstack.com/form) |
+| Linter/Formatter | [Oxc](https://oxc.rs) (no ESLint/Prettier — Rust-based, <500ms full codebase) |
+| Testing | [Vitest](https://vitest.dev) |
+| Icons | [lucide-react](https://lucide.dev) |
+| Env Validation | [T3Env](https://env.t3.gg) (Zod-powered) |
+| Data Fetching | [TanStack Query](https://tanstack.com/query) |
+
+---
+
+## Architecture
+
+Hexagonal Architecture (Ports & Adapters) keeps business logic decoupled from frameworks. **Domain never imports from Infrastructure or UI.**
+
+### Directory Layout
+
+```
+src/
+├── apis/               Server Functions (RPC layer)
+├── components/         React UI
+│   ├── ui/             shadcn/ui primitives
+│   ├── forms/          Reusable form components (DateField, FileUpload, GalleryUpload)
+│   ├── layout/         Sidebar, Header, ThemeToggle, AppShell
+│   └── tables/         DataTable with pagination
+├── domain/             Business logic (pure TypeScript + Zod)
+│   ├── schemas/        Zod validation schemas
+│   ├── ports/          Interface definitions (Ports)
+│   └── use-cases/      Business logic implementations
+├── infrastructure/     Framework adapters
+│   ├── db/             Drizzle ORM schema + repositories
+│   ├── auth/           Clerk backend auth adapter
+│   └── supabase/       Supabase Storage client
+├── routes/             File-based routes (TanStack Router)
+│   ├── auth/           Sign-in page
+│   └── admin/          Protected dashboard pages
+├── stores/             Zustand stores (sidebar state)
+├── integrations/       Provider wrappers (Clerk, TanStack Query)
+└── lib/                Utilities (cn() helper)
+```
+
+### RPC Data Flow
+
+```
+Form (TanStack Form) → Zod validate (client) → createServerFn POST
+→ Zod re-validate (server) → Use case → Repository → PostgreSQL
+→ Typed response back to client
+```
+
+All internal data mutations use `createServerFn` (RPC pattern) — no manual `fetch` calls. Zod schemas are defined once in `src/domain/schemas/` and shared between client form validation and server function validators for end-to-end type safety.
+
+### Key Decisions
+
+| Decision | Rationale |
+|---|---|
+| RPC over REST | No URL construction, automatic type inference across the wire |
+| Shared Zod schemas | Single source of truth validated on both client and server |
+| Zustand | ~1KB, no provider wrapping, works outside React components |
+| Nitro adapter | Framework-agnostic build — deploy anywhere (Render, Fly.io, VPS) |
+| Upload-on-save | Files stored as pending state, uploaded to Supabase only on form submit — prevents orphaned files |
+
+---
+
+## Features
+
+### Modules
+
+| Module | Route | Key Capabilities |
+|---|---|---|
+| Dashboard | `/admin/dashboard` | Quick stats, action shortcuts |
+| Profile | `/admin/profile` | Name, title, short/long bio, avatar upload, CV upload/replace/delete |
+| Projects | `/admin/projects` | Full CRUD, slug auto-generation, thumbnail upload, featured flag |
+| Case Studies | `/admin/case-studies` | Markdown editor per project, media gallery with captions |
+| Experiences | `/admin/experiences` | CRUD, multi-point bullet descriptions, date pickers, org logo upload |
+| Skills | `/admin/skills` | CRUD, 10 categories (frontend, mobile, backend, database, devops, deployment, cloud, design, tools, other), icon upload |
+| Achievements | `/admin/achievements` | CRUD, date pickers, event organizer tracking |
+| Stats | `/admin/stats` | CRUD for stat counters displayed on portfolio |
+
+### Automatic Stat Tracking
+
+- Creating/deleting a skill auto-increments/decrements `technologies_explored`
+- Creating/deleting a project auto-increments/decrements `projects_shipped`
+
+### Form Components
+
+| Component | Description |
+|---|---|
+| `DateField` | shadcn Calendar + Popover date picker, outputs `YYYY-MM-DD` |
+| `FileUpload` | Single file upload with deferred upload pattern (pending state until form save) |
+| `GalleryUpload` | Multi-image grid upload for case study screenshots, caption editing |
+| `TextField`, `TextAreaField`, `SelectField` | Standard form field wrappers |
+
+---
+
+## Database
+
+### Tables
+
+- **profiles** — Singleton record (full_name, current_role, bio_short, bio_long, cv_url, image_url)
+- **skills** — Categorized tech stack (name, category, icon_url, sort_order)
+- **experiences** — Work/education/organization entries (org_name, role, dates, description text[], type, image_url)
+- **projects** — Portfolio projects (title, slug, description, thumbnail, links, featured, sort_order)
+- **case_studies** — 1:1 with projects (content_markdown, gallery_jsonb)
+- **achievements** — Awards and milestones (title, event, organizer, date, description, url)
+- **stats** — Key-value counters (key, value, category, sub_value, icon, sort_order)
+
+### Enums
+
+- `skill_category`: mobile, web, frontend, backend, database, devops, deployment, cloud, design, tools, other
+- `exp_type`: work, organization, volunteer, education
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 20+
+- A [Supabase](https://supabase.com) project (PostgreSQL + Storage)
+- A [Clerk](https://clerk.com) application (login-only mode)
+
+### Setup
 
 ```bash
+# 1. Install dependencies
 npm install
+
+# 2. Environment variables
+cp .env.example .env.local
+# Fill in: VITE_CLERK_PUBLISHABLE_KEY, CLERK_SECRET_KEY
+#          DATABASE_URL, SUPABASE_URL, SUPABASE_SERVICE_KEY
+
+# 3. Push database schema
+npm run db:push
+
+# 4. Create Supabase storage buckets (8 buckets)
+npm run db:setup-storage
+
+# 5. (Optional) Seed demo data
+npm run db:seed
+
+# 6. Start development
 npm run dev
 ```
 
-# Building For Production
+Visit `http://localhost:3000` — sign in with your Clerk account to access `/admin`.
 
-To build this application for production:
+---
+
+## Scripts
+
+### Development
+
+| Command | Description |
+|---|---|
+| `npm run dev` | Start Vite dev server with HMR |
+| `npm run build` | Production build (client + Nitro SSR server) |
+| `npm run preview` | Preview production build (`node dist/server/index.mjs`) |
+
+### Code Quality
+
+| Command | Description |
+|---|---|
+| `oxlint .` | Lint all files with Oxc Linter |
+| `oxlint --fix .` | Lint and auto-format |
+| `npx tsc --noEmit` | TypeScript type checking |
+
+### Database
+
+| Command | Description |
+|---|---|
+| `npm run db:generate` | Generate Drizzle migration SQL |
+| `npm run db:migrate` | Apply pending migrations |
+| `npm run db:push` | Push schema directly (dev only) |
+| `npm run db:seed` | Seed all tables with demo data |
+| `npm run db:setup-storage` | Create Supabase storage buckets |
+
+### Testing
+
+| Command | Description |
+|---|---|
+| `npm run test` | Run all Vitest tests |
+| `npm run test:watch` | Run tests in watch mode |
+
+---
+
+## Environment Variables
+
+All validated at startup by `src/env.ts` using T3Env:
+
+| Variable | Required | Description |
+|---|---|---|
+| `VITE_CLERK_PUBLISHABLE_KEY` | Yes | Clerk publishable key (`pk_test_...` or `pk_live_...`) |
+| `CLERK_SECRET_KEY` | Yes | Clerk secret key (`sk_test_...` or `sk_live_...`) |
+| `DATABASE_URL` | Yes | Supabase PostgreSQL connection string |
+| `SUPABASE_URL` | Yes | Supabase project URL |
+| `SUPABASE_SERVICE_KEY` | Yes | Supabase service_role key |
+| `VITE_APP_TITLE` | No | Application title |
+| `SERVER_URL` | No | Production URL for redirects |
+
+---
+
+## Deployment
 
 ```bash
 npm run build
-```
-
-## Testing
-
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
-
-```bash
-npm run test
-```
-
-## Styling
-
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
-
-### Removing Tailwind CSS
-
-If you prefer not to use Tailwind CSS:
-
-1. Remove the demo pages in `src/routes/demo/`
-2. Replace the Tailwind import in `src/styles.css` with your own styles
-3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
-4. Uninstall the packages: `npm install @tailwindcss/vite tailwindcss -D`
-
-
-## Deploy with Nitro
-
-This project uses Nitro as a generic server adapter, so it can run on any Node-compatible host.
-
-```bash
-npm run build
+# Output: dist/client/ (static assets) + dist/server/ (Nitro Node server)
 node dist/server/index.mjs
 ```
 
-The build output is a self-contained Node server. To deploy, push the `dist/` directory to your host (Render, Fly.io, your own VPS, etc.) and run the server command above.
+### Post-Deploy
 
-For host-specific presets (Vercel, Netlify, Cloudflare, AWS Lambda, etc.) and tuning, see https://v3.nitro.build/deploy.
+1. Run `npm run db:migrate` for schema changes
+2. Replace Clerk test keys with production keys
+3. Configure production domain under Clerk Dashboard → Domains
+4. Set up social providers (Google, GitHub) under Clerk Dashboard → Social Connections
 
+Compatible with Render, Fly.io, Railway, or any Node.js VPS.
 
-## Setting up Clerk
+---
 
-1. Sign up at [clerk.com](https://clerk.com) and create an application
-2. Copy the **Publishable Key** from the Clerk dashboard
-3. Set it in your `.env.local`:
-   ```bash
-   VITE_CLERK_PUBLISHABLE_KEY=pk_test_...
-   ```
-4. Visit the demo route at `/demo/clerk` once `npm run dev` is running
+## Authentication & Security
 
-### What's wired up
+- **Clerk login-only mode** — registration disabled at the provider level
+- **Client-side:** `<SignedIn>` guards wrap all admin routes
+- **Server-side:** Every Server Function calls `auth()` and throws on missing user
+- **Validation:** Zod schemas on both client and server — no raw data reaches the database
+- **File safety:** MIME type validation, size limits, upload-on-save pattern prevents orphaned files
 
-- **`<ClerkProvider>`** at the app root (`src/integrations/clerk/provider.tsx`) handles auth context for the whole tree
-- **`<SignInButton>` / `<UserButton>`** in the header swap based on auth state
-- **`/demo/clerk`** shows Clerk's prebuilt sign-in UI and a signed-in greeting
+---
 
-### Protecting a route
-
-Wrap any component in `<SignedIn>` / `<SignedOut>`:
-
-```tsx
-import { SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react'
-
-function ProtectedPage() {
-  return (
-    <>
-      <SignedIn>
-        <YourPageContent />
-      </SignedIn>
-      <SignedOut>
-        <RedirectToSignIn />
-      </SignedOut>
-    </>
-  )
-}
-```
-
-For server-side checks (route loaders, server functions), see the Clerk docs on [`auth()`](https://clerk.com/docs/references/backend/auth).
-
-### Production checklist
-
-- Replace the test keys with **production keys** from a dedicated production Clerk instance
-- Configure your production domain under **Domains** in the Clerk dashboard
-- Set up social providers (Google, GitHub, etc.) under **User & Authentication → Social Connections**
-
-
-## Shadcn
-
-Add components using the latest version of [Shadcn](https://ui.shadcn.com/).
-
-```bash
-pnpm dlx shadcn@latest add button
-```
-
-
-## T3Env
-
-- You can use T3Env to add type safety to your environment variables.
-- Add Environment variables to the `src/env.mjs` file.
-- Use the environment variables in your code.
-
-### Usage
-
-```ts
-import { env } from "#/env";
-
-console.log(env.VITE_APP_TITLE);
-```
-
-
-
-
-
-
-## Routing
-
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
-
-### Adding A Route
-
-To add a new route to your application just add a new file in the `./src/routes` directory.
-
-TanStack will automatically generate the content of the route file for you.
-
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
-
-```tsx
-import { Link } from "@tanstack/react-router";
-```
-
-Then anywhere in your JSX you can use it like so:
-
-```tsx
-<Link to="/about">About</Link>
-```
-
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the `shellComponent`.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-
-export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'My App' },
-    ],
-  }),
-  shellComponent: ({ children }) => (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <header>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
-          </nav>
-        </header>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  ),
-})
-```
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-## Server Functions
-
-TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
-
-```tsx
-import { createServerFn } from '@tanstack/react-start'
-
-const getServerTime = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  return new Date().toISOString()
-})
-
-// Use in a component
-function MyComponent() {
-  const [time, setTime] = useState('')
-  
-  useEffect(() => {
-    getServerTime().then(setTime)
-  }, [])
-  
-  return <div>Server time: {time}</div>
-}
-```
-
-## API Routes
-
-You can create API routes by using the `server` property in your route definitions:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { json } from '@tanstack/react-start'
-
-export const Route = createFileRoute('/api/hello')({
-  server: {
-    handlers: {
-      GET: () => json({ message: 'Hello, World!' }),
-    },
-  },
-})
-```
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-
-export const Route = createFileRoute('/people')({
-  loader: async () => {
-    const response = await fetch('https://swapi.dev/api/people')
-    return response.json()
-  },
-  component: PeopleComponent,
-})
-
-function PeopleComponent() {
-  const data = Route.useLoaderData()
-  return (
-    <ul>
-      {data.results.map((person) => (
-        <li key={person.name}>{person.name}</li>
-      ))}
-    </ul>
-  )
-}
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
-
-For TanStack Start specific documentation, visit [TanStack Start](https://tanstack.com/start).
+*Last updated: 2026-06-13.*

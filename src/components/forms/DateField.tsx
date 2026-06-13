@@ -50,7 +50,7 @@ export default function DateField({ name, label, value, onChange, error, placeho
             mode="single"
             selected={date}
             onSelect={handleSelect}
-            initialFocus
+            autoFocus
           />
         </PopoverContent>
       </Popover>
