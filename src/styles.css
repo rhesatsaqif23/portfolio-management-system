@@ -175,7 +175,6 @@ pre code {
 
 .glass-table table {
   width: 100%;
-  table-layout: fixed;
   border-collapse: collapse;
 }
 
@@ -192,11 +191,20 @@ pre code {
   padding: 0.75rem 1rem;
   color: var(--sea-ink-soft);
   border-bottom: 1px solid rgba(100, 150, 220, 0.08);
-  overflow-wrap: break-word;
 }
 
 .glass-table tbody tr:hover {
   background: rgba(20, 36, 60, 0.6);
+}
+
+.glass-table th:nth-child(3),
+.glass-table td:nth-child(3) {
+  min-width: 11rem;
+}
+
+.glass-table th:nth-child(5),
+.glass-table td:nth-child(5) {
+  min-width: 5rem;
 }
 
 .display-title {
