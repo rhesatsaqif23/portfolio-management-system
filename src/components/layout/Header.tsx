@@ -19,29 +19,17 @@ export default function Header() {
 
         <div className="order-3 flex w-full flex-wrap items-center gap-x-4 gap-y-1 pb-1 text-sm font-semibold sm:order-none sm:w-auto sm:flex-nowrap sm:pb-0">
           <SignedIn>
-            <Link
-              to="/admin/dashboard"
-              className="nav-link"
-              activeProps={{ className: 'nav-link is-active' }}
-            >
-              Dashboard
-            </Link>
-            <Link
-              to="/admin/projects"
-              className="nav-link"
-              activeProps={{ className: 'nav-link is-active' }}
-            >
-              Projects
-            </Link>
+            <Link to="/admin/dashboard" className="nav-link" activeProps={{ className: 'nav-link is-active' }}>Dashboard</Link>
+            <Link to="/admin/profile" className="nav-link" activeProps={{ className: 'nav-link is-active' }}>Profile</Link>
+            <Link to="/admin/projects" className="nav-link" activeProps={{ className: 'nav-link is-active' }}>Projects</Link>
+            <Link to="/admin/experiences" className="nav-link" activeProps={{ className: 'nav-link is-active' }}>Experiences</Link>
+            <Link to="/admin/skills" className="nav-link" activeProps={{ className: 'nav-link is-active' }}>Skills</Link>
+            <Link to="/admin/case-studies" className="nav-link" activeProps={{ className: 'nav-link is-active' }}>Case Studies</Link>
+            <Link to="/admin/achievements" className="nav-link" activeProps={{ className: 'nav-link is-active' }}>Achievements</Link>
+            <Link to="/admin/stats" className="nav-link" activeProps={{ className: 'nav-link is-active' }}>Stats</Link>
           </SignedIn>
           <SignedOut>
-            <Link
-              to="/"
-              className="nav-link"
-              activeProps={{ className: 'nav-link is-active' }}
-            >
-              Home
-            </Link>
+            <Link to="/" className="nav-link" activeProps={{ className: 'nav-link is-active' }}>Home</Link>
           </SignedOut>
         </div>
 

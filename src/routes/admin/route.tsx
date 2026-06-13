@@ -2,6 +2,8 @@ import { createFileRoute, Outlet } from '@tanstack/react-router'
 import { SignedIn, SignedOut, useUser } from '@clerk/clerk-react'
 import { Link } from '@tanstack/react-router'
 
+const ALLOWED_EMAIL = 'atstsaqif23@gmail.com'
+
 export const Route = createFileRoute('/admin')({
   component: AdminLayout,
 })
@@ -10,7 +12,7 @@ function AdminLayout() {
   return (
     <>
       <SignedIn>
-        <AdminShell />
+        <AdminGate />
       </SignedIn>
       <SignedOut>
         <div className="page-wrap flex min-h-[calc(100vh-8rem)] items-center justify-center px-4 py-12">
@@ -30,6 +32,33 @@ function AdminLayout() {
       </SignedOut>
     </>
   )
+}
+
+function AdminGate() {
+  const { user } = useUser()
+  const email = user?.primaryEmailAddress?.emailAddress?.toLowerCase()
+  const isAllowed = email === ALLOWED_EMAIL
+
+  if (!isAllowed) {
+    return (
+      <div className="page-wrap flex min-h-[calc(100vh-8rem)] items-center justify-center px-4 py-12">
+        <section className="island-shell w-full max-w-md rounded-2xl p-6 text-center sm:p-8">
+          <h1 className="text-xl font-bold text-[var(--sea-ink)]">Access Restricted</h1>
+          <p className="mt-2 text-sm text-[var(--sea-ink-soft)]">
+            This admin panel is restricted to authorized users only.
+          </p>
+          <a
+            href="/"
+            className="mt-4 inline-block rounded-full bg-[var(--sea-ink)] px-6 py-2 text-sm font-semibold text-white no-underline"
+          >
+            Go Home
+          </a>
+        </section>
+      </div>
+    )
+  }
+
+  return <AdminShell />
 }
 
 function AdminShell() {

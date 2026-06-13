@@ -1,6 +1,8 @@
 import { createClerkClient } from '@clerk/backend'
 import { createClerkRequest } from '@clerk/backend/internal'
 
+const ALLOWED_EMAIL = 'atstsaqif23@gmail.com'
+
 let _clerkClient: ReturnType<typeof createClerkClient> | null = null
 function getClerkClient() {
   if (!_clerkClient) {
@@ -32,4 +34,17 @@ export async function getServerAuth(request: Request): Promise<ServerAuthResult>
     console.error('[auth] error:', err)
     return { userId: null }
   }
+}
+
+export async function requireAdminAuth(request: Request): Promise<string> {
+  const { userId } = await getServerAuth(request)
+  if (!userId) throw new Error('Unauthorized')
+
+  const user = await getClerkClient().users.getUser(userId)
+  const email = user.emailAddresses?.[0]?.emailAddress
+  if (!email || email.toLowerCase() !== ALLOWED_EMAIL) {
+    throw new Error('Unauthorized: access restricted to authorized email only')
+  }
+
+  return userId
 }
