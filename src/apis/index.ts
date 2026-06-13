@@ -5,4 +5,4 @@ export { listExperiences, createExperience, updateExperience, deleteExperience }
 export { listAchievements, createAchievement, updateAchievement, deleteAchievement } from './achievements'
 export { listCaseStudies, createCaseStudy, updateCaseStudy, deleteCaseStudy } from './case-studies'
 export { listStats, createStat, updateStat, deleteStat } from './stats'
-export { uploadFile } from './storage'
+export { uploadFile, deleteFile, replaceFile } from './storage'

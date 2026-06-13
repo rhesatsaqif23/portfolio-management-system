@@ -4,6 +4,7 @@ import { getServerAuth } from '#/infrastructure/auth'
 import { projectSchema } from '#/domain/schemas'
 import { listProjectsUseCase, createProjectUseCase, updateProjectUseCase, deleteProjectUseCase } from '#/domain/use-cases'
 import { drizzleProjectRepository } from '#/infrastructure/db/repositories/projectRepository'
+import { drizzleStatsRepository } from '#/infrastructure/db/repositories/statsRepository'
 
 async function requireUserId() {
   const { userId } = await getServerAuth(getRequest())
@@ -37,7 +38,7 @@ export const createProject = createServerFn({ method: 'POST' })
   .validator((data: unknown) => projectSchema.parse(data))
   .handler(async ({ data }) => {
     await requireUserId()
-    return createProjectUseCase(drizzleProjectRepository, data)
+    return createProjectUseCase(drizzleProjectRepository, drizzleStatsRepository, data)
   })
 
 export const updateProject = createServerFn({ method: 'POST' })
@@ -54,5 +55,5 @@ export const deleteProject = createServerFn({ method: 'POST' })
   .validator((data: unknown) => ({ id: String(data) }))
   .handler(async ({ data }) => {
     await requireUserId()
-    return deleteProjectUseCase(drizzleProjectRepository, data.id)
+    return deleteProjectUseCase(drizzleProjectRepository, drizzleStatsRepository, data.id)
   })

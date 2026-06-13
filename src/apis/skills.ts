@@ -4,6 +4,7 @@ import { getServerAuth } from '#/infrastructure/auth'
 import { skillSchema } from '#/domain/schemas'
 import { listSkillsUseCase, createSkillUseCase, updateSkillUseCase, deleteSkillUseCase } from '#/domain/use-cases'
 import { drizzleSkillRepository } from '#/infrastructure/db/repositories/skillRepository'
+import { drizzleStatsRepository } from '#/infrastructure/db/repositories/statsRepository'
 
 async function requireUserId() {
   const { userId } = await getServerAuth(getRequest())
@@ -20,7 +21,7 @@ export const createSkill = createServerFn({ method: 'POST' })
   .validator((data: unknown) => skillSchema.parse(data))
   .handler(async ({ data }) => {
     await requireUserId()
-    return createSkillUseCase(drizzleSkillRepository, data)
+    return createSkillUseCase(drizzleSkillRepository, drizzleStatsRepository, data)
   })
 
 export const updateSkill = createServerFn({ method: 'POST' })
@@ -37,5 +38,5 @@ export const deleteSkill = createServerFn({ method: 'POST' })
   .validator((data: unknown) => ({ id: String(data) }))
   .handler(async ({ data }) => {
     await requireUserId()
-    return deleteSkillUseCase(drizzleSkillRepository, data.id)
+    return deleteSkillUseCase(drizzleSkillRepository, drizzleStatsRepository, data.id)
   })

@@ -14,6 +14,10 @@ export const drizzleExperienceRepository: IExperienceRepository = {
   },
 
   async update(id: string, data: Partial<ExperienceInsert>): Promise<Experience> {
+    if (Object.keys(data).length === 0) {
+      const [existing] = await db.select().from(experiencesTable).where(eq(experiencesTable.id, id)).limit(1)
+      return existing!
+    }
     const [updated] = await db.update(experiencesTable).set(data).where(eq(experiencesTable.id, id)).returning()
     return updated
   },

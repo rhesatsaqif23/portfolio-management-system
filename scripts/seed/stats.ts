@@ -12,7 +12,7 @@ const stats = [
   },
   {
     key: 'projects_shipped',
-    value: '18',
+    value: '16',
     category: 'general',
     subValue: null,
     icon: 'code',
@@ -20,7 +20,7 @@ const stats = [
   },
   {
     key: 'technologies_explored',
-    value: '27',
+    value: '37',
     category: 'general',
     subValue: null,
     icon: 'layers',
@@ -28,7 +28,7 @@ const stats = [
   },
   {
     key: 'main_focus',
-    value: 'Front-end / Mobile / Full-stack',
+    value: 'Front-end, Mobile, Full-stack',
     category: 'general',
     subValue: null,
     icon: 'target',
@@ -68,7 +68,7 @@ const stats = [
   },
   {
     key: 'personality_traits',
-    value: 'Growth Mindset / Continuous Learner / Detail Oriented / Result Driven',
+    value: 'Growth Mindset, Continuous Learner, Detail Oriented, Result Driven',
     category: 'about',
     subValue: null,
     icon: 'heart',

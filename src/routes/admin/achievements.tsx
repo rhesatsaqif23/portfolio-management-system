@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { DataTable } from '#/components/tables'
+import { DataTable, usePagination } from '#/components/tables'
 import { TextField, TextAreaField } from '#/components/forms'
 import { Button } from '#/components/ui/button'
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction, AlertDialogMedia } from '#/components/ui/alert-dialog'
@@ -25,6 +25,7 @@ function AchievementsPage() {
   const [confirm, setConfirm] = useState<ConfirmAction>(null)
 
   const { data: achievements = [], isLoading } = useQuery({ queryKey: ['achievements'], queryFn: () => listAchievements() })
+  const pag = usePagination(achievements, 10)
 
   const createMutation = useMutation({
     mutationFn: () => createAchievement({ data: form }),
@@ -92,12 +93,15 @@ function AchievementsPage() {
             </div>
           )},
         ]}
-        data={achievements}
+        data={pag.paginatedData}
+        page={pag.page}
+        totalPages={pag.totalPages}
+        onPageChange={pag.setPage}
       />
 
       {showForm && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-lg rounded-2xl border bg-card p-6 shadow-lg">
+          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border bg-card p-6 shadow-lg">
             <h2 className="mb-4 text-lg font-semibold">{editing ? 'Edit Achievement' : 'Add Achievement'}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <TextField label="Title" name="title" value={form.title} onChange={(v) => setForm({ ...form, title: v })} error={errors.title} />

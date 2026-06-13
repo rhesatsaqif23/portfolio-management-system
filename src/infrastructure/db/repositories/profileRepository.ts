@@ -15,6 +15,7 @@ export const drizzleProfileRepository: IProfileRepository = {
       const [created] = await db.insert(profilesTable).values(data as ProfileInsert).returning()
       return created
     }
+    if (Object.keys(data).length === 0) return existing
     const [updated] = await db.update(profilesTable).set(data).returning()
     return updated
   },

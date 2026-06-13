@@ -14,6 +14,10 @@ export const drizzleAchievementRepository: IAchievementRepository = {
   },
 
   async update(id: string, data: Partial<AchievementInsert>): Promise<Achievement> {
+    if (Object.keys(data).length === 0) {
+      const [existing] = await db.select().from(achievementsTable).where(eq(achievementsTable.id, id)).limit(1)
+      return existing!
+    }
     const [updated] = await db.update(achievementsTable).set(data).where(eq(achievementsTable.id, id)).returning()
     return updated
   },

@@ -18,6 +18,10 @@ export const drizzleSkillRepository: ISkillRepository = {
   },
 
   async update(id: string, data: Partial<SkillInsert>): Promise<Skill> {
+    if (Object.keys(data).length === 0) {
+      const [existing] = await db.select().from(skillsTable).where(eq(skillsTable.id, id)).limit(1)
+      return existing!
+    }
     const [updated] = await db.update(skillsTable).set(data).where(eq(skillsTable.id, id)).returning()
     return updated
   },
