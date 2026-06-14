@@ -83,9 +83,9 @@ function AchievementsPage() {
       <DataTable
         loading={isLoading}
         columns={[
-          { key: 'title' as keyof Achievement, header: 'Title' },
-          { key: 'eventName' as keyof Achievement, header: 'Event' },
-          { key: 'organizer' as keyof Achievement, header: 'Organizer' },
+          { key: 'title' as keyof Achievement, header: 'Title', render: (v) => <span className="line-clamp-2">{String(v)}</span> },
+          { key: 'eventName' as keyof Achievement, header: 'Event', render: (v) => <span className="line-clamp-2">{String(v ?? '')}</span> },
+          { key: 'organizer' as keyof Achievement, header: 'Organizer', render: (v) => <span className="line-clamp-2">{String(v ?? '')}</span> },
           { key: 'date' as keyof Achievement, header: 'Date' },
           { key: 'id' as keyof Achievement, header: 'Actions', render: (_, r) => (
             <div className="flex gap-2">

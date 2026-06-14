@@ -212,6 +212,21 @@ pre code {
   white-space: nowrap;
 }
 
+@media (min-width: 1280px) {
+  .glass-table {
+    overflow-x: visible;
+  }
+  .glass-table table {
+    min-width: 0;
+    table-layout: auto;
+  }
+  .glass-table th,
+  .glass-table td {
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
+}
+
 .glass-table table {
   width: 100%;
   border-collapse: collapse;

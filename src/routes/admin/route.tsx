@@ -91,7 +91,7 @@ function AdminShell() {
 
   return (
     <div className="flex min-h-[calc(100vh-8rem)]">
-      <aside className={`fixed bottom-0 left-0 top-16 z-30 w-64 border-r border-[var(--line)] bg-[var(--card)] p-4 transition-transform duration-200 md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:static md:block`}>
+      <aside className={`fixed bottom-0 left-0 top-16 z-30 w-48 border-r border-[var(--line)] bg-[var(--card)] p-4 transition-transform duration-200 md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:static md:block`}>
         <div className="mb-2 flex items-center justify-between md:hidden">
           <span className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">Navigation</span>
           <button onClick={() => setSidebarOpen(false)} className="rounded p-1 text-white hover:bg-[var(--link-bg-hover)]">
@@ -109,7 +109,7 @@ function AdminShell() {
         <div className="fixed inset-0 z-20 bg-black/50 md:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
-      <main className="flex-1 overflow-auto md:ml-64">
+      <main className="flex-1 overflow-auto md:ml-48">
         <div className="flex items-center justify-between border-b border-[var(--line)] px-4 py-2 md:px-6 md:py-3">
           <div className="flex items-center gap-2">
             <button
