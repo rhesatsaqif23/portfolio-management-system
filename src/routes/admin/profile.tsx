@@ -177,9 +177,9 @@ function ProfilePage() {
 
   if (isLoading) return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[var(--sea-ink)]">Profile</h1>
-        <p className="mt-1 text-sm text-[var(--sea-ink-soft)]">Edit your public profile.</p>
+      <div className="mb-4 md:mb-6">
+        <h1 className="text-lg font-bold text-[var(--sea-ink)] md:text-2xl">Profile</h1>
+        <p className="mt-1 text-xs text-[var(--sea-ink-soft)] md:text-sm">Edit your public profile.</p>
       </div>
       <ProfileFormSkeleton />
     </div>
@@ -187,40 +187,40 @@ function ProfilePage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[var(--sea-ink)]">Profile</h1>
-        <p className="mt-1 text-sm text-[var(--sea-ink-soft)]">Edit your public profile.</p>
+      <div className="mb-4 md:mb-6">
+        <h1 className="text-lg font-bold text-[var(--sea-ink)] md:text-2xl">Profile</h1>
+        <p className="mt-1 text-xs text-[var(--sea-ink-soft)] md:text-sm">Edit your public profile.</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="mx-auto max-w-4xl space-y-4">
+      <form onSubmit={handleSubmit} className="mx-auto max-w-4xl space-y-3 md:space-y-4">
         <TextField label="Full Name" name="fullName" value={form.fullName} onChange={(v) => setForm({ ...form, fullName: v })} error={errors.fullName} />
 
         <div className="space-y-2">
-          <label className="text-sm font-medium">Roles (for typing animation)</label>
+          <label className="text-xs font-medium md:text-sm">Roles (for typing animation)</label>
           {form.currentRoles.map((role, i) => (
             <div key={i} className="flex gap-2">
-              <input value={role} onChange={(e) => updateRole(i, e.target.value)} placeholder="e.g. Full Stack Developer" className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50" />
+              <input value={role} onChange={(e) => updateRole(i, e.target.value)} placeholder="e.g. Full Stack Developer" className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1.5 text-xs shadow-xs focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 md:h-10 md:text-sm" />
               {form.currentRoles.length > 1 && (
                 <Button type="button" size="xs" variant="destructive" onClick={() => removeRole(i)}>X</Button>
               )}
             </div>
           ))}
-          {errors.currentRoles && <p className="text-xs text-destructive">{errors.currentRoles}</p>}
+          {errors.currentRoles && <p className="text-[10px] text-destructive md:text-xs">{errors.currentRoles}</p>}
           <Button type="button" size="xs" variant="outline" onClick={addRole}>+ Add Role</Button>
         </div>
 
         <TextField label="Primary Role" name="currentRole" value={form.currentRole} onChange={(v) => setForm({ ...form, currentRole: v })} error={errors.currentRole} />
         <TextField label="Short Bio (max 280 chars)" name="bioShort" value={form.bioShort} onChange={(v) => setForm({ ...form, bioShort: v })} />
         <TextAreaField label="Long Bio" name="bioLong" value={form.bioLong} onChange={(v) => setForm({ ...form, bioLong: v })} rows={6} />
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-3 md:gap-4 sm:grid-cols-2">
           <FileUpload label="Avatar Image" value={form.avatarUrl} onChange={(url) => setForm({ ...form, avatarUrl: url })} accept="image/*" maxSizeMB={5} bucket="avatars" deferUpload pendingFile={pendingAvatar} onPendingFile={setPendingAvatar} />
           <FileUpload label="CV (PDF)" value={form.cvUrl} onChange={(url) => setForm({ ...form, cvUrl: url })} bucket="cv" deferUpload pendingFile={pendingCv} onPendingFile={setPendingCv} />
         </div>
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-3 md:gap-4 sm:grid-cols-2">
           <TextField label="Location" name="location" value={form.location} onChange={(v) => setForm({ ...form, location: v })} />
           <TextField label="Email" name="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} />
         </div>
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-3 md:gap-4 sm:grid-cols-3">
           <TextField label="GitHub" name="github" value={form.github} onChange={(v) => setForm({ ...form, github: v })} />
           <TextField label="LinkedIn" name="linkedin" value={form.linkedin} onChange={(v) => setForm({ ...form, linkedin: v })} />
           <TextField label="Instagram" name="instagram" value={form.instagram} onChange={(v) => setForm({ ...form, instagram: v })} />

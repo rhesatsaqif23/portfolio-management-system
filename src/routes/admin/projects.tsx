@@ -136,24 +136,25 @@ function ProjectsPage() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-4 flex items-center justify-between md:mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--sea-ink)]">Projects</h1>
-          <p className="mt-1 text-sm text-[var(--sea-ink-soft)]">Manage your portfolio projects.</p>
+          <h1 className="text-lg font-bold text-[var(--sea-ink)] md:text-2xl">Projects</h1>
+          <p className="mt-1 text-xs text-[var(--sea-ink-soft)] md:text-sm">Manage your portfolio projects.</p>
         </div>
-        <Button onClick={openCreate}><Plus /> Create Project</Button>
+        <Button onClick={openCreate} size="xs"><Plus className="size-3 md:size-4" /> Create</Button>
       </div>
 
+      <div className="overflow-x-auto">
       <DataTable
         loading={isLoading}
         columns={[
           { key: 'title' as keyof Project, header: 'Title' },
-          { key: 'descriptionShort' as keyof Project, header: 'Description', render: (v) => <span className="line-clamp-2 max-w-xs">{String(v ?? '')}</span> },
+          { key: 'descriptionShort' as keyof Project, header: 'Description', render: (v) => <span className="line-clamp-2 max-w-[120px] md:max-w-xs">{String(v ?? '')}</span> },
           { key: 'isFeatured' as keyof Project, header: 'Featured', render: (v) => <Badge variant={v ? 'default' : 'outline'}>{v ? 'Featured' : 'No'}</Badge> },
           { key: 'category' as keyof Project, header: 'Category' },
           { key: 'sortOrder' as keyof Project, header: 'Order' },
           { key: 'id' as keyof Project, header: 'Actions', render: (_, r) => (
-            <div className="flex gap-2">
+            <div className="flex gap-1 md:gap-2">
               <Button size="xs" variant="outline" onClick={() => openEdit(r)}>Edit</Button>
               <Button size="xs" variant="destructive" onClick={() => setConfirm({ type: 'delete', id: r.id })}>Delete</Button>
             </div>
@@ -164,17 +165,21 @@ function ProjectsPage() {
         totalPages={pag.totalPages}
         onPageChange={pag.setPage}
       />
+      </div>
 
       {showForm && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50">
-          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border bg-card p-6 shadow-lg">
-            <h2 className="mb-4 text-lg font-semibold">{editing ? 'Edit Project' : 'Create Project'}</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="fixed inset-0 z-40 flex items-end justify-center bg-black/50 md:items-center">
+          <div className="max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-t-2xl border bg-card p-4 shadow-lg md:rounded-2xl md:p-6">
+            <div className="mb-2 flex items-center justify-between md:mb-4">
+              <h2 className="text-sm font-semibold md:text-lg">{editing ? 'Edit Project' : 'Create Project'}</h2>
+              <button onClick={closeForm} className="rounded p-1 text-white hover:bg-[var(--link-bg-hover)]">&times;</button>
+            </div>
+            <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
               <div>
                 <TextField label="Title" name="title" value={form.title} onChange={(v) => setForm({ ...form, title: v })} error={errors.title} />
               </div>
               <TextAreaField label="Short Description" name="descriptionShort" value={form.descriptionShort} onChange={(v) => setForm({ ...form, descriptionShort: v })} rows={3} />
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-3 md:gap-4 sm:grid-cols-2">
                 <TextField label="GitHub URL" name="githubUrl" value={form.githubUrl} onChange={(v) => setForm({ ...form, githubUrl: v })} />
                 <TextField label="Live URL" name="liveUrl" value={form.liveUrl} onChange={(v) => setForm({ ...form, liveUrl: v })} />
               </div>
@@ -187,12 +192,12 @@ function ProjectsPage() {
               <FileUpload label="Thumbnail Image" value={form.thumbnailUrl} onChange={(url) => setForm({ ...form, thumbnailUrl: url })} accept="image/*" maxSizeMB={5} bucket="project-images" deferUpload pendingFile={pendingThumbnail} onPendingFile={setPendingThumbnail} />
               <div className="flex items-center gap-2">
                 <input type="checkbox" id="isFeatured" checked={form.isFeatured} onChange={(e) => setForm({ ...form, isFeatured: e.target.checked })} className="h-4 w-4" />
-                <label htmlFor="isFeatured" className="text-sm font-medium">Featured</label>
+                <label htmlFor="isFeatured" className="text-xs font-medium md:text-sm">Featured</label>
               </div>
               <TextField label="Sort Order" name="sortOrder" value={String(form.sortOrder)} onChange={(v) => setForm({ ...form, sortOrder: Number(v) || 0 })} />
               <div className="flex justify-end gap-3">
-                <Button type="button" variant="outline" onClick={closeForm}>Cancel</Button>
-                <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>{editing ? 'Update' : 'Create'}</Button>
+                <Button type="button" variant="outline" size="xs" onClick={closeForm}>Cancel</Button>
+                <Button type="submit" size="xs" disabled={createMutation.isPending || updateMutation.isPending}>{editing ? 'Update' : 'Create'}</Button>
               </div>
             </form>
           </div>

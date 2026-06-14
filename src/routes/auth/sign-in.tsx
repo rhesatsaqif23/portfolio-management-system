@@ -57,11 +57,11 @@ function SignInPage() {
   if (isSignedIn) {
     return (
       <main className="page-wrap flex min-h-[calc(100vh-8rem)] items-center justify-center px-4 py-12">
-        <section className="island-shell w-full max-w-md rounded-2xl p-6 text-center sm:p-8">
-          <p className="text-[var(--sea-ink-soft)]">You are already signed in.</p>
+        <section className="island-shell w-full max-w-md rounded-2xl text-center">
+          <p className="text-xs text-[var(--sea-ink-soft)] md:text-sm">You are already signed in.</p>
           <a
             href="/admin/dashboard"
-            className="mt-4 inline-block rounded-full bg-[var(--sea-ink)] px-6 py-2 text-sm font-semibold text-white no-underline"
+            className="mt-4 inline-block rounded-full bg-[var(--sea-ink)] px-5 py-2 text-xs font-semibold text-[var(--sand)] no-underline md:px-6 md:py-2 md:text-sm"
           >
             Go to Dashboard
           </a>
@@ -72,19 +72,19 @@ function SignInPage() {
 
   return (
     <main className="page-wrap flex min-h-[calc(100vh-8rem)] items-center justify-center px-4 py-12">
-      <section className="island-shell w-full max-w-md rounded-2xl p-6 sm:p-8">
-        <div className="mb-6 text-center">
-          <h1 className="display-title text-2xl font-bold text-[var(--sea-ink)]">
+      <section className="island-shell w-full max-w-md rounded-2xl">
+        <div className="mb-4 text-center md:mb-6">
+          <h1 className="display-title text-lg font-bold text-[var(--sea-ink)] md:text-2xl">
             Sign In
           </h1>
-          <p className="mt-2 text-sm text-[var(--sea-ink-soft)]">
+          <p className="mt-1 text-xs text-[var(--sea-ink-soft)] md:mt-2 md:text-sm">
             Access your Portfolio CMS dashboard
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-[var(--sea-ink)]">
+            <label htmlFor="email" className="block text-xs font-medium text-[var(--sea-ink)] md:text-sm">
               Email
             </label>
             <input
@@ -93,13 +93,13 @@ function SignInPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--ring)] focus:ring-1 focus:ring-[var(--ring)]"
+              className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-1.5 text-xs text-[var(--foreground)] outline-none transition focus:border-[var(--ring)] focus:ring-1 focus:ring-[var(--ring)] md:px-3 md:py-2 md:text-sm"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-[var(--sea-ink)]">
+            <label htmlFor="password" className="block text-xs font-medium text-[var(--sea-ink)] md:text-sm">
               Password
             </label>
             <input
@@ -108,36 +108,36 @@ function SignInPage() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--ring)] focus:ring-1 focus:ring-[var(--ring)]"
+              className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-1.5 text-xs text-[var(--foreground)] outline-none transition focus:border-[var(--ring)] focus:ring-1 focus:ring-[var(--ring)] md:px-3 md:py-2 md:text-sm"
               placeholder="Your password"
             />
           </div>
 
           {error && (
-            <p className="text-sm text-red-600">{error}</p>
+            <p className="text-xs text-red-600 md:text-sm">{error}</p>
           )}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-full bg-[var(--sea-ink)] px-6 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+            className="w-full rounded-full bg-[var(--sea-ink)] px-5 py-2 text-xs font-semibold text-[var(--sand)] transition hover:opacity-90 disabled:opacity-50 md:px-6 md:py-2 md:text-sm"
           >
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
 
-        <div className="my-4 flex items-center gap-3">
+        <div className="my-3 flex items-center gap-3 md:my-4">
           <span className="h-px flex-1 bg-[var(--border)]" />
-          <span className="text-xs text-[var(--sea-ink-soft)]">OR</span>
+          <span className="text-[10px] text-[var(--sea-ink-soft)] md:text-xs">OR</span>
           <span className="h-px flex-1 bg-[var(--border)]" />
         </div>
 
         <button
           type="button"
           onClick={signInWithGoogle}
-          className="flex w-full items-center justify-center gap-2 rounded-full border border-[var(--border)] bg-[var(--card)] px-6 py-2 text-sm font-medium text-[var(--foreground)] transition hover:bg-[var(--muted)]"
+          className="flex w-full items-center justify-center gap-2 rounded-full border border-[var(--border)] bg-[var(--card)] px-5 py-2 text-xs font-medium text-[var(--foreground)] transition hover:bg-[var(--muted)] md:px-6 md:py-2 md:text-sm"
         >
-          <svg className="h-5 w-5" viewBox="0 0 24 24">
+          <svg className="size-4 md:size-5" viewBox="0 0 24 24">
             <path
               fill="#4285F4"
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"

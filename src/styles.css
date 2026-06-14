@@ -102,6 +102,27 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* Mobile-first responsive overrides */
+@media (max-width: 767px) {
+  .page-wrap {
+    width: min(1280px, calc(100% - 1rem));
+  }
+  .display-title {
+    font-size: 1.75rem !important;
+  }
+  .island-shell {
+    padding: 1rem !important;
+  }
+  .glass-table th,
+  .glass-table td {
+    padding: 0.5rem 0.625rem !important;
+  }
+  .page-wrap > section,
+  .page-wrap > div:not(.not-mobile) {
+    scrollbar-width: thin;
+  }
+}
+
 html,
 body,
 #app {
@@ -160,8 +181,14 @@ pre code {
 }
 
 .page-wrap {
-  width: min(1280px, calc(100% - 2rem));
+  width: min(1280px, calc(100% - 1rem));
   margin-inline: auto;
+}
+
+@media (min-width: 640px) {
+  .page-wrap {
+    width: min(1280px, calc(100% - 2rem));
+  }
 }
 
 .glass-table {
@@ -219,6 +246,13 @@ pre code {
     0 22px 44px rgba(0, 0, 0, 0.3),
     0 6px 18px rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(4px);
+  padding: 1rem;
+}
+
+@media (min-width: 768px) {
+  .island-shell {
+    padding: 1.5rem;
+  }
 }
 
 .feature-card {

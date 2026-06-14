@@ -71,14 +71,15 @@ function StatsPage() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-4 md:mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--sea-ink)]">Stats</h1>
-          <p className="mt-1 text-sm text-[var(--sea-ink-soft)]">Manage About section stats.</p>
+          <h1 className="text-lg md:text-2xl font-bold text-[var(--sea-ink)]">Stats</h1>
+          <p className="mt-1 text-xs md:text-sm text-[var(--sea-ink-soft)]">Manage About section stats.</p>
         </div>
-        <Button onClick={openCreate}><Plus /> Add Stat</Button>
+        <Button size="xs" onClick={openCreate}><Plus className="size-4 md:size-5" /><span className="hidden md:inline"> Add Stat</span></Button>
       </div>
 
+      <div className="overflow-x-auto">
       <DataTable
         loading={isLoading}
         columns={[
@@ -99,19 +100,23 @@ function StatsPage() {
         totalPages={pag.totalPages}
         onPageChange={pag.setPage}
       />
+      </div>
 
       {showForm && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50">
-          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border bg-card p-6 shadow-lg">
-            <h2 className="mb-4 text-lg font-semibold">{editing ? 'Edit Stat' : 'Add Stat'}</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2">
+        <div className="fixed inset-0 z-40 flex items-end md:items-center justify-center bg-black/50">
+          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-t-2xl md:rounded-2xl border bg-card p-4 md:p-6 shadow-lg">
+            <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-sm md:text-lg font-semibold">{editing ? 'Edit Stat' : 'Add Stat'}</h2>
+            <Button type="button" size="xs" variant="ghost" onClick={closeForm} className="text-muted-foreground">✕</Button>
+          </div>
+            <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
+              <div className="grid gap-3 md:gap-4 sm:grid-cols-2">
                 <TextField label="Key" name="key" value={form.key} onChange={(v) => setForm({ ...form, key: v })} error={errors.key} />
                 <TextField label="Category" name="category" value={form.category} onChange={(v) => setForm({ ...form, category: v })} />
               </div>
               <TextField label="Value" name="value" value={form.value} onChange={(v) => setForm({ ...form, value: v })} error={errors.value} />
               <TextField label="Sub Value" name="subValue" value={form.subValue} onChange={(v) => setForm({ ...form, subValue: v })} />
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-3 md:gap-4 sm:grid-cols-2">
                 <TextField label="Icon" name="icon" value={form.icon} onChange={(v) => setForm({ ...form, icon: v })} />
                 <TextField label="Sort Order" name="sortOrder" value={String(form.sortOrder)} onChange={(v) => setForm({ ...form, sortOrder: Number(v) || 0 })} />
               </div>

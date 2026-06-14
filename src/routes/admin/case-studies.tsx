@@ -78,14 +78,15 @@ function CaseStudiesPage() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-4 md:mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--sea-ink)]">Case Studies</h1>
-          <p className="mt-1 text-sm text-[var(--sea-ink-soft)]">Manage detailed case studies for projects.</p>
+          <h1 className="text-lg md:text-2xl font-bold text-[var(--sea-ink)]">Case Studies</h1>
+          <p className="mt-1 text-xs md:text-sm text-[var(--sea-ink-soft)]">Manage detailed case studies for projects.</p>
         </div>
-        <Button onClick={openCreate}><Plus /> Create Case Study</Button>
+        <Button size="xs" onClick={openCreate}><Plus className="size-4 md:size-5" /><span className="hidden md:inline"> Create Case Study</span></Button>
       </div>
 
+      <div className="overflow-x-auto">
       <DataTable
         loading={isLoading}
         columns={[
@@ -103,12 +104,16 @@ function CaseStudiesPage() {
         totalPages={pag.totalPages}
         onPageChange={pag.setPage}
       />
+      </div>
 
       {showForm && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50">
-          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border bg-card p-6 shadow-lg">
-            <h2 className="mb-4 text-lg font-semibold">{editing ? 'Edit Case Study' : 'Create Case Study'}</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="fixed inset-0 z-40 flex items-end md:items-center justify-center bg-black/50">
+          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-t-2xl md:rounded-2xl border bg-card p-4 md:p-6 shadow-lg">
+            <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-sm md:text-lg font-semibold">{editing ? 'Edit Case Study' : 'Create Case Study'}</h2>
+            <Button type="button" size="xs" variant="ghost" onClick={closeForm} className="text-muted-foreground">✕</Button>
+          </div>
+            <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
               <TextField label="Project ID" name="projectId" value={form.projectId} onChange={(v) => setForm({ ...form, projectId: v })} error={errors.projectId} />
               <TextAreaField label="Content (Markdown)" name="contentMarkdown" value={form.contentMarkdown} onChange={(v) => setForm({ ...form, contentMarkdown: v })} rows={8} error={errors.contentMarkdown} />
               <GalleryUpload items={form.galleryJsonb} onChange={(items) => setForm({ ...form, galleryJsonb: items })} />

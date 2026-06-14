@@ -96,14 +96,15 @@ function SkillsPage() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-4 md:mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--sea-ink)]">Skills</h1>
-          <p className="mt-1 text-sm text-[var(--sea-ink-soft)]">Manage your skills.</p>
+          <h1 className="text-lg md:text-2xl font-bold text-[var(--sea-ink)]">Skills</h1>
+          <p className="mt-1 text-xs md:text-sm text-[var(--sea-ink-soft)]">Manage your skills.</p>
         </div>
-        <Button onClick={openCreate}><Plus /> Add Skill</Button>
+        <Button size="xs" onClick={openCreate}><Plus className="size-4 md:size-5" /><span className="hidden md:inline"> Add Skill</span></Button>
       </div>
 
+      <div className="overflow-x-auto">
       <DataTable
         loading={isLoading}
         columns={[
@@ -122,12 +123,16 @@ function SkillsPage() {
         totalPages={pag.totalPages}
         onPageChange={pag.setPage}
       />
+      </div>
 
       {showForm && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50">
-          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border bg-card p-6 shadow-lg">
-            <h2 className="mb-4 text-lg font-semibold">{editing ? 'Edit Skill' : 'Add Skill'}</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="fixed inset-0 z-40 flex items-end md:items-center justify-center bg-black/50">
+          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-t-2xl md:rounded-2xl border bg-card p-4 md:p-6 shadow-lg">
+            <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-sm md:text-lg font-semibold">{editing ? 'Edit Skill' : 'Add Skill'}</h2>
+            <Button type="button" size="xs" variant="ghost" onClick={closeForm} className="text-muted-foreground">✕</Button>
+          </div>
+            <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
               <TextField label="Skill Name" name="name" value={form.name} onChange={(v) => setForm({ ...form, name: v })} error={error} />
               <SelectField label="Category" name="category" value={form.category} onChange={(v) => setForm({ ...form, category: v })} options={categories} />
               <FileUpload label="Icon / Logo" value={form.iconUrl} onChange={(url) => setForm({ ...form, iconUrl: url })} accept="image/*" maxSizeMB={5} bucket="tech-stack" deferUpload pendingFile={pendingIcon} onPendingFile={setPendingIcon} />

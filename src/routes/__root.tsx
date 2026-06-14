@@ -56,11 +56,11 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 function NotFound() {
   return (
     <main className="page-wrap flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center px-4 py-12 text-center">
-      <h1 className="text-4xl font-bold text-[var(--sea-ink)]">404</h1>
-      <p className="mt-2 text-[var(--sea-ink-soft)]">Page not found.</p>
+      <h1 className="text-3xl font-bold text-[var(--sea-ink)] md:text-4xl">404</h1>
+      <p className="mt-2 text-xs text-[var(--sea-ink-soft)] md:text-sm">Page not found.</p>
       <Link
         to="/"
-        className="mt-6 inline-block rounded-full bg-[var(--sea-ink)] px-6 py-2 text-sm font-semibold text-white no-underline"
+        className="mt-4 inline-block rounded-full bg-[var(--sea-ink)] px-5 py-2 text-xs font-semibold text-[var(--sand)] no-underline md:mt-6 md:px-6 md:text-sm"
       >
         Go Home
       </Link>

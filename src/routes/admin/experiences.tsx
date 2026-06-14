@@ -107,14 +107,15 @@ function ExperiencesPage() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-4 md:mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--sea-ink)]">Experiences</h1>
-          <p className="mt-1 text-sm text-[var(--sea-ink-soft)]">Manage your career timeline.</p>
+          <h1 className="text-lg md:text-2xl font-bold text-[var(--sea-ink)]">Experiences</h1>
+          <p className="mt-1 text-xs md:text-sm text-[var(--sea-ink-soft)]">Manage your career timeline.</p>
         </div>
-        <Button onClick={openCreate}><Plus /> Add Experience</Button>
+        <Button size="xs" onClick={openCreate}><Plus className="size-4 md:size-5" /><span className="hidden md:inline"> Add Experience</span></Button>
       </div>
 
+      <div className="overflow-x-auto">
       <DataTable
         loading={isLoading}
         columns={[
@@ -135,17 +136,21 @@ function ExperiencesPage() {
         totalPages={pag.totalPages}
         onPageChange={pag.setPage}
       />
+      </div>
 
       {showForm && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50">
-          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border bg-card p-6 shadow-lg">
-            <h2 className="mb-4 text-lg font-semibold">{editing ? 'Edit Experience' : 'Add Experience'}</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2">
+        <div className="fixed inset-0 z-40 flex items-end md:items-center justify-center bg-black/50">
+          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-t-2xl md:rounded-2xl border bg-card p-4 md:p-6 shadow-lg">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-sm md:text-lg font-semibold">{editing ? 'Edit Experience' : 'Add Experience'}</h2>
+              <Button type="button" size="xs" variant="ghost" onClick={closeForm} className="text-muted-foreground">✕</Button>
+            </div>
+            <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
+              <div className="grid gap-3 md:gap-4 sm:grid-cols-2">
                 <TextField label="Organization" name="orgName" value={form.orgName} onChange={(v) => setForm({ ...form, orgName: v })} error={errors.orgName} />
                 <TextField label="Role" name="role" value={form.role} onChange={(v) => setForm({ ...form, role: v })} error={errors.role} />
               </div>
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-3 md:gap-4 sm:grid-cols-2">
                 <DateField label="Start Date" name="startDate" value={form.startDate} onChange={(v) => setForm({ ...form, startDate: v })} error={errors.startDate} />
                 <DateField label="End Date" name="endDate" value={form.endDate} onChange={(v) => setForm({ ...form, endDate: v })} placeholder={form.endDate ? 'Pick a date' : 'Leave empty if current'} />
               </div>

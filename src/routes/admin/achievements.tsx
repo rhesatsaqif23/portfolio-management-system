@@ -71,14 +71,15 @@ function AchievementsPage() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-4 md:mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--sea-ink)]">Achievements</h1>
-          <p className="mt-1 text-sm text-[var(--sea-ink-soft)]">Manage your achievements.</p>
+          <h1 className="text-lg md:text-2xl font-bold text-[var(--sea-ink)]">Achievements</h1>
+          <p className="mt-1 text-xs md:text-sm text-[var(--sea-ink-soft)]">Manage your achievements.</p>
         </div>
-        <Button onClick={openCreate}><Plus /> Add Achievement</Button>
+        <Button size="xs" onClick={openCreate}><Plus className="size-4 md:size-5" /><span className="hidden md:inline"> Add Achievement</span></Button>
       </div>
 
+      <div className="overflow-x-auto">
       <DataTable
         loading={isLoading}
         columns={[
@@ -98,18 +99,22 @@ function AchievementsPage() {
         totalPages={pag.totalPages}
         onPageChange={pag.setPage}
       />
+      </div>
 
       {showForm && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50">
-          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border bg-card p-6 shadow-lg">
-            <h2 className="mb-4 text-lg font-semibold">{editing ? 'Edit Achievement' : 'Add Achievement'}</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="fixed inset-0 z-40 flex items-end md:items-center justify-center bg-black/50">
+          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-t-2xl md:rounded-2xl border bg-card p-4 md:p-6 shadow-lg">
+            <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-sm md:text-lg font-semibold">{editing ? 'Edit Achievement' : 'Add Achievement'}</h2>
+            <Button type="button" size="xs" variant="ghost" onClick={closeForm} className="text-muted-foreground">✕</Button>
+          </div>
+            <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
               <TextField label="Title" name="title" value={form.title} onChange={(v) => setForm({ ...form, title: v })} error={errors.title} />
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-3 md:gap-4 sm:grid-cols-2">
                 <TextField label="Event Name" name="eventName" value={form.eventName} onChange={(v) => setForm({ ...form, eventName: v })} />
                 <TextField label="Organizer" name="organizer" value={form.organizer} onChange={(v) => setForm({ ...form, organizer: v })} />
               </div>
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-3 md:gap-4 sm:grid-cols-2">
                 <TextField label="Date" name="date" value={form.date} onChange={(v) => setForm({ ...form, date: v })} error={errors.date} placeholder="YYYY-MM-DD" />
                 <TextField label="Sort Order" name="sortOrder" value={String(form.sortOrder)} onChange={(v) => setForm({ ...form, sortOrder: Number(v) || 0 })} />
               </div>
