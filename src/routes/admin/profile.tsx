@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState, useEffect } from 'react'
 import { TextField, TextAreaField, FileUpload } from '#/components/forms'
 import { Skeleton } from '#/components/ui/skeleton'
+import { Input } from '#/components/ui/input'
 import { Button } from '#/components/ui/button'
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction, AlertDialogMedia } from '#/components/ui/alert-dialog'
 import { toast } from '#/components/ui/sonner'
@@ -198,8 +199,8 @@ function ProfilePage() {
         <div className="space-y-2">
           <label className="text-xs font-medium md:text-sm">Roles (for typing animation)</label>
           {form.currentRoles.map((role, i) => (
-            <div key={i} className="flex gap-2">
-              <input value={role} onChange={(e) => updateRole(i, e.target.value)} placeholder="e.g. Full Stack Developer" className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1.5 text-xs shadow-xs focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 md:h-10 md:text-sm" />
+            <div key={i} className="flex items-center gap-2">
+              <Input value={role} onChange={(e) => updateRole(i, e.target.value)} placeholder="e.g. Full Stack Developer" />
               {form.currentRoles.length > 1 && (
                 <Button type="button" size="xs" variant="destructive" onClick={() => removeRole(i)}>X</Button>
               )}

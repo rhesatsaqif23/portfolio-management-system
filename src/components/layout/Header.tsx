@@ -21,7 +21,7 @@ export default function Header() {
   )
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--header-bg)] px-3 backdrop-blur-lg sm:px-4">
+    <header className="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--header-bg)] px-3 sm:px-4">
       <nav className="page-wrap flex items-center py-2 sm:py-4">
         <h2 className="flex-shrink-0">
           <Link
@@ -33,17 +33,17 @@ export default function Header() {
           </Link>
         </h2>
 
-        <div className="hidden flex-1 items-center justify-center gap-x-5 text-sm font-semibold md:flex">
+        <div className="hidden flex-1 items-center justify-center gap-x-5 text-sm font-semibold lg:flex">
           {navLinks}
           <SignedOut>
             <Link to="/" className="nav-link text-white" activeProps={{ className: 'nav-link is-active text-white' }}>Home</Link>
           </SignedOut>
         </div>
 
-        <div className="flex flex-1 items-center justify-end gap-1.5 sm:gap-2 md:flex-none">
+        <div className="flex flex-1 items-center justify-end gap-1.5 sm:gap-2 lg:flex-none">
           <ClerkHeader />
           <button
-            className="ml-1 flex items-center justify-center rounded-lg p-1.5 text-white transition hover:bg-[var(--link-bg-hover)] md:hidden"
+            className="ml-1 flex items-center justify-center rounded-lg p-1.5 text-white transition hover:bg-[var(--link-bg-hover)] lg:hidden"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle navigation menu"
           >
@@ -53,11 +53,14 @@ export default function Header() {
       </nav>
 
       {menuOpen && (
-        <div className="border-t border-[var(--line)] bg-[var(--header-bg)] backdrop-blur-lg md:hidden">
-          <div className="page-wrap flex flex-col gap-1 px-3 py-3 text-sm font-semibold">
-            {navLinks}
+        <>
+          <div className="fixed inset-0 z-40 bg-black/50 lg:hidden" onClick={() => setMenuOpen(false)} />
+          <div className="absolute left-0 right-0 top-full z-40 border-t border-[var(--line)] bg-[var(--bg-base)] lg:hidden">
+            <div className="flex flex-col gap-3 px-3 py-3 text-sm font-semibold">
+              {navLinks}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </header>
   )

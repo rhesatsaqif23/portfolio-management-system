@@ -94,24 +94,24 @@ export function FileUpload({
   const fileName = value ? value.split('/').pop() : (pendingFile ? pendingFile.name : null)
 
   return (
-    <div className="space-y-2">
+    <div className="w-full min-w-0 space-y-2">
       <label className="text-sm font-medium">{label}</label>
       {(displayUrl && !pendingFile) || previewUrl ? (
-        <div className="flex items-center gap-2 rounded-md border bg-muted/30 px-3 py-2 text-sm">
+        <div className="flex w-full min-w-0 items-center gap-2 overflow-hidden rounded-md border bg-muted/30 px-3 py-2 text-sm">
           {isImage ? (
             <Image className="size-4 shrink-0 text-primary" />
           ) : (
             <FileText className="size-4 shrink-0 text-primary" />
           )}
-          <span className="flex-1 truncate">{fileName}</span>
+          <span className="flex-1 truncate min-w-0">{fileName}</span>
           {!previewUrl && value && (
-            <a href={value} target="_blank" rel="noreferrer" className="text-xs text-primary underline underline-offset-2">View</a>
+            <a href={value} target="_blank" rel="noreferrer" className="text-xs text-primary underline underline-offset-2 shrink-0">View</a>
           )}
-          {previewUrl && <span className="text-xs text-muted-foreground">(pending)</span>}
+          {previewUrl && <span className="text-xs text-muted-foreground shrink-0">(pending)</span>}
           <button type="button" onClick={remove} className="shrink-0 text-muted-foreground hover:text-destructive"><X className="size-4" /></button>
         </div>
       ) : (
-        <div className="flex items-center gap-2">
+        <div className="flex w-full min-w-0 items-center gap-2 overflow-hidden">
           <Button type="button" variant="outline" size="sm" disabled={uploading} onClick={() => ref.current?.click()}>
             {uploading ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />}
             {uploading ? 'Uploading...' : `Choose ${accept === 'image/*' || accept.startsWith('image/') ? 'Image' : 'File'}`}

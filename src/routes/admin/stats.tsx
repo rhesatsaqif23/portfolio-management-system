@@ -84,14 +84,14 @@ function StatsPage() {
         loading={isLoading}
         columns={[
           { key: 'key' as keyof Stat, header: 'Key' },
-          { key: 'value' as keyof Stat, header: 'Value' },
+          { key: 'value' as keyof Stat, header: 'Value', render: (v) => <span className="line-clamp-2">{String(v)}</span> },
           { key: 'category' as keyof Stat, header: 'Category' },
-          { key: 'subValue' as keyof Stat, header: 'Sub Value' },
+          { key: 'subValue' as keyof Stat, header: 'Sub Value', render: (v) => <span className="line-clamp-2">{String(v ?? '')}</span> },
           { key: 'sortOrder' as keyof Stat, header: 'Order' },
           { key: 'id' as keyof Stat, header: 'Actions', render: (_, r) => (
             <div className="flex gap-2">
-              <Button size="sm" variant="outline" onClick={() => openEdit(r)}>Edit</Button>
-              <Button size="sm" variant="destructive" onClick={() => setConfirm({ type: 'delete', id: r.id })}>Delete</Button>
+              <Button size="xs" variant="outline" onClick={() => openEdit(r)}>Edit</Button>
+              <Button size="xs" variant="destructive" onClick={() => setConfirm({ type: 'delete', id: r.id })}>Delete</Button>
             </div>
           )},
         ]}

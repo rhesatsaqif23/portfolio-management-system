@@ -119,15 +119,15 @@ function ExperiencesPage() {
       <DataTable
         loading={isLoading}
         columns={[
-          { key: 'orgName' as keyof Experience, header: 'Organization' },
-          { key: 'role' as keyof Experience, header: 'Role' },
+          { key: 'orgName' as keyof Experience, header: 'Organization', render: (v) => <span className="line-clamp-2">{String(v)}</span> },
+          { key: 'role' as keyof Experience, header: 'Role', render: (v) => <span className="line-clamp-2">{String(v)}</span> },
           { key: 'type' as keyof Experience, header: 'Type' },
           { key: 'startDate' as keyof Experience, header: 'Start' },
           { key: 'endDate' as keyof Experience, header: 'End', render: (v) => <span>{String(v || 'Present')}</span> },
           { key: 'id' as keyof Experience, header: 'Actions', render: (_, r) => (
             <div className="flex gap-2">
-              <Button size="sm" variant="outline" onClick={() => openEdit(r)}>Edit</Button>
-              <Button size="sm" variant="destructive" onClick={() => setConfirm({ type: 'delete', id: r.id })}>Delete</Button>
+              <Button size="xs" variant="outline" onClick={() => openEdit(r)}>Edit</Button>
+              <Button size="xs" variant="destructive" onClick={() => setConfirm({ type: 'delete', id: r.id })}>Delete</Button>
             </div>
           )},
         ]}
@@ -158,8 +158,8 @@ function ExperiencesPage() {
               <div className="space-y-2">
                 <label className="text-sm font-medium">Key Points</label>
                 {form.description.map((point, i) => (
-                  <div key={i} className="flex gap-2">
-                    <input value={point} onChange={(e) => updateDescription(i, e.target.value)} placeholder="• Bullet point" className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50" />
+                  <div key={i} className="flex items-center gap-2">
+                    <input value={point} onChange={(e) => updateDescription(i, e.target.value)} placeholder="• Bullet point" className="h-9 w-full min-w-0 rounded-md border border-input bg-[var(--card)]/50 px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 md:text-sm dark:bg-input/30" />
                     {form.description.length > 1 && (
                       <Button type="button" size="xs" variant="destructive" onClick={() => removeDescription(i)}>X</Button>
                     )}

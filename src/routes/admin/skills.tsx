@@ -108,13 +108,14 @@ function SkillsPage() {
       <DataTable
         loading={isLoading}
         columns={[
-          { key: 'name' as keyof Skill, header: 'Name' },
-          { key: 'category' as keyof Skill, header: 'Category', render: (v) => <Badge variant="secondary">{String(v)}</Badge> },
-          { key: 'sortOrder' as keyof Skill, header: 'Order' },
+          { key: 'name' as keyof Skill, header: 'Name', width: '28%' },
+          { key: 'category' as keyof Skill, header: 'Category', width: '20%', render: (v) => <Badge variant="secondary">{String(v)}</Badge> },
+          { key: 'iconUrl' as keyof Skill, header: 'Icon', width: '26%', render: (v) => v ? <span className="truncate block text-xs">{String(v).split('/').pop()}</span> : <span className="text-xs text-muted-foreground">—</span> },
+          { key: 'sortOrder' as keyof Skill, header: 'Order', width: '8%' },
           { key: 'id' as keyof Skill, header: 'Actions', render: (_, r) => (
             <div className="flex gap-2">
-              <Button size="sm" variant="outline" onClick={() => openEdit(r)}>Edit</Button>
-              <Button size="sm" variant="destructive" onClick={() => setConfirm({ type: 'delete', id: r.id })}>Delete</Button>
+              <Button size="xs" variant="outline" onClick={() => openEdit(r)}>Edit</Button>
+              <Button size="xs" variant="destructive" onClick={() => setConfirm({ type: 'delete', id: r.id })}>Delete</Button>
             </div>
           )},
         ]}

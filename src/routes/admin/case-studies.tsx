@@ -91,11 +91,11 @@ function CaseStudiesPage() {
         loading={isLoading}
         columns={[
           { key: 'projectId' as keyof CaseStudy, header: 'Project ID' },
-          { key: 'contentMarkdown' as keyof CaseStudy, header: 'Content', render: (v) => <span className="line-clamp-2 max-w-xs">{String(v).slice(0, 120)}{String(v).length > 120 ? '...' : ''}</span> },
+          { key: 'contentMarkdown' as keyof CaseStudy, header: 'Content', render: (v) => <span className="line-clamp-2">{String(v).slice(0, 120)}{String(v).length > 120 ? '...' : ''}</span> },
           { key: 'id' as keyof CaseStudy, header: 'Actions', render: (_, r) => (
             <div className="flex gap-2">
-              <Button size="sm" variant="outline" onClick={() => openEdit(r)}>Edit</Button>
-              <Button size="sm" variant="destructive" onClick={() => setConfirm({ type: 'delete', id: r.id })}>Delete</Button>
+              <Button size="xs" variant="outline" onClick={() => openEdit(r)}>Edit</Button>
+              <Button size="xs" variant="destructive" onClick={() => setConfirm({ type: 'delete', id: r.id })}>Delete</Button>
             </div>
           )},
         ]}

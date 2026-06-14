@@ -89,8 +89,8 @@ function AchievementsPage() {
           { key: 'date' as keyof Achievement, header: 'Date' },
           { key: 'id' as keyof Achievement, header: 'Actions', render: (_, r) => (
             <div className="flex gap-2">
-              <Button size="sm" variant="outline" onClick={() => openEdit(r)}>Edit</Button>
-              <Button size="sm" variant="destructive" onClick={() => setConfirm({ type: 'delete', id: r.id })}>Delete</Button>
+              <Button size="xs" variant="outline" onClick={() => openEdit(r)}>Edit</Button>
+              <Button size="xs" variant="destructive" onClick={() => setConfirm({ type: 'delete', id: r.id })}>Delete</Button>
             </div>
           )},
         ]}

@@ -107,18 +107,22 @@
   .page-wrap {
     width: min(1280px, calc(100% - 1rem));
   }
+
   .display-title {
     font-size: 1.75rem !important;
   }
+
   .island-shell {
     padding: 1rem !important;
   }
+
   .glass-table th,
   .glass-table td {
     padding: 0.5rem 0.625rem !important;
   }
-  .page-wrap > section,
-  .page-wrap > div:not(.not-mobile) {
+
+  .page-wrap>section,
+  .page-wrap>div:not(.not-mobile) {
     scrollbar-width: thin;
   }
 }
@@ -197,8 +201,6 @@ pre code {
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 .glass-table table {
@@ -209,20 +211,18 @@ pre code {
 
 .glass-table th,
 .glass-table td {
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 @media (min-width: 1280px) {
-  .glass-table {
-    overflow-x: visible;
-  }
   .glass-table table {
     min-width: 0;
     table-layout: auto;
   }
+
   .glass-table th,
   .glass-table td {
-    white-space: normal;
     overflow-wrap: break-word;
   }
 }
@@ -319,43 +319,31 @@ a {
 .nav-link::after {
   content: '';
   position: absolute;
-  left: 50%;
+  left: 0;
   bottom: -4px;
-  width: 60%;
+  width: 20%;
   height: 2px;
-  transform: translateX(-50%) scaleX(0);
-  transform-origin: center;
   background: linear-gradient(90deg, var(--lagoon), var(--palm));
-  transition: transform 170ms ease;
   border-radius: 1px;
+  transition: opacity 170ms ease;
+  opacity: 0;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .nav-link::after {
     bottom: -8px;
     width: 100%;
-    transform: scaleX(0);
-    transform-origin: left;
-  }
-  .nav-link:hover::after,
-  .nav-link.is-active::after {
-    transform: scaleX(1);
   }
 }
 
 .nav-link:hover::after,
 .nav-link.is-active::after {
-  transform: translateX(-50%) scaleX(1);
+  opacity: 1;
 }
 
 .nav-link:hover,
 .nav-link.is-active {
   color: var(--sea-ink);
-}
-
-.nav-link:hover::after,
-.nav-link.is-active::after {
-  transform: scaleX(1);
 }
 
 .rise-in {
@@ -367,6 +355,7 @@ a {
     opacity: 0;
     transform: translateY(12px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -378,14 +367,38 @@ a {
   background: color-mix(in oklab, var(--header-bg) 84%, transparent 16%);
 }
 
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--lagoon-deep);
+}
+
+@supports (scrollbar-color: auto) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) transparent;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     background-color: var(--background);
     color: var(--foreground);
   }
 }
-
-

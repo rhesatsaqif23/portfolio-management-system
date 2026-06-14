@@ -57,12 +57,12 @@ export function GalleryUpload({ items, onChange, maxItems = 10, bucket = 'case-s
             <div className="flex items-center justify-center overflow-hidden bg-muted">
               <img src={item.url} alt={`Screenshot ${i + 1}`} className="h-auto w-full object-cover" />
             </div>
-            <div className="flex gap-2 p-2">
+            <div className="flex items-center gap-2 p-2">
               <input
                 value={item.caption}
                 onChange={(e) => updateCaption(i, e.target.value)}
                 placeholder="Caption..."
-                className="flex h-8 w-full rounded border border-input bg-transparent px-2 text-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                className="flex h-8 w-full min-w-0 rounded border border-input bg-background px-2 text-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
               />
               <button type="button" onClick={() => removeItem(i)} className="shrink-0 text-muted-foreground hover:text-destructive" title="Remove">
                 <X className="size-4" />

@@ -47,16 +47,18 @@ function AlertDialogContent({
   return (
     <AlertDialogPortal>
       <AlertDialogOverlay />
-      <AlertDialogPrimitive.Content
-        data-slot="alert-dialog-content"
-        className={cn(
-          "fixed top-1/2 left-1/2 z-[9999] grid w-full -translate-x-1/2 -translate-y-1/2 gap-4 border bg-background p-6 shadow-lg sm:rounded-xl",
-          size === "default" && "max-w-lg",
-          size === "sm" && "max-w-sm",
-          className
-        )}
-        {...props}
-      />
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+        <AlertDialogPrimitive.Content
+          data-slot="alert-dialog-content"
+          className={cn(
+            "grid w-full gap-4 border bg-background p-6 shadow-lg sm:rounded-xl",
+            size === "default" && "max-w-lg",
+            size === "sm" && "max-w-sm",
+            className
+          )}
+          {...props}
+        />
+      </div>
     </AlertDialogPortal>
   )
 }

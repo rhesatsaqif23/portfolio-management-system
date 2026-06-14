@@ -91,14 +91,14 @@ function AdminShell() {
 
   return (
     <div className="flex min-h-[calc(100vh-8rem)]">
-      <aside className={`fixed bottom-0 left-0 top-16 z-30 w-48 border-r border-[var(--line)] bg-[var(--card)] p-4 transition-transform duration-200 md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:static md:block`}>
-        <div className="mb-2 flex items-center justify-between md:hidden">
+      <aside className={`fixed bottom-0 left-0 top-12 z-30 w-64 border-r border-[var(--line)] bg-[var(--card)] p-4 transition-transform duration-200 lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:block lg:w-52 xl:w-64`}>
+        <div className=" py-4 flex items-center justify-between lg:hidden">
           <span className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">Navigation</span>
           <button onClick={() => setSidebarOpen(false)} className="rounded p-1 text-white hover:bg-[var(--link-bg-hover)]">
             <PanelLeftClose className="size-4" />
           </button>
         </div>
-        <nav className="space-y-1">
+        <nav className="space-y-2 lg:py-4">
           {sidebarLinks.map((link) => (
             <SidebarLink key={link.to} to={link.to} label={link.label} icon={link.icon} onClick={() => setSidebarOpen(false)} />
           ))}
@@ -106,39 +106,39 @@ function AdminShell() {
       </aside>
 
       {sidebarOpen && (
-        <div className="fixed inset-0 z-20 bg-black/50 md:hidden" onClick={() => setSidebarOpen(false)} />
+        <div className="fixed inset-0 z-20 bg-black/50 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
-      <main className="flex-1 overflow-auto md:ml-48">
-        <div className="flex items-center justify-between border-b border-[var(--line)] px-4 py-2 md:px-6 md:py-3">
+      <main className="flex-1 overflow-auto lg:ml-52 xl:ml-64 pb-20 lg:pb-0">
+        <div className="flex items-center justify-between border-b border-[var(--line)] px-4 py-2 lg:px-12 lg:py-3">
           <div className="flex items-center gap-2">
             <button
-              className="rounded p-1 text-white hover:bg-[var(--link-bg-hover)] md:hidden"
+              className="rounded p-1 text-white hover:bg-[var(--link-bg-hover)] lg:hidden"
               onClick={() => setSidebarOpen(true)}
               aria-label="Open sidebar"
             >
               <PanelLeft className="size-4" />
             </button>
-            <h2 className="text-xs font-semibold text-white md:text-sm">
+            <h2 className="text-xs font-semibold text-white lg:text-sm">
               Welcome, {user?.fullName || user?.primaryEmailAddress?.emailAddress || 'User'}
             </h2>
           </div>
         </div>
-        <div className="p-4 md:p-6">
+        <div className="p-4 lg:px-12 lg:py-6">
           <Outlet />
         </div>
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-30 flex items-center gap-1 overflow-x-auto border-t border-[var(--line)] bg-[var(--card)] px-2 py-1 md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-30 flex items-center justify-between border-t border-[var(--line)] bg-[var(--card)] px-2 py-5 lg:hidden">
         {sidebarLinks.map((link) => (
           <Link
             key={link.to}
             to={link.to}
-            className="flex shrink-0 flex-col items-center gap-0.5 px-2 py-1 text-[10px] text-white no-underline transition hover:text-[var(--lagoon)]"
-            activeProps={{ className: 'flex shrink-0 flex-col items-center gap-0.5 px-2 py-1 text-[10px] no-underline text-[var(--lagoon)]' }}
+            className="flex flex-1 flex-col items-center justify-center gap-1 text-[10px] text-white no-underline transition hover:text-[var(--lagoon)]"
+            activeProps={{ className: 'flex flex-1 flex-col items-center justify-center gap-1 text-[10px] no-underline text-[var(--lagoon)]' }}
           >
-            <link.icon className="size-4" />
-            <span>{link.label}</span>
+            <link.icon className="size-5" />
+            <span className="hidden sm:inline">{link.label}</span>
           </Link>
         ))}
       </nav>
@@ -151,8 +151,8 @@ function SidebarLink({ to, label, icon: Icon, onClick }: { to: string; label: st
     <Link
       to={to}
       onClick={onClick}
-      className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-white no-underline transition hover:bg-[var(--link-bg-hover)]"
-      activeProps={{ className: 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm no-underline bg-[var(--link-bg-hover)] text-white font-semibold' }}
+      className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm text-white no-underline transition hover:bg-[var(--link-bg-hover)]"
+      activeProps={{ className: 'flex items-center gap-3 rounded-lg px-3 py-3 text-sm no-underline bg-[var(--link-bg-hover)] text-white font-semibold' }}
     >
       <Icon className="size-4" />
       <span>{label}</span>

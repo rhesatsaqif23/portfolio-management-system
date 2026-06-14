@@ -7,6 +7,7 @@ type Column<T> = {
   key: keyof T
   header: string
   render?: (value: T[keyof T], row: T) => React.ReactNode
+  width?: string
 }
 
 type DataTableProps<T> = {
@@ -40,46 +41,48 @@ function SkeletonTable({ columns }: { columns: Column<Record<string, unknown>>[]
 export default function DataTable<T extends Record<string, unknown>>({ columns, data, loading, onRowClick, page, totalPages, onPageChange }: DataTableProps<T>) {
   return (
     <div className="glass-table">
-      <table className="w-full text-sm">
-        <thead>
-          <tr>
-            {columns.map((col) => (
-              <th key={String(col.key)}>
-                {col.header}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {loading ? (
-            <SkeletonTable columns={columns as Column<Record<string, unknown>>[]} />
-          ) : (
-            data.map((row, i) => (
-              <tr
-                key={i}
-                onClick={() => onRowClick?.(row)}
-                className={cn(
-                  'cursor-pointer transition',
-                  onRowClick && 'cursor-pointer',
-                )}
-              >
-                {columns.map((col) => (
-                  <td key={String(col.key)}>
-                    {col.render ? col.render(row[col.key], row) : String(row[col.key] ?? '')}
-                  </td>
-                ))}
-              </tr>
-            ))
-          )}
-          {!loading && data.length === 0 && (
+      <div className="max-xl:overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
             <tr>
-              <td colSpan={columns.length} className="px-4 py-8 text-center text-[var(--muted-foreground)]">
-                No data available
-              </td>
+              {columns.map((col) => (
+                <th key={String(col.key)} style={col.width ? { width: col.width } : undefined}>
+                  {col.header}
+                </th>
+              ))}
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {loading ? (
+              <SkeletonTable columns={columns as Column<Record<string, unknown>>[]} />
+            ) : (
+              data.map((row, i) => (
+                <tr
+                  key={i}
+                  onClick={() => onRowClick?.(row)}
+                  className={cn(
+                    'cursor-pointer transition',
+                    onRowClick && 'cursor-pointer',
+                  )}
+                >
+                  {columns.map((col) => (
+                    <td key={String(col.key)}>
+                      {col.render ? col.render(row[col.key], row) : String(row[col.key] ?? '')}
+                    </td>
+                  ))}
+                </tr>
+              ))
+            )}
+            {!loading && data.length === 0 && (
+              <tr>
+                <td colSpan={columns.length} className="px-4 py-8 text-center text-[var(--muted-foreground)]">
+                  No data available
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
       {page !== undefined && totalPages !== undefined && onPageChange && (
         <Pagination page={page} totalPages={totalPages} onPageChange={onPageChange} />
       )}

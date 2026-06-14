@@ -149,14 +149,14 @@ function ProjectsPage() {
         loading={isLoading}
         columns={[
           { key: 'title' as keyof Project, header: 'Title' },
-          { key: 'descriptionShort' as keyof Project, header: 'Description', render: (v) => <span className="line-clamp-2 max-w-[120px] md:max-w-xs">{String(v ?? '')}</span> },
-          { key: 'isFeatured' as keyof Project, header: 'Featured', render: (v) => <Badge variant={v ? 'default' : 'outline'}>{v ? 'Featured' : 'No'}</Badge> },
-          { key: 'category' as keyof Project, header: 'Category' },
+          { key: 'descriptionShort' as keyof Project, header: 'Description', render: (v) => <span className="line-clamp-2">{String(v ?? '')}</span> },
+          { key: 'isFeatured' as keyof Project, header: 'Featured', width: '90px', render: (v) => <Badge variant={v ? 'default' : 'outline'}>{v ? 'Featured' : 'No'}</Badge> },
+          { key: 'category' as keyof Project, header: 'Category', width: '120px' },
           { key: 'sortOrder' as keyof Project, header: 'Order' },
           { key: 'id' as keyof Project, header: 'Actions', render: (_, r) => (
             <div className="flex gap-1 md:gap-2">
-              <Button size="sm" variant="outline" onClick={() => openEdit(r)}>Edit</Button>
-              <Button size="sm" variant="destructive" onClick={() => setConfirm({ type: 'delete', id: r.id })}>Delete</Button>
+              <Button size="xs" variant="outline" onClick={() => openEdit(r)}>Edit</Button>
+              <Button size="xs" variant="destructive" onClick={() => setConfirm({ type: 'delete', id: r.id })}>Delete</Button>
             </div>
           )},
         ]}
