@@ -83,7 +83,7 @@ function CaseStudiesPage() {
           <h1 className="text-lg md:text-2xl font-bold text-[var(--sea-ink)]">Case Studies</h1>
           <p className="mt-1 text-xs md:text-sm text-[var(--sea-ink-soft)]">Manage detailed case studies for projects.</p>
         </div>
-        <Button size="xs" onClick={openCreate}><Plus className="size-4 md:size-5" /><span className="hidden md:inline"> Create Case Study</span></Button>
+        <Button size="sm" onClick={openCreate}><Plus className="size-4 md:size-5" /><span className="md:inline"> Create Case Study</span></Button>
       </div>
 
       <div className="overflow-x-auto">
@@ -94,8 +94,8 @@ function CaseStudiesPage() {
           { key: 'contentMarkdown' as keyof CaseStudy, header: 'Content', render: (v) => <span className="line-clamp-2 max-w-xs">{String(v).slice(0, 120)}{String(v).length > 120 ? '...' : ''}</span> },
           { key: 'id' as keyof CaseStudy, header: 'Actions', render: (_, r) => (
             <div className="flex gap-2">
-              <Button size="xs" variant="outline" onClick={() => openEdit(r)}>Edit</Button>
-              <Button size="xs" variant="destructive" onClick={() => setConfirm({ type: 'delete', id: r.id })}>Delete</Button>
+              <Button size="sm" variant="outline" onClick={() => openEdit(r)}>Edit</Button>
+              <Button size="sm" variant="destructive" onClick={() => setConfirm({ type: 'delete', id: r.id })}>Delete</Button>
             </div>
           )},
         ]}

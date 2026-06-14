@@ -141,7 +141,7 @@ function ProjectsPage() {
           <h1 className="text-lg font-bold text-[var(--sea-ink)] md:text-2xl">Projects</h1>
           <p className="mt-1 text-xs text-[var(--sea-ink-soft)] md:text-sm">Manage your portfolio projects.</p>
         </div>
-        <Button onClick={openCreate} size="xs"><Plus className="size-3 md:size-4" /> Create</Button>
+        <Button onClick={openCreate} size="sm"><Plus className="size-3 md:size-4" /> Create</Button>
       </div>
 
       <div className="overflow-x-auto">
@@ -155,8 +155,8 @@ function ProjectsPage() {
           { key: 'sortOrder' as keyof Project, header: 'Order' },
           { key: 'id' as keyof Project, header: 'Actions', render: (_, r) => (
             <div className="flex gap-1 md:gap-2">
-              <Button size="xs" variant="outline" onClick={() => openEdit(r)}>Edit</Button>
-              <Button size="xs" variant="destructive" onClick={() => setConfirm({ type: 'delete', id: r.id })}>Delete</Button>
+              <Button size="sm" variant="outline" onClick={() => openEdit(r)}>Edit</Button>
+              <Button size="sm" variant="destructive" onClick={() => setConfirm({ type: 'delete', id: r.id })}>Delete</Button>
             </div>
           )},
         ]}

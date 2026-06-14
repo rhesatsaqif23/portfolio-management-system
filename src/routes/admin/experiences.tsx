@@ -112,7 +112,7 @@ function ExperiencesPage() {
           <h1 className="text-lg md:text-2xl font-bold text-[var(--sea-ink)]">Experiences</h1>
           <p className="mt-1 text-xs md:text-sm text-[var(--sea-ink-soft)]">Manage your career timeline.</p>
         </div>
-        <Button size="xs" onClick={openCreate}><Plus className="size-4 md:size-5" /><span className="hidden md:inline"> Add Experience</span></Button>
+        <Button size="sm" onClick={openCreate}><Plus className="size-4 md:size-5" /><span className="md:inline"> Add Experience</span></Button>
       </div>
 
       <div className="overflow-x-auto">
@@ -126,8 +126,8 @@ function ExperiencesPage() {
           { key: 'endDate' as keyof Experience, header: 'End', render: (v) => <span>{String(v || 'Present')}</span> },
           { key: 'id' as keyof Experience, header: 'Actions', render: (_, r) => (
             <div className="flex gap-2">
-              <Button size="xs" variant="outline" onClick={() => openEdit(r)}>Edit</Button>
-              <Button size="xs" variant="destructive" onClick={() => setConfirm({ type: 'delete', id: r.id })}>Delete</Button>
+              <Button size="sm" variant="outline" onClick={() => openEdit(r)}>Edit</Button>
+              <Button size="sm" variant="destructive" onClick={() => setConfirm({ type: 'delete', id: r.id })}>Delete</Button>
             </div>
           )},
         ]}

@@ -197,7 +197,19 @@ pre code {
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  overflow: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.glass-table table {
+  min-width: max-content;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.glass-table th,
+.glass-table td {
+  white-space: nowrap;
 }
 
 .glass-table table {
@@ -292,14 +304,33 @@ a {
 .nav-link::after {
   content: '';
   position: absolute;
-  left: 0;
-  bottom: -8px;
-  width: 100%;
+  left: 50%;
+  bottom: -4px;
+  width: 60%;
   height: 2px;
-  transform: scaleX(0);
-  transform-origin: left;
+  transform: translateX(-50%) scaleX(0);
+  transform-origin: center;
   background: linear-gradient(90deg, var(--lagoon), var(--palm));
   transition: transform 170ms ease;
+  border-radius: 1px;
+}
+
+@media (min-width: 768px) {
+  .nav-link::after {
+    bottom: -8px;
+    width: 100%;
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  .nav-link:hover::after,
+  .nav-link.is-active::after {
+    transform: scaleX(1);
+  }
+}
+
+.nav-link:hover::after,
+.nav-link.is-active::after {
+  transform: translateX(-50%) scaleX(1);
 }
 
 .nav-link:hover,

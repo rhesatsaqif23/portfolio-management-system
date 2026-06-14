@@ -129,13 +129,13 @@ function AdminShell() {
         </div>
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-30 flex items-center justify-around border-t border-[var(--line)] bg-[var(--card)] py-1 md:hidden">
-        {sidebarLinks.slice(0, 5).map((link) => (
+      <nav className="fixed bottom-0 left-0 right-0 z-30 flex items-center gap-1 overflow-x-auto border-t border-[var(--line)] bg-[var(--card)] px-2 py-1 md:hidden">
+        {sidebarLinks.map((link) => (
           <Link
             key={link.to}
             to={link.to}
-            className="flex flex-col items-center gap-0.5 px-2 py-1 text-[10px] text-white no-underline transition hover:text-[var(--lagoon)]"
-            activeProps={{ className: 'flex flex-col items-center gap-0.5 px-2 py-1 text-[10px] no-underline text-[var(--lagoon)]' }}
+            className="flex shrink-0 flex-col items-center gap-0.5 px-2 py-1 text-[10px] text-white no-underline transition hover:text-[var(--lagoon)]"
+            activeProps={{ className: 'flex shrink-0 flex-col items-center gap-0.5 px-2 py-1 text-[10px] no-underline text-[var(--lagoon)]' }}
           >
             <link.icon className="size-4" />
             <span>{link.label}</span>
@@ -155,7 +155,7 @@ function SidebarLink({ to, label, icon: Icon, onClick }: { to: string; label: st
       activeProps={{ className: 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm no-underline bg-[var(--link-bg-hover)] text-white font-semibold' }}
     >
       <Icon className="size-4" />
-      <span className="hidden md:inline">{label}</span>
+      <span>{label}</span>
     </Link>
   )
 }
