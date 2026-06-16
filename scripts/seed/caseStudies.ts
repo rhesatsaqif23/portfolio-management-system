@@ -143,8 +143,8 @@ export async function seedCaseStudies() {
     {
       projectId: projectMap['lwu'],
       role: 'Web Developer',
-      startDate: '2024-06-01',
-      endDate: '2024-06-01',
+      startDate: '2026-05-01',
+      endDate: '2026-05-01',
       overview:
         'Learning With Us (LWU) Web is a premium online English education platform designed to showcase both digital products and educational services. Built as a modern, responsive, and SEO-optimized website within a 24-hour sprint, the platform serves as the definitive digital presence for LWU, which has mentored over 1,000 students globally.',
       problems: [
@@ -184,7 +184,7 @@ export async function seedCaseStudies() {
       projectId: projectMap['gamevault'],
       role: 'Front-End Developer',
       startDate: '2026-05-01',
-      endDate: '2026-06-01',
+      endDate: '2026-05-01',
       overview:
         'GameVault is a modern, premium web-based game catalog platform designed for the Indonesian gamer community. Built as part of the Ariverse Studio frontend internship technical test, it serves as an interactive hub where users can discover new games, explore comprehensive game details, filter by genre and platform, and curate a personal wishlist.',
       problems: [
@@ -223,8 +223,8 @@ export async function seedCaseStudies() {
     {
       projectId: projectMap['jw-talk'],
       role: 'Full-Stack Developer',
-      startDate: '2025-08-01',
-      endDate: '2025-09-01',
+      startDate: '2026-02-01',
+      endDate: '2026-02-01',
       overview:
         'JW-Talk is a real-time, secure group chat web application built with a decoupled client-server architecture. It enables multiple users to communicate instantly across shared chat rooms with JWT-based authentication and WebSocket-powered messaging, featuring room management, persistent chat history, and route protection.',
       problems: [
@@ -264,8 +264,8 @@ export async function seedCaseStudies() {
     {
       projectId: projectMap['zenpilates'],
       role: 'Full-Stack Developer',
-      startDate: '2025-10-01',
-      endDate: '2025-11-01',
+      startDate: '2026-01-01',
+      endDate: '2026-02-01',
       overview:
         'ZenPilates is a full-stack web application simulating an end-to-end Pilates studio reservation system. It enables users to browse classes, select available dates and timeslots, choose an available court, complete payment, and manage reservation history — with double-booking prevention and payment-first confirmation flow.',
       problems: [
@@ -616,8 +616,8 @@ export async function seedCaseStudies() {
     {
       projectId: projectMap['eduearth'],
       role: 'Front-End Developer',
-      startDate: '2025-04-01',
-      endDate: '2025-05-01',
+      startDate: '2025-10-01',
+      endDate: '2025-11-01',
       overview:
         'EduEarth is an interactive 3D Earth Layer Visualization built with Three.js that enables users to explore the Earth\'s internal structure through an immersive, educational 3D experience. Users can rotate, zoom, and interact with different geological layers to learn about the Earth\'s composition in an engaging visual format.',
       problems: [
