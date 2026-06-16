@@ -146,7 +146,7 @@ function CaseStudiesPage() {
     setForm({ ...form, [section]: items })
   }
 
-  function SectionEditor({ section, label }: { section: keyof typeof initialForm; label: string }) {
+  function SectionEditor({ section, label, showIcon }: { section: keyof typeof initialForm; label: string; showIcon?: boolean }) {
     const items = form[section] as SectionItem[]
     return (
       <div className="space-y-2 border rounded-lg p-3">
@@ -154,8 +154,8 @@ function CaseStudiesPage() {
         {items.map((item, i) => (
           <div key={i} className="flex flex-col gap-1 p-2 border rounded bg-muted/20">
             <div className="flex items-center gap-2">
-              <div className="flex-1 min-w-0"><TextField label="Icon" name={`${section}[${i}].icon`} value={item.icon ?? ''} onChange={(v) => updateSection(section, i, 'icon', v)} placeholder="e.g. 🏗️" /></div>
-              <div className="flex-[2] min-w-0"><TextField label="Title" name={`${section}[${i}].title`} value={item.title} onChange={(v) => updateSection(section, i, 'title', v)} /></div>
+              {showIcon && <div className="flex-1 min-w-0"><TextField label="Icon" name={`${section}[${i}].icon`} value={item.icon ?? ''} onChange={(v) => updateSection(section, i, 'icon', v)} placeholder="e.g. 🏗️" /></div>}
+              <div className={showIcon ? 'flex-[2] min-w-0' : 'flex-1 min-w-0'}><TextField label="Title" name={`${section}[${i}].title`} value={item.title} onChange={(v) => updateSection(section, i, 'title', v)} /></div>
               <button type="button" onClick={() => removeSection(section, i)} className="shrink-0 mt-5 text-muted-foreground hover:text-destructive"><Trash2 className="size-4" /></button>
             </div>
             <TextAreaField label="Description" name={`${section}[${i}].description`} value={item.description} onChange={(v) => updateSection(section, i, 'description', v)} rows={2} />
@@ -237,9 +237,9 @@ function CaseStudiesPage() {
               <TextAreaField label="Overview" name="overview" value={form.overview} onChange={(v) => setForm({ ...form, overview: v })} rows={3} />
               <SectionEditor section="problems" label="Problems" />
               <SectionEditor section="solutions" label="Solutions" />
-              <SectionEditor section="features" label="Features" />
+              <SectionEditor section="features" label="Features" showIcon />
               <StringListEditor section="contributions" label="Contributions" />
-              <SectionEditor section="results" label="Results" />
+              <SectionEditor section="results" label="Results" showIcon />
               <GalleryUpload items={form.gallery} onChange={(items) => setForm({ ...form, gallery: items })} folder={form.projectId || undefined} />
               <div className="flex justify-end gap-3">
                 <Button type="button" variant="outline" onClick={closeForm}>Cancel</Button>
