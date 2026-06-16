@@ -4,7 +4,7 @@ import { statsTable } from '../../src/infrastructure/db/schema'
 const stats = [
   {
     key: 'years_experience',
-    value: '3+',
+    value: '2+',
     category: 'general',
     subValue: null,
     icon: 'briefcase',
@@ -36,7 +36,7 @@ const stats = [
   },
   {
     key: 'github_total_contributions',
-    value: '630',
+    value: '650+',
     category: 'general',
     subValue: '2023\u20132026',
     icon: 'github',

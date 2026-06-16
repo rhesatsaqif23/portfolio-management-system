@@ -218,7 +218,7 @@ export async function seedProjects() {
   console.log('Seeding projects...')
   await db.delete(projectsTable)
   for (const project of projects) {
-    await db.insert(projectsTable).values(project)
+    await db.insert(projectsTable).values(project as any)
     console.log(`  \u2713 ${project.title}`)
   }
   console.log(`  \u2192 ${projects.length} projects inserted\n`)

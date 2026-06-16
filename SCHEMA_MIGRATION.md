@@ -165,11 +165,11 @@ CREATE TABLE stats (
 
 | key | value | category | sub_value |
 |-----|-------|----------|-----------|
-| `years_experience` | `3+` | general | — |
-| `projects_shipped` | `16` | general | — |
+| `years_experience` | `2+` | general | — |
+| `projects_shipped` | `16+` | general | — |
 | `technologies_explored` | `27` | general | — |
 | `main_focus` | `Front-end / Mobile / Full-stack` | general | — |
-| `github_total_contributions` | `630` | general | `2023–2026` |
+| `github_total_contributions` | `650+` | general | `2023–2026` |
 | `work_experience` | `2` | general | `positions` |
 | `education` | `Informatics Engineering - 2023` | about | `Universitas Brawijaya` |
 | `gpa` | `3.92` | about | `out of 4.00` |

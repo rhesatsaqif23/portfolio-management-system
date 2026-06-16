@@ -318,7 +318,6 @@ export async function listStats(): Promise<Stat[]> {
 
 ```ts
 const githubStats = stats.find(s => s.key === 'github_total_contributions')
-// { value: '630', subValue: '2023–2026' }
 ```
 
 Stat keys: `years_experience`, `projects_shipped`, `technologies_explored`, `main_focus`, `github_total_contributions`, `work_experience`, `education`, `gpa`, `personality_traits`

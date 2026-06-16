@@ -1,6 +1,9 @@
 import { pgTable, uuid, text, timestamp, boolean, integer, date, jsonb, pgEnum, varchar } from 'drizzle-orm/pg-core'
 
-export const skillCategoryEnum = pgEnum('skill_category', ['mobile', 'web', 'frontend', 'backend', 'database', 'devops', 'deployment', 'cloud', 'design', 'tools', 'other'])
+export const skillCategoryEnum = pgEnum('skill_category', ['Frontend', 'Backend', 'Mobile', 'Database', 'DevOps', 'Cloud & Deployment', 'Tools', 'Design'])
+export const expTypeEnum = pgEnum('exp_type', ['Work', 'Internship', 'Education', 'Organization', 'Volunteer'])
+export const projectCategoryEnum = pgEnum('project_category', ['Web App', 'Mobile App'])
+export const achievementCategoryEnum = pgEnum('achievement_category', ['Software Development', 'Hackathon', 'Photo & Video', 'Applied Technology', 'Others'])
 
 export const projectsTable = pgTable('projects', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -10,7 +13,7 @@ export const projectsTable = pgTable('projects', {
   thumbnailUrl: text('thumbnail_url'),
   techStacks: text('tech_stacks').array(),
   isFeatured: boolean('is_featured').default(false),
-  category: text('category'),
+  category: projectCategoryEnum('category'),
   githubUrl: text('github_url'),
   liveUrl: text('live_url'),
   additionalLinks: jsonb('additional_links').$type<{ label: string; url: string }[]>(),
@@ -27,7 +30,7 @@ export const experiencesTable = pgTable('experiences', {
   startDate: date('start_date').notNull(),
   endDate: date('end_date'),
   description: text('description').array(),
-  type: text('type').notNull(),
+  type: expTypeEnum('type').notNull(),
   imageUrl: text('image_url'),
   sortOrder: integer('sort_order'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
@@ -42,7 +45,7 @@ export const achievementsTable = pgTable('achievements', {
   date: date('date').notNull(),
   description: text('description'),
   url: text('url'),
-  category: text('category'),
+  category: achievementCategoryEnum('category'),
   sortOrder: integer('sort_order'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),

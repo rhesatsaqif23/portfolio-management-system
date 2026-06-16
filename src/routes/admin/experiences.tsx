@@ -13,14 +13,14 @@ import { Plus, Trash2 } from 'lucide-react'
 export const Route = createFileRoute('/admin/experiences')({ component: ExperiencesPage })
 
 const expTypes = [
-  { value: 'work', label: 'Work' },
-  { value: 'internship', label: 'Internship' },
-  { value: 'education', label: 'Education' },
-  { value: 'organization', label: 'Organization' },
-  { value: 'volunteer', label: 'Volunteer' },
+  { value: 'Work', label: 'Work' },
+  { value: 'Internship', label: 'Internship' },
+  { value: 'Education', label: 'Education' },
+  { value: 'Organization', label: 'Organization' },
+  { value: 'Volunteer', label: 'Volunteer' },
 ]
 
-const initialForm = { orgName: '', role: '', startDate: '', endDate: '', description: [''] as string[], type: 'work', imageUrl: '', sortOrder: 0 }
+const initialForm = { orgName: '', role: '', startDate: '', endDate: '', description: [''] as string[], type: 'Work', imageUrl: '', sortOrder: 0 }
 
 type ConfirmAction = { type: 'create' } | { type: 'update'; id: string } | { type: 'delete'; id: string } | null
 
