@@ -37,8 +37,8 @@ export const createProject = createServerFn({ method: 'POST' })
 
 export const updateProject = createServerFn({ method: 'POST' })
   .validator((data: unknown) => {
-    const { id, ...rest } = data as { id: string }
-    return { id, data: projectSchema.partial().parse(rest) }
+    const { id, data: fields } = data as { id: string; data: Record<string, unknown> }
+    return { id, data: projectSchema.partial().parse(fields) }
   })
   .handler(async ({ data }) => {
     await requireAdminAuth(getRequest())

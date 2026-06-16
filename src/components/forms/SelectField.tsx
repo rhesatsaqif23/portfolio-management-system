@@ -9,12 +9,13 @@ type SelectFieldProps = {
   error?: string
   options: { value: string; label: string }[]
   placeholder?: string
+  required?: boolean
 }
 
-export default function SelectField({ name, label, value, onChange, error, options, placeholder }: SelectFieldProps) {
+export default function SelectField({ name, label, value, onChange, error, options, placeholder, required }: SelectFieldProps) {
   return (
     <div className="space-y-1">
-      {label && <Label htmlFor={name}>{label}</Label>}
+      {label && <Label htmlFor={name}>{label}{required && <span className="text-destructive ml-0.5">*</span>}</Label>}
       <Select value={value} onValueChange={(v) => onChange?.(v)}>
         <SelectTrigger className="w-full" data-error={error ? 'true' : undefined}>
           <SelectValue placeholder={placeholder} />

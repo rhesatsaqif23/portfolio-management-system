@@ -22,8 +22,8 @@ function StatCardSkeleton() {
 function StatCard({ label, value, href }: { label: string; value: number | string; href: string }) {
   return (
     <a href={href} className="island-shell block rounded-2xl no-underline transition hover:-translate-y-0.5">
-      <p className="text-lg font-bold text-[var(--sea-ink)] md:text-2xl">{value}</p>
-      <p className="mt-1 text-xs text-[var(--sea-ink-soft)] md:text-sm">{label}</p>
+      <p className="text-lg font-bold text-(--sea-ink) md:text-2xl">{value}</p>
+      <p className="mt-1 text-xs text-(--sea-ink-soft) md:text-sm">{label}</p>
     </a>
   )
 }
@@ -44,8 +44,8 @@ function DashboardPage() {
   return (
     <div className="space-y-4 md:space-y-6">
       <div>
-        <h1 className="text-lg font-bold text-[var(--sea-ink)] md:text-2xl">Dashboard</h1>
-        <p className="mt-1 text-xs text-[var(--sea-ink-soft)] md:text-sm">
+        <h1 className="text-lg font-bold text-(--sea-ink) md:text-2xl">Dashboard</h1>
+        <p className="mt-1 text-xs text-(--sea-ink-soft) md:text-sm">
           Welcome to your Portfolio CMS. Manage your content from here.
         </p>
       </div>
@@ -55,8 +55,8 @@ function DashboardPage() {
           <div className="flex items-center gap-3 md:gap-4">
             <img src={user.imageUrl} alt="" className="size-10 rounded-full object-cover md:size-14" />
             <div>
-              <h2 className="text-sm font-semibold text-[var(--sea-ink)] md:text-lg">{user.fullName}</h2>
-              <p className="text-xs text-[var(--sea-ink-soft)] md:text-sm">{user.primaryEmailAddress?.emailAddress}</p>
+              <h2 className="text-sm font-semibold text-(--sea-ink) md:text-lg">{user.fullName}</h2>
+              <p className="text-xs text-(--sea-ink-soft) md:text-sm">{user.primaryEmailAddress?.emailAddress}</p>
             </div>
           </div>
         </section>
@@ -76,12 +76,12 @@ function DashboardPage() {
         </section>
       ) : profile ? (
         <section className="island-shell rounded-2xl">
-          <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-[var(--muted-foreground)] md:mb-3 md:text-sm">Profile Summary</h3>
-          <div className="space-y-1 text-xs text-[var(--sea-ink-soft)] md:text-sm">
-            <p><span className="font-medium text-[var(--sea-ink)]">Name:</span> {profile.fullName}</p>
-            <p><span className="font-medium text-[var(--sea-ink)]">Role:</span> {profile.currentRole}</p>
-            {profile.email && <p><span className="font-medium text-[var(--sea-ink)]">Email:</span> {profile.email}</p>}
-            {profile.location && <p><span className="font-medium text-[var(--sea-ink)]">Location:</span> {profile.location}</p>}
+          <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground md:mb-3 md:text-sm">Profile Summary</h3>
+          <div className="space-y-1 text-xs text-(--sea-ink-soft) md:text-sm">
+            <p><span className="font-medium text-(--sea-ink)">Name:</span> {profile.fullName}</p>
+            <p><span className="font-medium text-(--sea-ink)">Role:</span> {profile.currentRole}</p>
+            {profile.email && <p><span className="font-medium text-(--sea-ink)">Email:</span> {profile.email}</p>}
+            {profile.location && <p><span className="font-medium text-(--sea-ink)">Location:</span> {profile.location}</p>}
           </div>
         </section>
       ) : null}

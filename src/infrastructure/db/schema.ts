@@ -16,7 +16,7 @@ export const projectsTable = pgTable('projects', {
   category: projectCategoryEnum('category'),
   githubUrl: text('github_url'),
   liveUrl: text('live_url'),
-  additionalLinks: jsonb('additional_links').$type<{ label: string; url: string }[]>(),
+  additionalLinks: text('additional_links'),
   longDescription: text('long_description'),
   sortOrder: integer('sort_order'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
@@ -91,8 +91,8 @@ export const statsTable = pgTable('stats', {
 
 export const caseStudiesTable = pgTable('case_studies', {
   id: uuid('id').defaultRandom().primaryKey(),
-  projectId: uuid('project_id').references(() => projectsTable.id).notNull(),
-  role: text('role').notNull().default('full-stack developer'),
+  projectId: uuid('project_id').references(() => projectsTable.id, { onDelete: 'cascade' }).notNull(),
+  role: text('role').notNull(),
   startDate: date('start_date'),
   endDate: date('end_date'),
   overview: text('overview'),

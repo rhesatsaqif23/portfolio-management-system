@@ -8,6 +8,8 @@ const projects = [
     title: 'OctoSight',
     slug: 'octosight',
     descriptionShort: 'End-to-end anti-phishing & fraud detection prototype for digital banking',
+    longDescription:
+      'OctoSight is an end-to-end anti-phishing and fraud detection prototype for digital banking, built as a capstone project for CIMB Niaga. It provides a streamlined reporting portal for customers and a hybrid AI-driven detection engine that combines rule-based heuristics with machine learning predictions. The platform features a full admin triage workflow with Kanban-based case management, analytics dashboards, and SLA monitoring across seven roles. It also includes educational microlearning modules, gamification with 14 achievement types, and comprehensive blacklist management for URLs, bank accounts, and phone numbers.',
     thumbnailUrl: `${STORAGE}/octosight.png`,
     techStacks: ['FastAPI', 'Next.js', 'Python', 'TypeScript', 'Docker', 'MySQL', 'scikit-learn'],
     isFeatured: true,
@@ -21,6 +23,8 @@ const projects = [
     title: 'NeuroClash GG',
     slug: 'neuroclash-gg',
     descriptionShort: 'AI-powered edutainment platform with auto-battler quiz mechanics',
+    longDescription:
+      'NeuroClash GG is a web-based edutainment platform that transforms conventional learning into a competitive auto-battler experience for students. The platform features an AI-powered question generator using the Gemini API to process PDFs into structured quizzes with answer keys and difficulty levels. It includes real-time 1v1 multiplayer battles with HP systems, damage calculation, and a StarBox comeback mechanic that gives losing players a chance to recover. Solo mode with an adaptive bot opponent and customizable room parameters make it versatile for both classroom and individual use.',
     thumbnailUrl: `${STORAGE}/neuroclash.png`,
     techStacks: ['Next.js', 'TypeScript', 'Supabase', 'Zustand', 'Gemini API', 'Tailwind CSS'],
     isFeatured: true,
@@ -34,6 +38,8 @@ const projects = [
     title: 'Raion Web',
     slug: 'raion-web',
     descriptionShort: 'Official website for Raion Community with CMS and Form Management System',
+    longDescription:
+      'Raion Web is the official website for Raion Community, a student organization at the Faculty of Computer Science, Brawijaya University. It serves as a comprehensive full-stack platform powering content management, event registration, and internal administrative workflows. The platform features a CMS dashboard with full CRUD operations, a dynamic form builder supporting multiple question types, and an Order Raion Craft System for software house service bookings. Built with Next.js, TypeScript, and Drizzle ORM, it follows clean architecture principles with strict separation of concerns for maintainability.',
     thumbnailUrl: `${STORAGE}/raion.png`,
     techStacks: ['Next.js', 'TypeScript', 'Supabase', 'Drizzle ORM', 'Tailwind CSS', 'Radix UI'],
     isFeatured: true,
@@ -47,6 +53,8 @@ const projects = [
     title: 'LWU',
     slug: 'lwu',
     descriptionShort: 'Modern online English education platform with premium design',
+    longDescription:
+      'Learning With Us (LWU) is a premium online English education platform that has evolved from a local private tutoring service into a global digital learning hub. The website showcases both digital products such as ebooks and self-paced guides, and educational services including IELTS preparation and General English coaching. Built with Next.js and Framer Motion, it features scroll-triggered animations, a dynamic product catalog with filtering, and a fully responsive mobile-first design. The platform was architected as a production-ready solution within a 24-hour sprint, emphasizing performance and SEO optimization.',
     thumbnailUrl: `${STORAGE}/lwuweb.png`,
     techStacks: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'Radix UI'],
     isFeatured: true,
@@ -60,6 +68,8 @@ const projects = [
     title: 'GameVault',
     slug: 'gamevault',
     descriptionShort: 'Game catalog platform for Indonesian gamer community',
+    longDescription:
+      'GameVault is a modern, premium web-based game catalog platform designed for the Indonesian gamer community. It features an immersive discovery experience with a dynamic hero banner, advanced filtering by genre and platform, and a persistent wishlist powered by localStorage. The platform includes a comprehensive game detail page with an interactive lightbox gallery and supports both dark and light mode themes. Built as an MVP for the Ariverse Studio frontend internship technical test, it emphasizes fluid Framer Motion animations and a polished gaming-inspired UI.',
     thumbnailUrl: `${STORAGE}/gamevault.png`,
     techStacks: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'Vitest'],
     isFeatured: false,
@@ -73,6 +83,8 @@ const projects = [
     title: 'JW-Talk',
     slug: 'jw-talk',
     descriptionShort: 'Real-time secure group chat with JWT auth and WebSocket messaging',
+    longDescription:
+      'JW-Talk is a real-time, secure group chat web application built with a decoupled client-server architecture using Next.js and Express.js. It enables multiple users to communicate instantly across shared chat rooms with JWT-based authentication and Socket.io WebSocket-powered messaging. The platform features room management with join-by-ID flow, persistent message history stored in PostgreSQL via Prisma ORM, and route protection that redirects unauthenticated users to the login page. Race condition prevention on room creation and chronological message ordering with auto-scroll ensure a smooth user experience.',
     thumbnailUrl: `${STORAGE}/jwtalk.png`,
     techStacks: ['Next.js', 'Express', 'TypeScript', 'Socket.io', 'Prisma', 'PostgreSQL'],
     isFeatured: false,
@@ -86,6 +98,8 @@ const projects = [
     title: 'ZenPilates',
     slug: 'zenpilates',
     descriptionShort: 'Full-stack Pilates studio reservation system',
+    longDescription:
+      'ZenPilates is a full-stack web application simulating an end-to-end Pilates studio reservation system developed as a technical test for DIRO. It allows users to browse classes, select available dates and timeslots, choose an available court, and complete payment via Midtrans Snap before confirming a booking. The backend is built with Golang following Clean Architecture principles, with multi-layer validation preventing double bookings across date, timeslot, and court combinations. JWT-based authentication protects all booking flows, and the reservation history page lets users track pending and completed bookings.',
     thumbnailUrl: `${STORAGE}/zenpilates.png`,
     techStacks: ['Next.js', 'Golang', 'Supabase', 'Midtrans', 'PostgreSQL'],
     isFeatured: false,
@@ -99,6 +113,8 @@ const projects = [
     title: 'Immunify',
     slug: 'immunify',
     descriptionShort: 'Mobile app for managing children\'s vaccination schedules',
+    longDescription:
+      'Immunify is a mobile application designed to help parents manage and monitor their children\'s vaccination schedules more effectively. The app provides structured vaccine information, immunization reminders via push notifications, and access to nearby healthcare facilities using location-based services. It integrates Fused Location Provider and OpenStreetMap to help users locate nearby clinics and healthcare centers providing specific vaccinations. Developed as a final project for the Mobile Application Development course, the app was built using Jetpack Compose following MVVM architecture patterns.',
     thumbnailUrl: `${STORAGE}/immunify.png`,
     techStacks: ['Kotlin', 'Jetpack Compose', 'MVVM', 'OpenStreetMap', 'Fused Location Provider'],
     isFeatured: false,
@@ -112,6 +128,8 @@ const projects = [
     title: 'EduEarth',
     slug: 'eduearth',
     descriptionShort: 'Interactive 3D Earth Layer Visualization',
+    longDescription:
+      'EduEarth is an interactive 3D Earth Layer Visualization built with Three.js that enables users to explore the Earth\'s internal structure through an immersive educational experience. Users can rotate, zoom, and interact with different geological layers to learn about the Earth\'s composition from crust to core. Each layer features educational annotations with informative labels and descriptions that combine visual learning with geological facts. The application achieves smooth 60fps rendering performance across modern browsers, making abstract geological concepts accessible through hands-on 3D interaction.',
     thumbnailUrl: `${STORAGE}/eduearth.png`,
     techStacks: ['Three.js', 'JavaScript', 'WebGL'],
     isFeatured: false,
@@ -125,6 +143,8 @@ const projects = [
     title: 'OptiFind',
     slug: 'optifind',
     descriptionShort: 'Web-based Lost and Found platform — Top 5 Finalist at IT FEST UMK',
+    longDescription:
+      'OptiFind is a web-based Lost and Found platform rebuilt from an earlier Laravel version using a modern tech stack for improved scalability and user experience. The platform introduces a public searchable system with verified user access, optimized indexing, and an engaging landing page that keeps reports discoverable and well-organized. It was developed for the Web Development Competition at IT FEST UMK, where it achieved Top 5 Finalist at the national level. The frontend was built with Next.js and TypeScript, with Supabase handling authentication, public access, and scalable data management.',
     thumbnailUrl: `${STORAGE}/optifind.png`,
     techStacks: ['Next.js', 'TypeScript', 'Supabase', 'Tailwind CSS'],
     isFeatured: true,
@@ -138,6 +158,8 @@ const projects = [
     title: 'HearMe',
     slug: 'hearme',
     descriptionShort: 'Voice-based stress detection for student mental health awareness',
+    longDescription:
+      'HearMe is a mobile application designed to help students recognize early signs of stress and depression through voice-based analysis. Users record their voice while answering guided questions, and the system analyzes speech patterns to detect stress levels using AI-powered processing. The app provides personalized activity recommendations generated by Gemini API and offers direct access to professional counseling services. Developed during Raion Hackjam 2025, it was built using Jetpack Compose with Firebase integration and a FastAPI backend for stress analysis.',
     thumbnailUrl: `${STORAGE}/hearme.png`,
     techStacks: ['Kotlin', 'Jetpack Compose', 'Firebase', 'Gemini API', 'FastAPI'],
     isFeatured: false,
@@ -151,6 +173,8 @@ const projects = [
     title: 'Zelow',
     slug: 'zelow',
     descriptionShort: 'Food waste reduction platform connecting UMKM with consumers',
+    longDescription:
+      'Zelow is a mobile platform developed as part of Raion Revival 2025 to reduce food waste by connecting UMKM culinary businesses with consumers through discounted surplus food offerings. The app enables UMKM to sell surplus food through flash sales, surprise boxes, and location-based food discovery, turning food surplus into economic opportunities. Built with Flutter and Firebase, it includes features like rating and review systems, direct chat with sellers, and nearby UMKM discovery. As vice lead and frontend developer, I coordinated the team and implemented the mobile interface while restructuring an inherited codebase.',
     thumbnailUrl: `${STORAGE}/zelow.png`,
     techStacks: ['Flutter', 'Dart', 'Firebase'],
     isFeatured: false,
@@ -164,6 +188,8 @@ const projects = [
     title: 'Swara Ibu',
     slug: 'swara-ibu',
     descriptionShort: 'Voice-based emotional analysis for postpartum depression support — 1st Place',
+    longDescription:
+      'Swara Ibu is a mobile application that supports mothers experiencing postpartum depression through voice-based emotional analysis and AI-powered crisis detection. Users express their feelings via voice input, which is processed using OpenAI Whisper for speech-to-text and Librosa for audio feature extraction to detect emotional distress. The app features mood tracking, companion access mode for family members, and Gemini AI-generated personalized support suggestions. Built during a 5-day hackathon using Kotlin and Jetpack Compose, it achieved 1st Place at the SLASHCOM Android Hackathon National Competition 2025.',
     thumbnailUrl: `${STORAGE}/swaraibu.png`,
     techStacks: ['Kotlin', 'Jetpack Compose', 'Firebase', 'Gemini API', 'FastAPI', 'OpenAI Whisper', 'Librosa'],
     isFeatured: true,
@@ -177,6 +203,8 @@ const projects = [
     title: 'SABI',
     slug: 'sabi',
     descriptionShort: 'Waste management app with reward points system',
+    longDescription:
+      'SABI is a mobile-based waste management application that encourages sustainable behavior through point rewards, marketplace transactions, and community-driven waste handling in Malang City. Users can exchange sorted waste for points redeemable as cash, UMKM products, or charitable donations to orphanages. The platform includes a waste pickup scheduling system for large donations, a marketplace for recycled UMKM products, and daily eco-challenges to boost engagement. Built with Kotlin and Jetpack Compose following Clean Architecture, it served as the final evaluation project for the RAION Internship 2025.',
     thumbnailUrl: `${STORAGE}/sabi.png`,
     techStacks: ['Kotlin', 'Jetpack Compose', 'Firebase', 'UploadCare'],
     isFeatured: true,
@@ -190,6 +218,8 @@ const projects = [
     title: 'Found It!',
     slug: 'found-it',
     descriptionShort: 'Web-based Lost and Found for campus environment (Laravel)',
+    longDescription:
+      'Found It! is a web-based Lost and Found application designed to centralize reports of lost and found items within the campus environment at the Faculty of Computer Science, Universitas Brawijaya. Users can report lost or found items, search by category and location, and directly contact reporters to speed up the recovery process. The platform was built using Laravel with MVC architecture, featuring Laravel Breeze authentication, structured database design, and categorized browsing. Developed as a final project for the Web Application Development course, it demonstrates full-stack implementation from database design to frontend views.',
     thumbnailUrl: `${STORAGE}/foundit.jpg`,
     techStacks: ['Laravel', 'PHP', 'MySQL', 'Bootstrap'],
     isFeatured: false,
@@ -203,6 +233,8 @@ const projects = [
     title: 'Eventpal',
     slug: 'eventpal',
     descriptionShort: 'Mobile app for event vendors discovery and booking',
+    longDescription:
+      'Eventpal is a mobile application that helps event organizers easily find and connect with reliable vendors for equipment, decoration, and supporting services. The platform addresses the common challenge of finding trusted vendors by providing structured service listings, ratings and reviews, and in-app communication. Users can browse vendor profiles filtered by service type and pricing, and directly coordinate through the platform\'s messaging system. Developed during the RAION Internship 2024 using Kotlin and XML, it was my first Android development project and established my foundation in mobile application development.',
     thumbnailUrl: `${STORAGE}/eventpal.png`,
     techStacks: ['Kotlin', 'XML', 'Firebase'],
     isFeatured: false,

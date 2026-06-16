@@ -21,9 +21,9 @@ export default function Header() {
   )
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--header-bg)] px-3 sm:px-4">
+    <header className="sticky top-0 z-50 border-b border-(--line) bg-(--header-bg) px-3 sm:px-4">
       <nav className="page-wrap flex items-center py-2 sm:py-4">
-        <h2 className="flex-shrink-0">
+        <h2 className="shrink-0">
           <Link
             to="/"
             className="inline-flex items-center gap-2 text-white no-underline"
@@ -43,7 +43,7 @@ export default function Header() {
         <div className="flex flex-1 items-center justify-end gap-1.5 sm:gap-2 lg:flex-none">
           <ClerkHeader />
           <button
-            className="ml-1 flex items-center justify-center rounded-lg p-1.5 text-white transition hover:bg-[var(--link-bg-hover)] lg:hidden"
+            className="ml-1 flex items-center justify-center rounded-lg p-1.5 text-white transition hover:bg-(--link-bg-hover) lg:hidden"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle navigation menu"
           >
@@ -55,7 +55,7 @@ export default function Header() {
       {menuOpen && (
         <>
           <div className="fixed inset-0 z-40 bg-black/50 lg:hidden" onClick={() => setMenuOpen(false)} />
-          <div className="absolute left-0 right-0 top-full z-40 border-t border-[var(--line)] bg-[var(--bg-base)] lg:hidden">
+          <div className="absolute left-0 right-0 top-full z-40 border-t border-(--line) bg-(--bg-base) lg:hidden">
             <div className="flex flex-col gap-3 px-3 py-3 text-sm font-semibold">
               {navLinks}
             </div>

@@ -9,7 +9,7 @@ export const experienceSchema = z.object({
   endDate: z.string().optional().nullable(),
   description: z.array(z.string()).optional().nullable(),
   type: expTypeEnum,
-  imageUrl: z.string().optional().nullable(),
+  imageUrl: z.string().optional().nullable().or(z.literal('')),
   sortOrder: z.number().int().optional().nullable(),
 })
 

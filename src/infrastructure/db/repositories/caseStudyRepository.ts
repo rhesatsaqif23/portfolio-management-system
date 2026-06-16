@@ -1,11 +1,11 @@
 import { db } from '#/infrastructure/db'
 import { caseStudiesTable } from '#/infrastructure/db/schema'
-import { eq } from 'drizzle-orm'
+import { eq, desc } from 'drizzle-orm'
 import type { ICaseStudyRepository, CaseStudy, CaseStudyInsert } from '#/domain/ports'
 
 export const drizzleCaseStudyRepository: ICaseStudyRepository = {
   async findAll(): Promise<CaseStudy[]> {
-    return db.select().from(caseStudiesTable).orderBy(caseStudiesTable.createdAt)
+    return db.select().from(caseStudiesTable).orderBy(desc(caseStudiesTable.createdAt))
   },
 
   async findByProjectId(projectId: string): Promise<CaseStudy | null> {

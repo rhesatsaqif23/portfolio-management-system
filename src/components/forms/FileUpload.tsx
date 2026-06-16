@@ -65,18 +65,19 @@ export function FileUpload({
 
     setUploading(true)
     try {
-      const buffer = await file.arrayBuffer()
-      const bytes = Array.from(new Uint8Array(buffer))
       const path = getPath ? getPath(file) : DEFAULT_CV_PATH
       const { replaceFile: upload } = await import('#/apis')
-      const result = await upload({
-        data: {
-          bucket,
-          path,
-          oldPath: value ? value.split('/').pop() : undefined,
-          file: bytes,
-        },
-      })
+      
+      const formData = new FormData()
+      formData.append('bucket', bucket)
+      formData.append('path', path)
+      if (value) {
+        const oldPath = value.split('/').pop()
+        if (oldPath) formData.append('oldPath', oldPath)
+      }
+      formData.append('file', file)
+
+      const result = await upload({ data: formData })
       onChange(result.url)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Upload failed')

@@ -24,11 +24,11 @@ function SkeletonTable({ columns }: { columns: Column<Record<string, unknown>>[]
   return (
     <Fragment>
       {Array.from({ length: 5 }).map((_, i) => (
-        <tr key={i} className="border-b border-[var(--line)]">
+        <tr key={i} className="border-b border-(--line)">
           {columns.map((col, j) => (
             <td key={String(col.key)} className="px-4 py-3">
               <div className="flex items-center gap-2">
-                <Skeleton className={cn("h-5", j === columns.length - 1 ? "w-16" : "w-full max-w-[140px]")} />
+                <Skeleton className={cn("h-5", j === columns.length - 1 ? "w-16" : "w-full max-w-35")} />
               </div>
             </td>
           ))}
@@ -75,7 +75,7 @@ export default function DataTable<T extends Record<string, unknown>>({ columns, 
             )}
             {!loading && data.length === 0 && (
               <tr>
-                <td colSpan={columns.length} className="px-4 py-8 text-center text-[var(--muted-foreground)]">
+                <td colSpan={columns.length} className="px-4 py-8 text-center text-muted-foreground">
                   No data available
                 </td>
               </tr>

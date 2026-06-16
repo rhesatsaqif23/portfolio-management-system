@@ -9,12 +9,13 @@ type TextFieldProps = {
   error?: string
   placeholder?: string
   type?: string
+  required?: boolean
 }
 
-export default function TextField({ name, label, value, onChange, error, placeholder, type }: TextFieldProps) {
+export default function TextField({ name, label, value, onChange, error, placeholder, type, required }: TextFieldProps) {
   return (
     <div className="space-y-1">
-      {label && <Label htmlFor={name}>{label}</Label>}
+      {label && <Label htmlFor={name}>{label}{required && <span className="text-destructive ml-0.5">*</span>}</Label>}
       <Input
         id={name}
         name={name}

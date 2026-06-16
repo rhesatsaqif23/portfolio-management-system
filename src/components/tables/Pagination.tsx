@@ -11,8 +11,8 @@ export default function Pagination({ page, totalPages, onPageChange }: Paginatio
   if (totalPages <= 1) return null
 
   return (
-    <div className="flex items-center justify-between border-t border-[var(--line)] px-4 py-3">
-      <p className="text-sm text-[var(--muted-foreground)]">
+    <div className="flex items-center justify-between border-t border-(--line) px-4 py-3">
+      <p className="text-sm text-muted-foreground">
         Page {page} of {totalPages}
       </p>
       <div className="flex items-center gap-1">
