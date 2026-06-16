@@ -12,9 +12,10 @@ type DateFieldProps = {
   onChange: (value: string) => void
   error?: string
   placeholder?: string
+  required?: boolean
 }
 
-export default function DateField({ name, label, value, onChange, error, placeholder = "Pick a date" }: DateFieldProps) {
+export default function DateField({ name, label, value, onChange, error, placeholder = "Pick a date", required }: DateFieldProps) {
   const date = value ? new Date(value + "T00:00:00") : undefined
 
   function handleSelect(d: Date | undefined) {
@@ -28,7 +29,7 @@ export default function DateField({ name, label, value, onChange, error, placeho
 
   return (
     <div className="space-y-1">
-      {label && <label htmlFor={name} className="text-sm font-medium">{label}</label>}
+      {label && <label htmlFor={name} className="text-sm font-medium">{label}{required && <span className="text-destructive ml-0.5">*</span>}</label>}
       <Popover>
         <PopoverTrigger asChild>
           <Button

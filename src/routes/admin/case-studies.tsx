@@ -17,7 +17,7 @@ type SectionItem = { icon?: string; title: string; description: string }
 
 const initialForm = {
   projectId: '',
-  role: 'full-stack developer',
+  role: '',
   startDate: '',
   endDate: '',
   overview: '',
@@ -38,6 +38,7 @@ function CaseStudiesPage() {
   const [form, setForm] = useState(initialForm)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [confirm, setConfirm] = useState<ConfirmAction>(null)
+  const [openSections, setOpenSections] = useState<Set<string>>(new Set())
 
   const { data: caseStudies = [], isLoading } = useQuery({ queryKey: ['caseStudies'], queryFn: () => listCaseStudies() })
   const { data: projects = [] } = useQuery({ queryKey: ['projects'], queryFn: () => listProjects() })
@@ -48,17 +49,17 @@ function CaseStudiesPage() {
   const createMutation = useMutation({
     mutationFn: () => createCaseStudy({ data: buildPayload() }),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['caseStudies'] }); toast.success('Case study created'); closeForm() },
-    onError: (err) => toast.error(err instanceof Error ? err.message : 'Failed'),
+    onError: (err) => toast.error(err instanceof Error ? err.message : typeof err === 'string' ? err : JSON.stringify(err)),
   })
   const updateMutation = useMutation({
     mutationFn: () => updateCaseStudy({ data: { id: editing!.id, ...buildPayload() } }),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['caseStudies'] }); toast.success('Case study updated'); closeForm() },
-    onError: (err) => toast.error(err instanceof Error ? err.message : 'Failed'),
+    onError: (err) => toast.error(err instanceof Error ? err.message : typeof err === 'string' ? err : JSON.stringify(err)),
   })
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteCaseStudy({ data: id }),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['caseStudies'] }); toast.success('Case study deleted') },
-    onError: (err) => toast.error(err instanceof Error ? err.message : 'Failed'),
+    onError: (err) => toast.error(err instanceof Error ? err.message : typeof err === 'string' ? err : JSON.stringify(err)),
   })
 
   function buildPayload() {
@@ -83,7 +84,7 @@ function CaseStudiesPage() {
     setEditing(cs)
     setForm({
       projectId: cs.projectId,
-      role: cs.role ?? 'full-stack developer',
+      role: cs.role ?? '',
       startDate: cs.startDate ?? '',
       endDate: cs.endDate ?? '',
       overview: cs.overview ?? '',
@@ -97,14 +98,35 @@ function CaseStudiesPage() {
     setErrors({}); setShowForm(true)
   }
 
-  function closeForm() { setShowForm(false); setEditing(null); setForm(initialForm); setErrors({}) }
+  function closeForm() { setShowForm(false); setEditing(null); setForm(initialForm); setErrors({}); setOpenSections(new Set()) }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    const cleaned: Record<string, unknown> = {}
+    const sectionKeys = ['problems', 'solutions', 'features', 'results'] as const
     const errs: Record<string, string> = {}
     if (!form.projectId.trim()) errs.projectId = 'Project is required'
+    if (!form.role.trim()) errs.role = 'Role is required'
+    if (!form.overview.trim()) errs.overview = 'Overview is required'
+    if (form.endDate && form.startDate && form.endDate <= form.startDate) errs.endDate = 'End date must be after start date'
+    for (const key of sectionKeys) {
+      const items = (form[key] as SectionItem[]).filter((item) => item.title.trim() || item.description.trim())
+      if (items.length !== (form[key] as SectionItem[]).length) cleaned[key] = items
+      const itemErrors: { index: number; field: string; message: string }[] = []
+      items.forEach((item, i) => {
+        const hasTitle = item.title.trim().length > 0
+        const hasDesc = item.description.trim().length > 0
+        if (hasTitle && !hasDesc) itemErrors.push({ index: i, field: 'description', message: 'Description required when title is filled' })
+        if (!hasTitle && hasDesc) itemErrors.push({ index: i, field: 'title', message: 'Title required when description is filled' })
+      })
+      if (itemErrors.length) errs[`${key}Items` as string] = JSON.stringify(itemErrors)
+    }
     setErrors(errs)
-    if (Object.keys(errs).length > 0) return
+    if (Object.keys(errs).length > 0) {
+      if (Object.keys(cleaned).length) setForm((prev) => ({ ...prev, ...cleaned }))
+      return
+    }
+    if (Object.keys(cleaned).length) setForm((prev) => ({ ...prev, ...cleaned }))
     setConfirm(editing ? { type: 'update', id: editing.id } : { type: 'create' })
   }
 
@@ -116,6 +138,14 @@ function CaseStudiesPage() {
     setConfirm(null)
   }
 
+  function toggleSection(section: string) {
+    setOpenSections((prev) => {
+      const next = new Set(prev)
+      if (next.has(section)) next.delete(section); else next.add(section)
+      return next
+    })
+  }
+
   function updateSection(section: keyof typeof initialForm, index: number, field: keyof SectionItem, value: string) {
     const items = [...(form[section] as SectionItem[])]
     items[index] = { ...items[index], [field]: value }
@@ -124,6 +154,7 @@ function CaseStudiesPage() {
 
   function addSection(section: keyof typeof initialForm) {
     setForm({ ...form, [section]: [...(form[section] as SectionItem[]), { title: '', description: '' }] })
+    setOpenSections((prev) => { const next = new Set(prev); next.add(section); return next })
   }
 
   function removeSection(section: keyof typeof initialForm, index: number) {
@@ -148,20 +179,27 @@ function CaseStudiesPage() {
 
   function SectionEditor({ section, label, showIcon }: { section: keyof typeof initialForm; label: string; showIcon?: boolean }) {
     const items = form[section] as SectionItem[]
+    const errKey = `${section}Items` as string
+    const sectionErrors = (errors[errKey] ? JSON.parse(errors[errKey]) : []) as { index: number; field: string; message: string }[]
+    const isOpen = openSections.has(section)
     return (
-      <details className="border rounded-lg">
-        <summary className="cursor-pointer select-none px-3 py-2 text-sm font-medium hover:bg-muted/20 rounded-t-lg">{label} ({items.length})</summary>
+      <details className="border rounded-lg" open={isOpen}>
+        <summary onClick={(e) => { e.preventDefault(); toggleSection(section) }} className="cursor-pointer select-none px-3 py-2 text-sm font-medium hover:bg-muted/20 rounded-t-lg">{label} ({items.length})</summary>
         <div className="space-y-3 p-3 border-t">
-          {items.map((item, i) => (
-            <div key={i} className="flex flex-col gap-1 p-2 border rounded bg-muted/20">
-              <div className="flex items-center gap-2">
-                {showIcon && <div className="flex-1 min-w-0"><TextField label="Icon" name={`${section}[${i}].icon`} value={item.icon ?? ''} onChange={(v) => updateSection(section, i, 'icon', v)} placeholder="e.g. 🏗️" /></div>}
-                <div className={showIcon ? 'flex-[2] min-w-0' : 'flex-1 min-w-0'}><TextField label="Title" name={`${section}[${i}].title`} value={item.title} onChange={(v) => updateSection(section, i, 'title', v)} placeholder="Section title" /></div>
-                <button type="button" onClick={() => removeSection(section, i)} className="shrink-0 mt-5 text-muted-foreground hover:text-destructive"><Trash2 className="size-4" /></button>
+          {items.map((item, i) => {
+            const titleErr = sectionErrors.find((e) => e.index === i && e.field === 'title')
+            const descErr = sectionErrors.find((e) => e.index === i && e.field === 'description')
+            return (
+              <div key={i} className="flex flex-col gap-1 p-2 border rounded bg-muted/20">
+                <div className="flex items-center gap-2">
+                  {showIcon && <div className="flex-1 min-w-0"><TextField label="Icon" name={`${section}[${i}].icon`} value={item.icon ?? ''} onChange={(v) => updateSection(section, i, 'icon', v)} placeholder="e.g. 🏗️" /></div>}
+                  <div className={showIcon ? 'flex-[2] min-w-0' : 'flex-1 min-w-0'}><TextField label="Title" name={`${section}[${i}].title`} value={item.title} onChange={(v) => updateSection(section, i, 'title', v)} placeholder="Section title" error={titleErr?.message} /></div>
+                  <button type="button" onClick={() => removeSection(section, i)} className="shrink-0 mt-5 text-muted-foreground hover:text-destructive"><Trash2 className="size-4" /></button>
+                </div>
+                <TextAreaField label="Description" name={`${section}[${i}].description`} value={item.description} onChange={(v) => updateSection(section, i, 'description', v)} rows={2} placeholder="Describe this item..." error={descErr?.message} />
               </div>
-              <TextAreaField label="Description" name={`${section}[${i}].description`} value={item.description} onChange={(v) => updateSection(section, i, 'description', v)} rows={2} placeholder="Describe this item..." />
-            </div>
-          ))}
+            )
+          })}
           <div className="pt-2"><Button type="button" size="xs" variant="outline" onClick={() => addSection(section)}>+ Add Item</Button></div>
         </div>
       </details>
@@ -232,13 +270,13 @@ function CaseStudiesPage() {
             <Button type="button" size="xs" variant="ghost" onClick={closeForm} className="text-muted-foreground">✕</Button>
           </div>
             <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
-              <SelectField label="Project" name="projectId" value={form.projectId} onChange={(v) => setForm({ ...form, projectId: v })} options={projectOptions} placeholder="Select project" error={errors.projectId} />
-              <TextField label="Role" name="role" value={form.role} onChange={(v) => setForm({ ...form, role: v })} placeholder="e.g. Full Stack Developer" />
+              <SelectField label="Project" name="projectId" value={form.projectId} onChange={(v) => setForm({ ...form, projectId: v })} options={projectOptions} placeholder="Select project" error={errors.projectId} required />
+              <TextField label="Role" name="role" value={form.role} onChange={(v) => setForm({ ...form, role: v })} placeholder="e.g. Full Stack Developer" error={errors.role} required />
               <div className="grid gap-3 md:gap-4 sm:grid-cols-2">
                 <DateField label="Start Date" name="startDate" value={form.startDate} onChange={(v) => setForm({ ...form, startDate: v })} />
-                <DateField label="End Date" name="endDate" value={form.endDate} onChange={(v) => setForm({ ...form, endDate: v })} placeholder="Leave empty if current" />
+                <DateField label="End Date" name="endDate" value={form.endDate} onChange={(v) => setForm({ ...form, endDate: v })} placeholder="Leave empty if current" error={errors.endDate} />
               </div>
-              <TextAreaField label="Overview" name="overview" value={form.overview} onChange={(v) => setForm({ ...form, overview: v })} rows={3} placeholder="Brief overview of the project and your role..." />
+              <TextAreaField label="Overview" name="overview" value={form.overview} onChange={(v) => setForm({ ...form, overview: v })} rows={3} placeholder="Brief overview of the project and your role..." error={errors.overview} required />
               <SectionEditor section="problems" label="Problems" />
               <SectionEditor section="solutions" label="Solutions" />
               <SectionEditor section="features" label="Features" showIcon />

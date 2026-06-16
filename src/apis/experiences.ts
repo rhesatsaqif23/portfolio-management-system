@@ -19,8 +19,8 @@ export const createExperience = createServerFn({ method: 'POST' })
 
 export const updateExperience = createServerFn({ method: 'POST' })
   .validator((data: unknown) => {
-    const { id, ...rest } = data as { id: string }
-    return { id, data: experienceSchema.partial().parse(rest) }
+    const { id, data: fields } = data as { id: string; data: Record<string, unknown> }
+    return { id, data: experienceSchema.partial().parse(fields) }
   })
   .handler(async ({ data }) => {
     await requireAdminAuth(getRequest())

@@ -1,11 +1,11 @@
 import { db } from '#/infrastructure/db'
 import { projectsTable, caseStudiesTable } from '#/infrastructure/db/schema'
-import { eq } from 'drizzle-orm'
+import { eq, sql, desc } from 'drizzle-orm'
 import type { IProjectRepository, Project, ProjectInsert, CaseStudy, CaseStudyInsert } from '#/domain/ports'
 
 export const drizzleProjectRepository: IProjectRepository = {
   async findAll(): Promise<Project[]> {
-    return db.select().from(projectsTable).orderBy(projectsTable.sortOrder)
+    return db.select().from(projectsTable).orderBy(desc(projectsTable.createdAt))
   },
 
   async findById(id: string): Promise<Project | null> {
@@ -19,6 +19,10 @@ export const drizzleProjectRepository: IProjectRepository = {
   },
 
   async create(data: ProjectInsert): Promise<Project> {
+    if (data.sortOrder == null) {
+      const [{ nextSort }] = await db.select({ nextSort: sql<number>`coalesce(max(${projectsTable.sortOrder}), 0) + 1` }).from(projectsTable)
+      data = { ...data, sortOrder: nextSort }
+    }
     const [created] = await db.insert(projectsTable).values(data).returning()
     return created
   },
@@ -27,6 +31,20 @@ export const drizzleProjectRepository: IProjectRepository = {
     if (Object.keys(data).length === 0) {
       const [existing] = await db.select().from(projectsTable).where(eq(projectsTable.id, id)).limit(1)
       return existing!
+    }
+    if (data.sortOrder != null) {
+      const [current] = await db.select({ sortOrder: projectsTable.sortOrder }).from(projectsTable).where(eq(projectsTable.id, id)).limit(1)
+      if (current && data.sortOrder !== current.sortOrder) {
+        await db.transaction(async (tx) => {
+          const [conflictingItem] = await tx.select({ id: projectsTable.id }).from(projectsTable).where(eq(projectsTable.sortOrder, data.sortOrder!)).limit(1)
+          if (conflictingItem) {
+            await tx.update(projectsTable).set({ sortOrder: current.sortOrder }).where(eq(projectsTable.id, conflictingItem.id))
+          }
+          await tx.update(projectsTable).set(data).where(eq(projectsTable.id, id))
+        })
+        const [updated] = await db.select().from(projectsTable).where(eq(projectsTable.id, id)).limit(1)
+        return updated!
+      }
     }
     const [updated] = await db.update(projectsTable).set(data).where(eq(projectsTable.id, id)).returning()
     return updated

@@ -1,7 +1,9 @@
 import { db } from './db'
 import { achievementsTable } from '../../src/infrastructure/db/schema'
 
-const achievements = [
+const achievements: {
+  title: string; eventName: string; organizer: string; date: string; category: string; description: string; url: null; sortOrder: number
+}[] = [
   {
     title: '1st Place – Android Hackathon Slash National Competition 2025',
     eventName: 'Slash National Competition 2025',
@@ -85,7 +87,7 @@ export async function seedAchievements() {
   console.log('Seeding achievements...')
   await db.delete(achievementsTable)
   for (const achievement of achievements) {
-    await db.insert(achievementsTable).values(achievement)
+    await db.insert(achievementsTable).values(achievement as any)
     console.log(`  ✓ ${achievement.title}`)
   }
   console.log(`  → ${achievements.length} achievements inserted\n`)

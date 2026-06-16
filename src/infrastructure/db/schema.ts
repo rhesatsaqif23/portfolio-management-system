@@ -92,7 +92,7 @@ export const statsTable = pgTable('stats', {
 export const caseStudiesTable = pgTable('case_studies', {
   id: uuid('id').defaultRandom().primaryKey(),
   projectId: uuid('project_id').references(() => projectsTable.id).notNull(),
-  role: text('role').notNull().default('full-stack developer'),
+  role: text('role').notNull(),
   startDate: date('start_date'),
   endDate: date('end_date'),
   overview: text('overview'),

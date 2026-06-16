@@ -7,11 +7,11 @@ export const caseStudySectionSchema = z.object({
 })
 
 export const caseStudySchema = z.object({
-  projectId: z.string().uuid(),
-  role: z.string(),
+  projectId: z.string().uuid('Invalid project selection'),
+  role: z.string().min(1, 'Role is required'),
   startDate: z.string().optional().nullable(),
   endDate: z.string().optional().nullable(),
-  overview: z.string().optional(),
+  overview: z.string().min(1, 'Overview is required'),
   problems: z.array(caseStudySectionSchema).optional().default([]),
   solutions: z.array(caseStudySectionSchema).optional().default([]),
   features: z.array(caseStudySectionSchema).optional().default([]),

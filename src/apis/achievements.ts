@@ -19,8 +19,8 @@ export const createAchievement = createServerFn({ method: 'POST' })
 
 export const updateAchievement = createServerFn({ method: 'POST' })
   .validator((data: unknown) => {
-    const { id, ...rest } = data as { id: string }
-    return { id, data: achievementSchema.partial().parse(rest) }
+    const { id, data: fields } = data as { id: string; data: Record<string, unknown> }
+    return { id, data: achievementSchema.partial().parse(fields) }
   })
   .handler(async ({ data }) => {
     await requireAdminAuth(getRequest())

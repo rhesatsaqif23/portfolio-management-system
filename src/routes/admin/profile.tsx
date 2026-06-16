@@ -129,7 +129,7 @@ function ProfilePage() {
       queryClient.invalidateQueries({ queryKey: ['profile'] })
       toast.success('Profile saved')
     },
-    onError: (err) => toast.error(err instanceof Error ? err.message : 'Failed to save profile'),
+    onError: (err) => toast.error(err instanceof Error ? err.message : typeof err === 'string' ? err : JSON.stringify(err)),
   })
 
   function updateRole(index: number, value: string) {

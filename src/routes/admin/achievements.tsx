@@ -2,11 +2,12 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { DataTable, usePagination } from '#/components/tables'
-import { TextField, TextAreaField, SelectField } from '#/components/forms'
+import { TextField, TextAreaField, SelectField, DateField } from '#/components/forms'
 import { Button } from '#/components/ui/button'
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction, AlertDialogMedia } from '#/components/ui/alert-dialog'
 import { toast } from '#/components/ui/sonner'
 import { listAchievements, createAchievement, updateAchievement, deleteAchievement } from '#/apis'
+import { normalizeUrl } from '#/lib/utils'
 import type { Achievement } from '#/domain/ports'
 import { Plus, Trash2 } from 'lucide-react'
 
@@ -28,22 +29,25 @@ function AchievementsPage() {
   const pag = usePagination(achievements, 10)
 
   const createMutation = useMutation({
-    mutationFn: () => createAchievement({ data: form }),
+    mutationFn: (payload: Record<string, unknown>) => createAchievement({ data: payload }),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['achievements'] }); toast.success('Achievement created'); closeForm() },
-    onError: (err) => toast.error(err instanceof Error ? err.message : 'Failed'),
+    onError: (err) => toast.error(err instanceof Error ? err.message : typeof err === 'string' ? err : JSON.stringify(err)),
   })
   const updateMutation = useMutation({
-    mutationFn: () => updateAchievement({ data: { id: editing!.id, data: form } }),
+    mutationFn: (payload: { id: string; data: Record<string, unknown> }) => updateAchievement({ data: payload }),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['achievements'] }); toast.success('Achievement updated'); closeForm() },
-    onError: (err) => toast.error(err instanceof Error ? err.message : 'Failed'),
+    onError: (err) => toast.error(err instanceof Error ? err.message : typeof err === 'string' ? err : JSON.stringify(err)),
   })
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteAchievement({ data: id }),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['achievements'] }); toast.success('Achievement deleted') },
-    onError: (err) => toast.error(err instanceof Error ? err.message : 'Failed'),
+    onError: (err) => toast.error(err instanceof Error ? err.message : typeof err === 'string' ? err : JSON.stringify(err)),
   })
 
-  function openCreate() { setEditing(null); setForm(initialForm); setErrors({}); setShowForm(true) }
+  function openCreate() {
+    const nextSort = achievements.length > 0 ? Math.max(...achievements.map((a) => a.sortOrder ?? 0)) + 1 : 0
+    setEditing(null); setForm({ ...initialForm, sortOrder: nextSort }); setErrors({}); setShowForm(true)
+  }
   function openEdit(ach: Achievement) {
     setEditing(ach)
     setForm({ title: ach.title, eventName: ach.eventName ?? '', organizer: ach.organizer ?? '', date: ach.date, description: ach.description ?? '', url: ach.url ?? '', category: ach.category ?? '', sortOrder: ach.sortOrder ?? 0 })
@@ -56,6 +60,7 @@ function AchievementsPage() {
     const errs: Record<string, string> = {}
     if (!form.title.trim()) errs.title = 'Title is required'
     if (!form.date.trim()) errs.date = 'Date is required'
+    if (!form.category.trim()) errs.category = 'Category is required'
     setErrors(errs)
     if (Object.keys(errs).length > 0) return
     setConfirm(editing ? { type: 'update', id: editing.id } : { type: 'create' })
@@ -63,9 +68,14 @@ function AchievementsPage() {
 
   function executeConfirm() {
     if (!confirm) return
-    if (confirm.type === 'create') createMutation.mutate()
-    else if (confirm.type === 'update') updateMutation.mutate()
-    else deleteMutation.mutate(confirm.id)
+    if (confirm.type === 'delete') { deleteMutation.mutate(confirm.id); setConfirm(null); return }
+    const data = { ...form, url: normalizeUrl(form.url) }
+    if (confirm.type === 'create') {
+      const { sortOrder, ...createPayload } = data
+      createMutation.mutate(createPayload)
+    } else {
+      updateMutation.mutate({ id: editing!.id, data })
+    }
     setConfirm(null)
   }
 
@@ -76,7 +86,7 @@ function AchievementsPage() {
           <h1 className="text-lg md:text-2xl font-bold text-[var(--sea-ink)]">Achievements</h1>
           <p className="mt-1 text-xs md:text-sm text-[var(--sea-ink-soft)]">Manage your achievements.</p>
         </div>
-        <Button size="sm" onClick={openCreate}><Plus className="size-4 md:size-5" /><span className="md:inline"> Add Achievement</span></Button>
+        <Button size="sm" onClick={openCreate}><Plus className="size-4 md:size-5" /><span className="md:inline"> Create Achievement</span></Button>
       </div>
 
       <div className="overflow-x-auto">
@@ -105,33 +115,33 @@ function AchievementsPage() {
         <div className="fixed inset-0 z-[60] flex items-end md:items-center justify-center bg-black/50">
           <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-t-2xl md:rounded-2xl border bg-card p-4 md:p-6 shadow-lg">
             <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-sm md:text-lg font-semibold">{editing ? 'Edit Achievement' : 'Add Achievement'}</h2>
+            <h2 className="text-sm md:text-lg font-semibold">{editing ? 'Edit Achievement' : 'Create Achievement'}</h2>
             <Button type="button" size="xs" variant="ghost" onClick={closeForm} className="text-muted-foreground">✕</Button>
           </div>
             <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
-              <TextField label="Title" name="title" value={form.title} onChange={(v) => setForm({ ...form, title: v })} error={errors.title} />
+              <TextField label="Title" name="title" value={form.title} onChange={(v) => setForm({ ...form, title: v })} error={errors.title} required />
               <div className="grid gap-3 md:gap-4 sm:grid-cols-2">
-                <TextField label="Event Name" name="eventName" value={form.eventName} onChange={(v) => setForm({ ...form, eventName: v })} />
-                <TextField label="Organizer" name="organizer" value={form.organizer} onChange={(v) => setForm({ ...form, organizer: v })} />
+                <TextField label="Event Name" name="eventName" value={form.eventName} onChange={(v) => setForm({ ...form, eventName: v })} placeholder="e.g. Hackathon 2026" />
+                <TextField label="Organizer" name="organizer" value={form.organizer} onChange={(v) => setForm({ ...form, organizer: v })} placeholder="e.g. Universitas Gadjah Mada" />
               </div>
               <div className="grid gap-3 md:gap-4 sm:grid-cols-2">
-                <TextField label="Date" name="date" value={form.date} onChange={(v) => setForm({ ...form, date: v })} error={errors.date} placeholder="YYYY-MM-DD" />
+                <DateField label="Date" name="date" value={form.date} onChange={(v) => setForm({ ...form, date: v })} error={errors.date} required />
                 <SelectField label="Category" name="category" value={form.category} onChange={(v) => setForm({ ...form, category: v })} options={[
                   { value: 'Software Development', label: 'Software Development' },
                   { value: 'Hackathon', label: 'Hackathon' },
                   { value: 'Photo & Video', label: 'Photo & Video' },
                   { value: 'Applied Technology', label: 'Applied Technology' },
                   { value: 'Others', label: 'Others' },
-                ]} placeholder="Select category" />
+                ]} placeholder="Select category" error={errors.category} required />
               </div>
               <div className="grid gap-3 md:gap-4 sm:grid-cols-2">
-                <TextField label="Sort Order" name="sortOrder" value={String(form.sortOrder)} onChange={(v) => setForm({ ...form, sortOrder: Number(v) || 0 })} />
+                <TextField label="Sort Order" name="sortOrder" value={String(form.sortOrder)} onChange={(v) => setForm({ ...form, sortOrder: Number(v) || 0 })} placeholder="Auto-incremented on create" />
               </div>
-              <TextAreaField label="Description" name="description" value={form.description} onChange={(v) => setForm({ ...form, description: v })} rows={3} />
-              <TextField label="URL" name="url" value={form.url} onChange={(v) => setForm({ ...form, url: v })} />
+              <TextAreaField label="Description" name="description" value={form.description} onChange={(v) => setForm({ ...form, description: v })} rows={3} placeholder="Describe the achievement" />
+              <TextField label="URL" name="url" value={form.url} onChange={(v) => setForm({ ...form, url: v })} placeholder="https://example.com" />
               <div className="flex justify-end gap-3">
                 <Button type="button" variant="outline" onClick={closeForm}>Cancel</Button>
-                <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>{editing ? 'Update' : 'Add'}</Button>
+                <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>{editing ? 'Update' : 'Create'}</Button>
               </div>
             </form>
           </div>
@@ -146,15 +156,15 @@ function AchievementsPage() {
             <AlertDialogMedia><Plus className="size-6 text-primary" /></AlertDialogMedia>
           )}
           <AlertDialogHeader>
-            <AlertDialogTitle>{confirm?.type === 'delete' ? 'Delete Achievement' : confirm?.type === 'create' ? 'Add Achievement' : 'Update Achievement'}</AlertDialogTitle>
+            <AlertDialogTitle>{confirm?.type === 'delete' ? 'Delete Achievement' : confirm?.type === 'create' ? 'Create Achievement' : 'Update Achievement'}</AlertDialogTitle>
             <AlertDialogDescription>
-              {confirm?.type === 'delete' ? 'This action cannot be undone. Are you sure?' : `Are you sure you want to ${confirm?.type === 'create' ? 'add' : 'update'} this achievement?`}
+              {confirm?.type === 'delete' ? 'This action cannot be undone. Are you sure?' : `Are you sure you want to ${confirm?.type === 'create' ? 'create' : 'update'} this achievement?`}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setConfirm(null)}>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={executeConfirm} className={confirm?.type === 'delete' ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90' : ''}>
-              {confirm?.type === 'delete' ? 'Delete' : confirm?.type === 'create' ? 'Add' : 'Update'}
+              {confirm?.type === 'delete' ? 'Delete' : confirm?.type === 'create' ? 'Create' : 'Update'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

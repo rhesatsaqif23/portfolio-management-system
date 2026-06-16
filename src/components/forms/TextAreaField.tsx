@@ -9,12 +9,13 @@ type TextAreaFieldProps = {
   error?: string
   placeholder?: string
   rows?: number
+  required?: boolean
 }
 
-export default function TextAreaField({ name, label, value, onChange, error, placeholder, rows = 4 }: TextAreaFieldProps) {
+export default function TextAreaField({ name, label, value, onChange, error, placeholder, rows = 4, required }: TextAreaFieldProps) {
   return (
     <div className="space-y-1">
-      {label && <Label htmlFor={name}>{label}</Label>}
+      {label && <Label htmlFor={name}>{label}{required && <span className="text-destructive ml-0.5">*</span>}</Label>}
       <Textarea
         id={name}
         name={name}

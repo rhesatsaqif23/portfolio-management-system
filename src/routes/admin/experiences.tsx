@@ -39,17 +39,17 @@ function ExperiencesPage() {
   const createMutation = useMutation({
     mutationFn: (payload: Record<string, unknown>) => createExperience({ data: payload }),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['experiences'] }); toast.success('Experience created'); closeForm() },
-    onError: (err) => toast.error(err instanceof Error ? err.message : 'Failed'),
+    onError: (err) => toast.error(err instanceof Error ? err.message : typeof err === 'string' ? err : JSON.stringify(err)),
   })
   const updateMutation = useMutation({
     mutationFn: (payload: { id: string; data: Record<string, unknown> }) => updateExperience({ data: payload }),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['experiences'] }); toast.success('Experience updated'); closeForm() },
-    onError: (err) => toast.error(err instanceof Error ? err.message : 'Failed'),
+    onError: (err) => toast.error(err instanceof Error ? err.message : typeof err === 'string' ? err : JSON.stringify(err)),
   })
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteExperience({ data: id }),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['experiences'] }); toast.success('Experience deleted') },
-    onError: (err) => toast.error(err instanceof Error ? err.message : 'Failed'),
+    onError: (err) => toast.error(err instanceof Error ? err.message : typeof err === 'string' ? err : JSON.stringify(err)),
   })
 
   function updateDescription(index: number, value: string) {
@@ -78,7 +78,10 @@ function ExperiencesPage() {
     return result.url
   }
 
-  function openCreate() { setEditing(null); setForm(initialForm); setPendingImage(null); setErrors({}); setShowForm(true) }
+  function openCreate() {
+    const nextSort = experiences.length > 0 ? Math.max(...experiences.map((e) => e.sortOrder ?? 0)) + 1 : 0
+    setEditing(null); setForm({ ...initialForm, sortOrder: nextSort }); setPendingImage(null); setErrors({}); setShowForm(true)
+  }
   function openEdit(exp: Experience) {
     setEditing(exp)
     setForm({ orgName: exp.orgName, role: exp.role, startDate: exp.startDate, endDate: exp.endDate ?? '', description: (exp.description?.length ? exp.description : ['']) as string[], type: exp.type as string, imageUrl: exp.imageUrl ?? '', sortOrder: exp.sortOrder ?? 0 })
@@ -92,6 +95,8 @@ function ExperiencesPage() {
     if (!form.orgName.trim()) errs.orgName = 'Organization name is required'
     if (!form.role.trim()) errs.role = 'Role is required'
     if (!form.startDate.trim()) errs.startDate = 'Start date is required'
+    if (!form.type.trim()) errs.type = 'Experience type is required'
+    if (form.endDate && form.startDate && form.endDate <= form.startDate) errs.endDate = 'End date must be after start date'
     setErrors(errs)
     if (Object.keys(errs).length > 0) return
     setConfirm(editing ? { type: 'update', id: editing.id } : { type: 'create' })
@@ -101,8 +106,16 @@ function ExperiencesPage() {
     if (!confirm) return
     if (confirm.type === 'delete') { deleteMutation.mutate(confirm.id); setConfirm(null); return }
     const imageUrl = await uploadPending(form.imageUrl)
-    if (confirm.type === 'create') createMutation.mutate({ ...form, imageUrl })
-    else updateMutation.mutate({ id: editing!.id, data: { ...form, imageUrl } })
+    const payload = {
+      ...form,
+      imageUrl,
+      endDate: form.endDate || null,
+      description: form.description.filter((d: string) => d.trim()),
+    }
+    if (confirm.type === 'create') {
+      const { sortOrder, ...createPayload } = payload
+      createMutation.mutate(createPayload)
+    } else updateMutation.mutate({ id: editing!.id, data: payload })
     setConfirm(null)
   }
 
@@ -113,7 +126,7 @@ function ExperiencesPage() {
           <h1 className="text-lg md:text-2xl font-bold text-[var(--sea-ink)]">Experiences</h1>
           <p className="mt-1 text-xs md:text-sm text-[var(--sea-ink-soft)]">Manage your career timeline.</p>
         </div>
-        <Button size="sm" onClick={openCreate}><Plus className="size-4 md:size-5" /><span className="md:inline"> Add Experience</span></Button>
+        <Button size="sm" onClick={openCreate}><Plus className="size-4 md:size-5" /><span className="md:inline"> Create Experience</span></Button>
       </div>
 
       <div className="overflow-x-auto">
@@ -143,19 +156,19 @@ function ExperiencesPage() {
         <div className="fixed inset-0 z-[60] flex items-end md:items-center justify-center bg-black/50">
           <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-t-2xl md:rounded-2xl border bg-card p-4 md:p-6 shadow-lg">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-sm md:text-lg font-semibold">{editing ? 'Edit Experience' : 'Add Experience'}</h2>
+              <h2 className="text-sm md:text-lg font-semibold">{editing ? 'Edit Experience' : 'Create Experience'}</h2>
               <Button type="button" size="xs" variant="ghost" onClick={closeForm} className="text-muted-foreground">✕</Button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
               <div className="grid gap-3 md:gap-4 sm:grid-cols-2">
-                <TextField label="Organization" name="orgName" value={form.orgName} onChange={(v) => setForm({ ...form, orgName: v })} error={errors.orgName} />
-                <TextField label="Role" name="role" value={form.role} onChange={(v) => setForm({ ...form, role: v })} error={errors.role} />
+                <TextField label="Organization" name="orgName" value={form.orgName} onChange={(v) => setForm({ ...form, orgName: v })} error={errors.orgName} placeholder="e.g. Google" required />
+                <TextField label="Role" name="role" value={form.role} onChange={(v) => setForm({ ...form, role: v })} error={errors.role} placeholder="e.g. Software Engineer" required />
               </div>
               <div className="grid gap-3 md:gap-4 sm:grid-cols-2">
-                <DateField label="Start Date" name="startDate" value={form.startDate} onChange={(v) => setForm({ ...form, startDate: v })} error={errors.startDate} />
-                <DateField label="End Date" name="endDate" value={form.endDate} onChange={(v) => setForm({ ...form, endDate: v })} placeholder={form.endDate ? 'Pick a date' : 'Leave empty if current'} />
+                <DateField label="Start Date" name="startDate" value={form.startDate} onChange={(v) => setForm({ ...form, startDate: v })} error={errors.startDate} required />
+                <DateField label="End Date" name="endDate" value={form.endDate} onChange={(v) => setForm({ ...form, endDate: v })} placeholder={form.endDate ? 'Pick a date' : 'Leave empty if current'} error={errors.endDate} />
               </div>
-              <SelectField label="Type" name="type" value={form.type} onChange={(v) => setForm({ ...form, type: v })} options={expTypes} />
+              <SelectField label="Type" name="type" value={form.type} onChange={(v) => setForm({ ...form, type: v })} options={expTypes} required />
               <div className="space-y-2">
                 <label className="text-sm font-medium">Key Points</label>
                 {form.description.map((point, i) => (
@@ -169,10 +182,10 @@ function ExperiencesPage() {
                 <Button type="button" size="xs" variant="outline" onClick={addDescription}>+ Add Point</Button>
               </div>
               <FileUpload label="Organization Logo" value={form.imageUrl} onChange={(url) => setForm({ ...form, imageUrl: url })} accept="image/*" maxSizeMB={5} bucket="company-images" deferUpload pendingFile={pendingImage} onPendingFile={setPendingImage} />
-              <TextField label="Sort Order" name="sortOrder" value={String(form.sortOrder)} onChange={(v) => setForm({ ...form, sortOrder: Number(v) || 0 })} />
+              <TextField label="Sort Order" name="sortOrder" value={String(form.sortOrder)} onChange={(v) => setForm({ ...form, sortOrder: Number(v) || 0 })} placeholder="Auto-incremented on create" />
               <div className="flex justify-end gap-3">
                 <Button type="button" variant="outline" onClick={closeForm}>Cancel</Button>
-                <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>{editing ? 'Update' : 'Add'}</Button>
+                <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>{editing ? 'Update' : 'Create'}</Button>
               </div>
             </form>
           </div>
@@ -187,15 +200,15 @@ function ExperiencesPage() {
             <AlertDialogMedia><Plus className="size-6 text-primary" /></AlertDialogMedia>
           )}
           <AlertDialogHeader>
-            <AlertDialogTitle>{confirm?.type === 'delete' ? 'Delete Experience' : confirm?.type === 'create' ? 'Add Experience' : 'Update Experience'}</AlertDialogTitle>
+            <AlertDialogTitle>{confirm?.type === 'delete' ? 'Delete Experience' : confirm?.type === 'create' ? 'Create Experience' : 'Update Experience'}</AlertDialogTitle>
             <AlertDialogDescription>
-              {confirm?.type === 'delete' ? 'This action cannot be undone. Are you sure?' : `Are you sure you want to ${confirm?.type === 'create' ? 'add' : 'update'} this experience?`}
+              {confirm?.type === 'delete' ? 'This action cannot be undone. Are you sure?' : `Are you sure you want to ${confirm?.type === 'create' ? 'create' : 'update'} this experience?`}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setConfirm(null)}>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={executeConfirm} className={confirm?.type === 'delete' ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90' : ''}>
-              {confirm?.type === 'delete' ? 'Delete' : confirm?.type === 'create' ? 'Add' : 'Update'}
+              {confirm?.type === 'delete' ? 'Delete' : confirm?.type === 'create' ? 'Create' : 'Update'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

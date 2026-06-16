@@ -8,6 +8,7 @@ import { Button } from '#/components/ui/button'
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction, AlertDialogMedia } from '#/components/ui/alert-dialog'
 import { toast } from '#/components/ui/sonner'
 import { listSkills, createSkill, updateSkill, deleteSkill } from '#/apis'
+import { normalizeUrl } from '#/lib/utils'
 import type { Skill } from '#/domain/ports'
 import { Plus, Trash2 } from 'lucide-react'
 
@@ -24,7 +25,7 @@ const categories = [
   { value: 'Design', label: 'Design' },
 ]
 
-const initialForm = { name: '', category: 'web', iconUrl: '', sortOrder: 0 }
+const initialForm = { name: '', category: 'Frontend', iconUrl: '', sortOrder: 0 }
 
 type ConfirmAction = { type: 'create' } | { type: 'update'; id: string } | { type: 'delete'; id: string } | null
 
@@ -34,7 +35,7 @@ function SkillsPage() {
   const [editing, setEditing] = useState<Skill | null>(null)
   const [form, setForm] = useState(initialForm)
   const [pendingIcon, setPendingIcon] = useState<File | null>(null)
-  const [error, setError] = useState('')
+  const [errors, setErrors] = useState<Record<string, string>>({})
   const [confirm, setConfirm] = useState<ConfirmAction>(null)
 
   const { data: skills = [], isLoading } = useQuery({ queryKey: ['skills'], queryFn: () => listSkills() })
@@ -43,17 +44,17 @@ function SkillsPage() {
   const createMutation = useMutation({
     mutationFn: (payload: Record<string, unknown>) => createSkill({ data: payload }),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['skills'] }); toast.success('Skill created'); closeForm() },
-    onError: (err) => toast.error(err instanceof Error ? err.message : 'Failed'),
+    onError: (err) => toast.error(err instanceof Error ? err.message : typeof err === 'string' ? err : JSON.stringify(err)),
   })
   const updateMutation = useMutation({
     mutationFn: (payload: { id: string; data: Record<string, unknown> }) => updateSkill({ data: payload }),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['skills'] }); toast.success('Skill updated'); closeForm() },
-    onError: (err) => toast.error(err instanceof Error ? err.message : 'Failed'),
+    onError: (err) => toast.error(err instanceof Error ? err.message : typeof err === 'string' ? err : JSON.stringify(err)),
   })
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteSkill({ data: id }),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['skills'] }); toast.success('Skill deleted') },
-    onError: (err) => toast.error(err instanceof Error ? err.message : 'Failed'),
+    onError: (err) => toast.error(err instanceof Error ? err.message : typeof err === 'string' ? err : JSON.stringify(err)),
   })
 
   async function uploadPending(iconUrl: string) {
@@ -69,26 +70,36 @@ function SkillsPage() {
     return result.url
   }
 
-  function openCreate() { setEditing(null); setForm(initialForm); setPendingIcon(null); setError(''); setShowForm(true) }
+  function openCreate() {
+    const nextSort = skills.length > 0 ? Math.max(...skills.map((s) => s.sortOrder ?? 0)) + 1 : 0
+    setEditing(null); setForm({ ...initialForm, sortOrder: nextSort }); setPendingIcon(null); setErrors({}); setShowForm(true)
+  }
   function openEdit(skill: Skill) {
     setEditing(skill)
     setForm({ name: skill.name, category: skill.category as string, iconUrl: skill.iconUrl ?? '', sortOrder: skill.sortOrder ?? 0 })
-    setPendingIcon(null); setError(''); setShowForm(true)
+    setPendingIcon(null); setErrors({}); setShowForm(true)
   }
-  function closeForm() { setShowForm(false); setEditing(null); setForm(initialForm); setPendingIcon(null); setError('') }
+  function closeForm() { setShowForm(false); setEditing(null); setForm(initialForm); setPendingIcon(null); setErrors({}) }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!form.name.trim()) { setError('Skill name is required'); return }
+    const errs: Record<string, string> = {}
+    if (!form.name.trim()) errs.name = 'Skill name is required'
+    if (!form.category.trim()) errs.category = 'Category is required'
+    setErrors(errs)
+    if (Object.keys(errs).length > 0) return
     setConfirm(editing ? { type: 'update', id: editing.id } : { type: 'create' })
   }
 
   async function executeConfirm() {
     if (!confirm) return
     if (confirm.type === 'delete') { deleteMutation.mutate(confirm.id); setConfirm(null); return }
-    const iconUrl = await uploadPending(form.iconUrl)
-    if (confirm.type === 'create') createMutation.mutate({ ...form, iconUrl })
-    else updateMutation.mutate({ id: editing!.id, data: { ...form, iconUrl } })
+    const iconUrl = normalizeUrl(await uploadPending(form.iconUrl))
+    const payload = { ...form, iconUrl }
+    if (confirm.type === 'create') {
+      const { sortOrder, ...createPayload } = payload
+      createMutation.mutate(createPayload)
+    } else updateMutation.mutate({ id: editing!.id, data: payload })
     setConfirm(null)
   }
 
@@ -99,7 +110,7 @@ function SkillsPage() {
           <h1 className="text-lg md:text-2xl font-bold text-[var(--sea-ink)]">Skills</h1>
           <p className="mt-1 text-xs md:text-sm text-[var(--sea-ink-soft)]">Manage your skills.</p>
         </div>
-        <Button size="sm" onClick={openCreate}><Plus className="size-4 md:size-5" /><span className="md:inline"> Add Skill</span></Button>
+        <Button size="sm" onClick={openCreate}><Plus className="size-4 md:size-5" /><span className="md:inline"> Create Skill</span></Button>
       </div>
 
       <div className="overflow-x-auto">
@@ -128,17 +139,17 @@ function SkillsPage() {
         <div className="fixed inset-0 z-[60] flex items-end md:items-center justify-center bg-black/50">
           <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-t-2xl md:rounded-2xl border bg-card p-4 md:p-6 shadow-lg">
             <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-sm md:text-lg font-semibold">{editing ? 'Edit Skill' : 'Add Skill'}</h2>
+            <h2 className="text-sm md:text-lg font-semibold">{editing ? 'Edit Skill' : 'Create Skill'}</h2>
             <Button type="button" size="xs" variant="ghost" onClick={closeForm} className="text-muted-foreground">✕</Button>
           </div>
             <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
-              <TextField label="Skill Name" name="name" value={form.name} onChange={(v) => setForm({ ...form, name: v })} error={error} />
-              <SelectField label="Category" name="category" value={form.category} onChange={(v) => setForm({ ...form, category: v })} options={categories} />
+              <TextField label="Skill Name" name="name" value={form.name} onChange={(v) => setForm({ ...form, name: v })} error={errors.name} required />
+              <SelectField label="Category" name="category" value={form.category} onChange={(v) => setForm({ ...form, category: v })} options={categories} error={errors.category} required />
               <FileUpload label="Icon / Logo" value={form.iconUrl} onChange={(url) => setForm({ ...form, iconUrl: url })} accept="image/*" maxSizeMB={5} bucket="tech-stack" deferUpload pendingFile={pendingIcon} onPendingFile={setPendingIcon} />
-              <TextField label="Sort Order" name="sortOrder" value={String(form.sortOrder)} onChange={(v) => setForm({ ...form, sortOrder: Number(v) || 0 })} />
+              <TextField label="Sort Order" name="sortOrder" value={String(form.sortOrder)} onChange={(v) => setForm({ ...form, sortOrder: Number(v) || 0 })} placeholder="Auto-incremented on create" />
               <div className="flex justify-end gap-3">
                 <Button type="button" variant="outline" onClick={closeForm}>Cancel</Button>
-                <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>{editing ? 'Update' : 'Add'}</Button>
+                <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>{editing ? 'Update' : 'Create'}</Button>
               </div>
             </form>
           </div>
@@ -153,15 +164,15 @@ function SkillsPage() {
             <AlertDialogMedia><Plus className="size-6 text-primary" /></AlertDialogMedia>
           )}
           <AlertDialogHeader>
-            <AlertDialogTitle>{confirm?.type === 'delete' ? 'Delete Skill' : confirm?.type === 'create' ? 'Add Skill' : 'Update Skill'}</AlertDialogTitle>
+            <AlertDialogTitle>{confirm?.type === 'delete' ? 'Delete Skill' : confirm?.type === 'create' ? 'Create Skill' : 'Update Skill'}</AlertDialogTitle>
             <AlertDialogDescription>
-              {confirm?.type === 'delete' ? 'This action cannot be undone. Are you sure?' : `Are you sure you want to ${confirm?.type === 'create' ? 'add' : 'update'} this skill?`}
+              {confirm?.type === 'delete' ? 'This action cannot be undone. Are you sure?' : `Are you sure you want to ${confirm?.type === 'create' ? 'create' : 'update'} this skill?`}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setConfirm(null)}>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={executeConfirm} className={confirm?.type === 'delete' ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90' : ''}>
-              {confirm?.type === 'delete' ? 'Delete' : confirm?.type === 'create' ? 'Add' : 'Update'}
+              {confirm?.type === 'delete' ? 'Delete' : confirm?.type === 'create' ? 'Create' : 'Update'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

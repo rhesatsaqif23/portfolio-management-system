@@ -3,11 +3,13 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { DataTable, usePagination } from '#/components/tables'
 import { TextField, TextAreaField, SelectField, FileUpload } from '#/components/forms'
+import { Switch } from '#/components/ui/switch'
 import { Badge } from '#/components/shared'
 import { Button } from '#/components/ui/button'
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction, AlertDialogMedia } from '#/components/ui/alert-dialog'
 import { toast } from '#/components/ui/sonner'
 import { listProjects, createProject, updateProject, deleteProject } from '#/apis'
+import { normalizeUrl } from '#/lib/utils'
 import type { Project } from '#/domain/ports'
 import { Plus, Trash2 } from 'lucide-react'
 
@@ -61,17 +63,17 @@ function ProjectsPage() {
   const createMutation = useMutation({
     mutationFn: (payload: Record<string, unknown>) => createProject({ data: payload }),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['projects'] }); toast.success('Project created'); closeForm() },
-    onError: (err) => toast.error(err instanceof Error ? err.message : 'Failed'),
+    onError: (err) => toast.error(err instanceof Error ? err.message : typeof err === 'string' ? err : JSON.stringify(err)),
   })
   const updateMutation = useMutation({
     mutationFn: (payload: { id: string; data: Record<string, unknown> }) => updateProject({ data: payload }),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['projects'] }); toast.success('Project updated'); closeForm() },
-    onError: (err) => toast.error(err instanceof Error ? err.message : 'Failed'),
+    onError: (err) => toast.error(err instanceof Error ? err.message : typeof err === 'string' ? err : JSON.stringify(err)),
   })
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteProject({ data: id }),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['projects'] }); toast.success('Project deleted') },
-    onError: (err) => toast.error(err instanceof Error ? err.message : 'Failed'),
+    onError: (err) => toast.error(err instanceof Error ? err.message : typeof err === 'string' ? err : JSON.stringify(err)),
   })
 
   function updateTechStack(index: number, value: string) {
@@ -91,15 +93,15 @@ function ProjectsPage() {
     const f = { ...form, ...overrides }
     const links = f.additionalLinks
       ? (() => {
-          try { const p = JSON.parse(f.additionalLinks); if (Array.isArray(p)) return p } catch {}
+          try { const p = JSON.parse(f.additionalLinks); if (Array.isArray(p)) return p.map((l: { label: string; url: string }) => ({ ...l, url: normalizeUrl(l.url) })) } catch {}
           return f.additionalLinks.split('\n').map((l) => l.trim()).filter(Boolean).map((l) => {
             const sep = l.includes('|') ? '|' : ','
             const [label, url] = l.split(sep).map((s) => s.trim())
-            return { label: label ?? '', url: url ?? '' }
+            return { label: label ?? '', url: normalizeUrl(url ?? '') }
           }).filter((l) => l.label && l.url)
         })()
       : []
-    return { ...f, additionalLinks: links, slug: slugify(f.title) || f.title, techStacks: f.techStacks.filter((s) => s.trim()) }
+    return { ...f, additionalLinks: links, githubUrl: normalizeUrl(f.githubUrl), liveUrl: normalizeUrl(f.liveUrl), slug: slugify(f.title) || f.title, techStacks: f.techStacks.filter((s) => s.trim()) }
   }
 
   async function uploadPending(thumbnailUrl: string) {
@@ -115,7 +117,10 @@ function ProjectsPage() {
     return result.url
   }
 
-  function openCreate() { setEditing(null); setForm(initialForm); setPendingThumbnail(null); setErrors({}); setShowForm(true) }
+  function openCreate() {
+    const nextSort = projects.length > 0 ? Math.max(...projects.map((p) => p.sortOrder ?? 0)) + 1 : 0
+    setEditing(null); setForm({ ...initialForm, sortOrder: nextSort }); setPendingThumbnail(null); setErrors({}); setShowForm(true)
+  }
 
   function openEdit(project: Project) {
     setEditing(project)
@@ -137,6 +142,7 @@ function ProjectsPage() {
     e.preventDefault()
     const errs: Record<string, string> = {}
     if (!form.title.trim()) errs.title = 'Title is required'
+    if (!form.category.trim()) errs.category = 'Category is required'
     setErrors(errs)
     if (Object.keys(errs).length > 0) return
     setConfirm(editing ? { type: 'update', id: editing.id } : { type: 'create' })
@@ -147,8 +153,10 @@ function ProjectsPage() {
     if (confirm.type === 'delete') { deleteMutation.mutate(confirm.id); setConfirm(null); return }
     const thumbnailUrl = await uploadPending(form.thumbnailUrl)
     const payload = buildPayload({ thumbnailUrl })
-    if (confirm.type === 'create') createMutation.mutate(payload)
-    else updateMutation.mutate({ id: editing!.id, data: payload })
+    if (confirm.type === 'create') {
+      const { sortOrder, ...createPayload } = payload
+      createMutation.mutate(createPayload)
+    } else updateMutation.mutate({ id: editing!.id, data: payload })
     setConfirm(null)
   }
 
@@ -194,21 +202,20 @@ function ProjectsPage() {
             </div>
             <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
               <div>
-                <TextField label="Title" name="title" value={form.title} onChange={(v) => setForm({ ...form, title: v })} error={errors.title} />
+                <TextField label="Title" name="title" value={form.title} onChange={(v) => setForm({ ...form, title: v })} error={errors.title} placeholder="e.g. My Portfolio" required />
               </div>
-              <TextAreaField label="Short Description" name="descriptionShort" value={form.descriptionShort} onChange={(v) => setForm({ ...form, descriptionShort: v })} rows={3} />
+              <TextAreaField label="Short Description" name="descriptionShort" value={form.descriptionShort} onChange={(v) => setForm({ ...form, descriptionShort: v })} rows={3} placeholder="Brief description of the project" />
               <div className="grid gap-3 md:gap-4 sm:grid-cols-2">
-                <TextField label="GitHub URL" name="githubUrl" value={form.githubUrl} onChange={(v) => setForm({ ...form, githubUrl: v })} />
-                <TextField label="Live URL" name="liveUrl" value={form.liveUrl} onChange={(v) => setForm({ ...form, liveUrl: v })} />
+                <TextField label="GitHub URL" name="githubUrl" value={form.githubUrl} onChange={(v) => setForm({ ...form, githubUrl: v })} placeholder="https://github.com/username/repo" />
+                <TextField label="Live URL" name="liveUrl" value={form.liveUrl} onChange={(v) => setForm({ ...form, liveUrl: v })} placeholder="https://myapp.com" />
               </div>
               <SelectField label="Category" name="category" value={form.category} onChange={(v) => setForm({ ...form, category: v })} options={[
                 { value: 'Web App', label: 'Web App' },
                 { value: 'Mobile App', label: 'Mobile App' },
-                { value: 'Others', label: 'Others' },
-              ]} placeholder="Select category" />
+              ]} placeholder="Select category" error={errors.category} required />
               <TextField label="Additional Links" name="additionalLinks" value={form.additionalLinks} onChange={(v) => setForm({ ...form, additionalLinks: v })} placeholder="Paste URL here" />
               <FileUpload label="Thumbnail Image" value={form.thumbnailUrl} onChange={(url) => setForm({ ...form, thumbnailUrl: url })} accept="image/*" maxSizeMB={5} bucket="project-images" deferUpload pendingFile={pendingThumbnail} onPendingFile={setPendingThumbnail} />
-              <TextAreaField label="Long Description" name="longDescription" value={form.longDescription} onChange={(v) => setForm({ ...form, longDescription: v })} rows={6} />
+              <TextAreaField label="Long Description" name="longDescription" value={form.longDescription} onChange={(v) => setForm({ ...form, longDescription: v })} rows={6} placeholder="Detailed description of the project" />
               <div className="space-y-2">
                 <label className="text-sm font-medium">Tech Stacks</label>
                 {form.techStacks.map((stack, i) => (
@@ -221,14 +228,14 @@ function ProjectsPage() {
                 ))}
                 <Button type="button" size="xs" variant="outline" onClick={addTechStack}>+ Add Stack</Button>
               </div>
-              <div className="flex items-center gap-2">
-                <input type="checkbox" id="isFeatured" checked={form.isFeatured} onChange={(e) => setForm({ ...form, isFeatured: e.target.checked })} className="h-4 w-4" />
-                <label htmlFor="isFeatured" className="text-xs font-medium md:text-sm">Featured</label>
+              <div className="flex items-center gap-3">
+                <Switch id="isFeatured" checked={form.isFeatured} onCheckedChange={(v) => setForm({ ...form, isFeatured: v })} size="sm" />
+                <label htmlFor="isFeatured" className="text-xs font-medium md:text-sm cursor-pointer">Featured</label>
               </div>
-              <TextField label="Sort Order" name="sortOrder" value={String(form.sortOrder)} onChange={(v) => setForm({ ...form, sortOrder: Number(v) || 0 })} />
+              <TextField label="Sort Order" name="sortOrder" value={String(form.sortOrder)} onChange={(v) => setForm({ ...form, sortOrder: Number(v) || 0 })} placeholder="Auto-incremented on create" />
               <div className="flex justify-end gap-3">
-                <Button type="button" variant="outline" size="xs" onClick={closeForm}>Cancel</Button>
-                <Button type="submit" size="xs" disabled={createMutation.isPending || updateMutation.isPending}>{editing ? 'Update' : 'Create'}</Button>
+                <Button type="button" variant="outline" onClick={closeForm}>Cancel</Button>
+                <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>{editing ? 'Update' : 'Create'}</Button>
               </div>
             </form>
           </div>
