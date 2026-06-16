@@ -7,6 +7,7 @@ const achievements = [
     eventName: 'Slash National Competition 2025',
     organizer: 'BEM Faculty of Computer Science, UPN "Veteran" Jakarta',
     date: '2025-07-01',
+    category: 'Hackathon',
     description:
       'Achieved 1st place by developing Swara Ibu, a mobile application for postpartum depression support using voice-based emotional analysis and emergency alert features within a 5-day hackathon.',
     url: null,
@@ -17,6 +18,7 @@ const achievements = [
     eventName: 'IT Fest x FTJ',
     organizer: 'Universitas Muria Kudus',
     date: '2025-11-01',
+    category: 'Software Development',
     description:
       'Achieved Top 5 Finalist position in a competitive Web Development event, showcasing proficiency in building responsive, user-friendly interfaces and robust backend systems by developing OptiFind, a web-based lost and found platform.',
     url: null,
@@ -27,6 +29,7 @@ const achievements = [
     eventName: 'HackAttack 2025',
     organizer: 'CCI x HimaIF Telkom University',
     date: '2025-11-01',
+    category: 'Hackathon',
     description:
       'Competed in HackAttack 2025, reaching the Top 7 finalists among numerous teams. Demonstrated strong collaboration and technical expertise in a high-pressure hackathon environment.',
     url: null,
@@ -37,6 +40,7 @@ const achievements = [
     eventName: 'FICPACT CUP 2026',
     organizer: 'Universitas Katolik Soegijapranata',
     date: '2026-03-01',
+    category: 'Software Development',
     description:
       'Selected as a Top 13 finalist in the Web Development competition at FICPACT CUP 2026 by developing NeuroClash GG, an AI-powered edutainment platform with auto-battler quiz mechanics.',
     url: null,
@@ -47,6 +51,7 @@ const achievements = [
     eventName: 'LIDM 2025',
     organizer: 'Ministry of Higher Education, Science, and Technology (Kemdiktisaintek)',
     date: '2025-12-01',
+    category: 'Photo & Video',
     description:
       'Selected as a Top 20 finalist nationally by producing "Tanya Bijak Salin Sadar", an educational short film addressing student life amid AI technology.',
     url: null,
@@ -57,6 +62,7 @@ const achievements = [
     eventName: 'Artropolis 2024',
     organizer: 'BEM Faculty of Computer Science, Universitas Brawijaya',
     date: '2024-10-01',
+    category: 'Photo & Video',
     description:
       'Secured 1st place with the photography work "Tech Collaboration", capturing the integration of technology within the Faculty of Computer Science environment.',
     url: null,
@@ -67,6 +73,7 @@ const achievements = [
     eventName: 'Dekan Cup FILKOM 2023',
     organizer: 'Faculty of Computer Science, Universitas Brawijaya',
     date: '2023-11-01',
+    category: 'Applied Technology',
     description:
       'Won 1st place by proposing a technology-based parking sensor system to detect available parking slots in malls as an applied IPTEK solution during the Dekan Cup FILKOM.',
     url: null,
