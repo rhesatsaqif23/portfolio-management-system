@@ -139,7 +139,7 @@ function CaseStudiesPage() {
         {items.map((item, i) => (
           <div key={i} className="flex flex-col gap-1 p-2 border rounded bg-muted/20">
             <div className="flex items-center gap-2">
-              <TextField label="Title" name={`${section}[${i}].title`} value={item.title} onChange={(v) => updateSection(section, i, 'title', v)} />
+              <div className="flex-1 min-w-0"><TextField label="Title" name={`${section}[${i}].title`} value={item.title} onChange={(v) => updateSection(section, i, 'title', v)} /></div>
               <button type="button" onClick={() => removeSection(section, i)} className="shrink-0 mt-5 text-muted-foreground hover:text-destructive"><Trash2 className="size-4" /></button>
             </div>
             <TextAreaField label="Description" name={`${section}[${i}].description`} value={item.description} onChange={(v) => updateSection(section, i, 'description', v)} rows={2} />
@@ -171,6 +171,7 @@ function CaseStudiesPage() {
           { key: 'role' as keyof CaseStudy, header: 'Role' },
           { key: 'startDate' as keyof CaseStudy, header: 'Start' },
           { key: 'endDate' as keyof CaseStudy, header: 'End', render: (v) => <span>{String(v || 'Present')}</span> },
+          { key: 'contributions' as keyof CaseStudy, header: 'Contrib.', render: (v) => <span>{(v as any[])?.length ?? 0} items</span> },
           { key: 'id' as keyof CaseStudy, header: 'Actions', render: (_, r) => (
             <div className="flex gap-2">
               <Button size="xs" variant="outline" onClick={() => openEdit(r)}>Edit</Button>
@@ -205,7 +206,7 @@ function CaseStudiesPage() {
               <SectionEditor section="features" label="Features" />
               <SectionEditor section="contributions" label="Contributions" />
               <SectionEditor section="results" label="Results" />
-              <GalleryUpload items={form.gallery} onChange={(items) => setForm({ ...form, gallery: items })} />
+              <GalleryUpload items={form.gallery} onChange={(items) => setForm({ ...form, gallery: items })} folder={form.projectId || undefined} />
               <div className="flex justify-end gap-3">
                 <Button type="button" variant="outline" onClick={closeForm}>Cancel</Button>
                 <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>{editing ? 'Update' : 'Create'}</Button>
