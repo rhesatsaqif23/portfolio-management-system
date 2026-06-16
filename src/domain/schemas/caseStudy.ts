@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 export const caseStudySectionSchema = z.object({
+  icon: z.string().optional(),
   title: z.string().optional(),
   description: z.string().optional(),
 })
@@ -14,7 +15,7 @@ export const caseStudySchema = z.object({
   problems: z.array(caseStudySectionSchema).optional().default([]),
   solutions: z.array(caseStudySectionSchema).optional().default([]),
   features: z.array(caseStudySectionSchema).optional().default([]),
-  contributions: z.array(caseStudySectionSchema).optional().default([]),
+  contributions: z.array(z.string()).optional().default([]),
   results: z.array(caseStudySectionSchema).optional().default([]),
   gallery: z.array(z.object({ url: z.string(), caption: z.string() })).optional().default([]),
 })

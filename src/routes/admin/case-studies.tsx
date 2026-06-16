@@ -13,7 +13,7 @@ import { Plus, Trash2 } from 'lucide-react'
 
 export const Route = createFileRoute('/admin/case-studies')({ component: CaseStudiesPage })
 
-type SectionItem = { title: string; description: string }
+type SectionItem = { icon?: string; title: string; description: string }
 
 const initialForm = {
   projectId: '',
@@ -24,7 +24,7 @@ const initialForm = {
   problems: [] as SectionItem[],
   solutions: [] as SectionItem[],
   features: [] as SectionItem[],
-  contributions: [] as SectionItem[],
+  contributions: [] as string[],
   results: [] as SectionItem[],
   gallery: [] as GalleryItem[],
 }
@@ -90,7 +90,7 @@ function CaseStudiesPage() {
       problems: (cs.problems ?? []) as SectionItem[],
       solutions: (cs.solutions ?? []) as SectionItem[],
       features: (cs.features ?? []) as SectionItem[],
-      contributions: (cs.contributions ?? []) as SectionItem[],
+      contributions: (cs.contributions ?? []) as string[],
       results: (cs.results ?? []) as SectionItem[],
       gallery: (cs.gallery ?? []) as GalleryItem[],
     })
@@ -131,6 +131,21 @@ function CaseStudiesPage() {
     setForm({ ...form, [section]: items })
   }
 
+  function addString(section: 'contributions') {
+    setForm({ ...form, [section]: [...(form[section] as string[]), ''] })
+  }
+
+  function updateString(section: 'contributions', index: number, value: string) {
+    const items = [...(form[section] as string[])]
+    items[index] = value
+    setForm({ ...form, [section]: items })
+  }
+
+  function removeString(section: 'contributions', index: number) {
+    const items = (form[section] as string[]).filter((_, i) => i !== index)
+    setForm({ ...form, [section]: items })
+  }
+
   function SectionEditor({ section, label }: { section: keyof typeof initialForm; label: string }) {
     const items = form[section] as SectionItem[]
     return (
@@ -139,13 +154,32 @@ function CaseStudiesPage() {
         {items.map((item, i) => (
           <div key={i} className="flex flex-col gap-1 p-2 border rounded bg-muted/20">
             <div className="flex items-center gap-2">
-              <div className="flex-1 min-w-0"><TextField label="Title" name={`${section}[${i}].title`} value={item.title} onChange={(v) => updateSection(section, i, 'title', v)} /></div>
+              <div className="flex-1 min-w-0"><TextField label="Icon" name={`${section}[${i}].icon`} value={item.icon ?? ''} onChange={(v) => updateSection(section, i, 'icon', v)} placeholder="e.g. 🏗️" /></div>
+              <div className="flex-[2] min-w-0"><TextField label="Title" name={`${section}[${i}].title`} value={item.title} onChange={(v) => updateSection(section, i, 'title', v)} /></div>
               <button type="button" onClick={() => removeSection(section, i)} className="shrink-0 mt-5 text-muted-foreground hover:text-destructive"><Trash2 className="size-4" /></button>
             </div>
             <TextAreaField label="Description" name={`${section}[${i}].description`} value={item.description} onChange={(v) => updateSection(section, i, 'description', v)} rows={2} />
           </div>
         ))}
         <Button type="button" size="xs" variant="outline" onClick={() => addSection(section)}>+ Add Item</Button>
+      </div>
+    )
+  }
+
+  function StringListEditor({ section, label }: { section: 'contributions'; label: string }) {
+    const items = form[section] as string[]
+    return (
+      <div className="space-y-2 border rounded-lg p-3">
+        <label className="text-sm font-medium">{label}</label>
+        {items.map((item, i) => (
+          <div key={i} className="flex items-center gap-2">
+            <div className="flex-1 min-w-0">
+              <TextField label={`#${i + 1}`} name={`${section}[${i}]`} value={item} onChange={(v) => updateString(section, i, v)} />
+            </div>
+            <button type="button" onClick={() => removeString(section, i)} className="shrink-0 mt-5 text-muted-foreground hover:text-destructive"><Trash2 className="size-4" /></button>
+          </div>
+        ))}
+        <Button type="button" size="xs" variant="outline" onClick={() => addString(section)}>+ Add Contribution</Button>
       </div>
     )
   }
@@ -171,7 +205,7 @@ function CaseStudiesPage() {
           { key: 'role' as keyof CaseStudy, header: 'Role' },
           { key: 'startDate' as keyof CaseStudy, header: 'Start' },
           { key: 'endDate' as keyof CaseStudy, header: 'End', render: (v) => <span>{String(v || 'Present')}</span> },
-          { key: 'contributions' as keyof CaseStudy, header: 'Contrib.', render: (v) => <span>{(v as any[])?.length ?? 0} items</span> },
+          { key: 'contributions' as keyof CaseStudy, header: 'Contrib.', render: (v) => <span>{Array.isArray(v) ? v.length : 0} items</span> },
           { key: 'id' as keyof CaseStudy, header: 'Actions', render: (_, r) => (
             <div className="flex gap-2">
               <Button size="xs" variant="outline" onClick={() => openEdit(r)}>Edit</Button>
@@ -204,7 +238,7 @@ function CaseStudiesPage() {
               <SectionEditor section="problems" label="Problems" />
               <SectionEditor section="solutions" label="Solutions" />
               <SectionEditor section="features" label="Features" />
-              <SectionEditor section="contributions" label="Contributions" />
+              <StringListEditor section="contributions" label="Contributions" />
               <SectionEditor section="results" label="Results" />
               <GalleryUpload items={form.gallery} onChange={(items) => setForm({ ...form, gallery: items })} folder={form.projectId || undefined} />
               <div className="flex justify-end gap-3">
