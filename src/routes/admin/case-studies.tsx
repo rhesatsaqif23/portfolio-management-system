@@ -149,38 +149,42 @@ function CaseStudiesPage() {
   function SectionEditor({ section, label, showIcon }: { section: keyof typeof initialForm; label: string; showIcon?: boolean }) {
     const items = form[section] as SectionItem[]
     return (
-      <div className="space-y-2 border rounded-lg p-3">
-        <label className="text-sm font-medium">{label}</label>
-        {items.map((item, i) => (
-          <div key={i} className="flex flex-col gap-1 p-2 border rounded bg-muted/20">
-            <div className="flex items-center gap-2">
-              {showIcon && <div className="flex-1 min-w-0"><TextField label="Icon" name={`${section}[${i}].icon`} value={item.icon ?? ''} onChange={(v) => updateSection(section, i, 'icon', v)} placeholder="e.g. 🏗️" /></div>}
-              <div className={showIcon ? 'flex-[2] min-w-0' : 'flex-1 min-w-0'}><TextField label="Title" name={`${section}[${i}].title`} value={item.title} onChange={(v) => updateSection(section, i, 'title', v)} /></div>
-              <button type="button" onClick={() => removeSection(section, i)} className="shrink-0 mt-5 text-muted-foreground hover:text-destructive"><Trash2 className="size-4" /></button>
+      <details className="border rounded-lg">
+        <summary className="cursor-pointer select-none px-3 py-2 text-sm font-medium hover:bg-muted/20 rounded-t-lg">{label} ({items.length})</summary>
+        <div className="space-y-3 p-3 border-t">
+          {items.map((item, i) => (
+            <div key={i} className="flex flex-col gap-1 p-2 border rounded bg-muted/20">
+              <div className="flex items-center gap-2">
+                {showIcon && <div className="flex-1 min-w-0"><TextField label="Icon" name={`${section}[${i}].icon`} value={item.icon ?? ''} onChange={(v) => updateSection(section, i, 'icon', v)} placeholder="e.g. 🏗️" /></div>}
+                <div className={showIcon ? 'flex-[2] min-w-0' : 'flex-1 min-w-0'}><TextField label="Title" name={`${section}[${i}].title`} value={item.title} onChange={(v) => updateSection(section, i, 'title', v)} placeholder="Section title" /></div>
+                <button type="button" onClick={() => removeSection(section, i)} className="shrink-0 mt-5 text-muted-foreground hover:text-destructive"><Trash2 className="size-4" /></button>
+              </div>
+              <TextAreaField label="Description" name={`${section}[${i}].description`} value={item.description} onChange={(v) => updateSection(section, i, 'description', v)} rows={2} placeholder="Describe this item..." />
             </div>
-            <TextAreaField label="Description" name={`${section}[${i}].description`} value={item.description} onChange={(v) => updateSection(section, i, 'description', v)} rows={2} />
-          </div>
-        ))}
-        <Button type="button" size="xs" variant="outline" onClick={() => addSection(section)}>+ Add Item</Button>
-      </div>
+          ))}
+          <div className="pt-2"><Button type="button" size="xs" variant="outline" onClick={() => addSection(section)}>+ Add Item</Button></div>
+        </div>
+      </details>
     )
   }
 
   function StringListEditor({ section, label }: { section: 'contributions'; label: string }) {
     const items = form[section] as string[]
     return (
-      <div className="space-y-2 border rounded-lg p-3">
-        <label className="text-sm font-medium">{label}</label>
-        {items.map((item, i) => (
-          <div key={i} className="flex items-center gap-2">
-            <div className="flex-1 min-w-0">
-              <TextField label={`#${i + 1}`} name={`${section}[${i}]`} value={item} onChange={(v) => updateString(section, i, v)} />
+      <details className="border rounded-lg">
+        <summary className="cursor-pointer select-none px-3 py-2 text-sm font-medium hover:bg-muted/20 rounded-t-lg">{label} ({items.length})</summary>
+        <div className="space-y-3 p-3 border-t">
+          {items.map((item, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <div className="flex-1 min-w-0">
+                <TextField label={`#${i + 1}`} name={`${section}[${i}]`} value={item} onChange={(v) => updateString(section, i, v)} placeholder="Describe this contribution..." />
+              </div>
+              <button type="button" onClick={() => removeString(section, i)} className="shrink-0 mt-5 text-muted-foreground hover:text-destructive"><Trash2 className="size-4" /></button>
             </div>
-            <button type="button" onClick={() => removeString(section, i)} className="shrink-0 mt-5 text-muted-foreground hover:text-destructive"><Trash2 className="size-4" /></button>
-          </div>
-        ))}
-        <Button type="button" size="xs" variant="outline" onClick={() => addString(section)}>+ Add Contribution</Button>
-      </div>
+          ))}
+          <div className="pt-2"><Button type="button" size="xs" variant="outline" onClick={() => addString(section)}>+ Add Contribution</Button></div>
+        </div>
+      </details>
     )
   }
 
@@ -229,12 +233,12 @@ function CaseStudiesPage() {
           </div>
             <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
               <SelectField label="Project" name="projectId" value={form.projectId} onChange={(v) => setForm({ ...form, projectId: v })} options={projectOptions} placeholder="Select project" error={errors.projectId} />
-              <TextField label="Role" name="role" value={form.role} onChange={(v) => setForm({ ...form, role: v })} />
+              <TextField label="Role" name="role" value={form.role} onChange={(v) => setForm({ ...form, role: v })} placeholder="e.g. Full Stack Developer" />
               <div className="grid gap-3 md:gap-4 sm:grid-cols-2">
                 <DateField label="Start Date" name="startDate" value={form.startDate} onChange={(v) => setForm({ ...form, startDate: v })} />
                 <DateField label="End Date" name="endDate" value={form.endDate} onChange={(v) => setForm({ ...form, endDate: v })} placeholder="Leave empty if current" />
               </div>
-              <TextAreaField label="Overview" name="overview" value={form.overview} onChange={(v) => setForm({ ...form, overview: v })} rows={3} />
+              <TextAreaField label="Overview" name="overview" value={form.overview} onChange={(v) => setForm({ ...form, overview: v })} rows={3} placeholder="Brief overview of the project and your role..." />
               <SectionEditor section="problems" label="Problems" />
               <SectionEditor section="solutions" label="Solutions" />
               <SectionEditor section="features" label="Features" showIcon />
