@@ -32,6 +32,8 @@ const initialForm = {
   githubUrl: '',
   liveUrl: '',
   additionalLinks: '',
+  techStacks: [''] as string[],
+  longDescription: '',
   sortOrder: 0,
 }
 
@@ -72,6 +74,19 @@ function ProjectsPage() {
     onError: (err) => toast.error(err instanceof Error ? err.message : 'Failed'),
   })
 
+  function updateTechStack(index: number, value: string) {
+    const stacks = [...form.techStacks]
+    stacks[index] = value
+    setForm({ ...form, techStacks: stacks })
+  }
+
+  function addTechStack() { setForm({ ...form, techStacks: [...form.techStacks, ''] }) }
+
+  function removeTechStack(index: number) {
+    const stacks = form.techStacks.filter((_, i) => i !== index)
+    setForm({ ...form, techStacks: stacks.length ? stacks : [''] })
+  }
+
   function buildPayload(overrides?: Partial<typeof form>) {
     const f = { ...form, ...overrides }
     const links = f.additionalLinks
@@ -84,7 +99,7 @@ function ProjectsPage() {
           }).filter((l) => l.label && l.url)
         })()
       : []
-    return { ...f, additionalLinks: links, slug: slugify(f.title) || f.title }
+    return { ...f, additionalLinks: links, slug: slugify(f.title) || f.title, techStacks: f.techStacks.filter((s) => s.trim()) }
   }
 
   async function uploadPending(thumbnailUrl: string) {
@@ -108,7 +123,10 @@ function ProjectsPage() {
       title: project.title, descriptionShort: project.descriptionShort ?? '',
       thumbnailUrl: project.thumbnailUrl ?? '', isFeatured: project.isFeatured ?? false,
       category: project.category ?? '', githubUrl: project.githubUrl ?? '', liveUrl: project.liveUrl ?? '',
-      additionalLinks: project.additionalLinks ? JSON.stringify(project.additionalLinks) : '', sortOrder: project.sortOrder ?? 0,
+      additionalLinks: project.additionalLinks ? JSON.stringify(project.additionalLinks) : '',
+      techStacks: (project.techStacks?.length ? project.techStacks : ['']) as string[],
+      longDescription: project.longDescription ?? '',
+      sortOrder: project.sortOrder ?? 0,
     })
     setPendingThumbnail(null); setErrors({}); setShowForm(true)
   }
@@ -168,8 +186,8 @@ function ProjectsPage() {
       </div>
 
       {showForm && (
-        <div className="fixed inset-0 z-40 flex items-end justify-center bg-black/50 md:items-center">
-          <div className="max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-t-2xl border bg-card p-4 shadow-lg md:rounded-2xl md:p-6">
+        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-black/50 md:items-center">
+          <div className="max-h-[85vh] w-full max-w-3xl overflow-y-auto rounded-t-2xl border bg-card p-4 shadow-lg md:rounded-2xl md:p-6">
             <div className="mb-2 flex items-center justify-between md:mb-4">
               <h2 className="text-sm font-semibold md:text-lg">{editing ? 'Edit Project' : 'Create Project'}</h2>
               <button onClick={closeForm} className="rounded p-1 text-white hover:bg-[var(--link-bg-hover)]">&times;</button>
@@ -190,6 +208,19 @@ function ProjectsPage() {
               ]} placeholder="Select category" />
               <TextField label="Additional Links" name="additionalLinks" value={form.additionalLinks} onChange={(v) => setForm({ ...form, additionalLinks: v })} placeholder="Paste URL here" />
               <FileUpload label="Thumbnail Image" value={form.thumbnailUrl} onChange={(url) => setForm({ ...form, thumbnailUrl: url })} accept="image/*" maxSizeMB={5} bucket="project-images" deferUpload pendingFile={pendingThumbnail} onPendingFile={setPendingThumbnail} />
+              <TextAreaField label="Long Description" name="longDescription" value={form.longDescription} onChange={(v) => setForm({ ...form, longDescription: v })} rows={6} />
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Tech Stacks</label>
+                {form.techStacks.map((stack, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <input value={stack} onChange={(e) => updateTechStack(i, e.target.value)} placeholder="e.g. React, Node.js" className="h-9 w-full min-w-0 rounded-md border border-input bg-[var(--card)]/50 px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 md:text-sm dark:bg-input/30" />
+                    {form.techStacks.length > 1 && (
+                      <Button type="button" size="xs" variant="destructive" onClick={() => removeTechStack(i)}>X</Button>
+                    )}
+                  </div>
+                ))}
+                <Button type="button" size="xs" variant="outline" onClick={addTechStack}>+ Add Stack</Button>
+              </div>
               <div className="flex items-center gap-2">
                 <input type="checkbox" id="isFeatured" checked={form.isFeatured} onChange={(e) => setForm({ ...form, isFeatured: e.target.checked })} className="h-4 w-4" />
                 <label htmlFor="isFeatured" className="text-xs font-medium md:text-sm">Featured</label>

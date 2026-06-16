@@ -103,8 +103,8 @@ function StatsPage() {
       </div>
 
       {showForm && (
-        <div className="fixed inset-0 z-40 flex items-end md:items-center justify-center bg-black/50">
-          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-t-2xl md:rounded-2xl border bg-card p-4 md:p-6 shadow-lg">
+        <div className="fixed inset-0 z-[60] flex items-end md:items-center justify-center bg-black/50">
+          <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-t-2xl md:rounded-2xl border bg-card p-4 md:p-6 shadow-lg">
             <div className="mb-4 flex items-center justify-between">
             <h2 className="text-sm md:text-lg font-semibold">{editing ? 'Edit Stat' : 'Add Stat'}</h2>
             <Button type="button" size="xs" variant="ghost" onClick={closeForm} className="text-muted-foreground">✕</Button>

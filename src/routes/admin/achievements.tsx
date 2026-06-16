@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { DataTable, usePagination } from '#/components/tables'
-import { TextField, TextAreaField } from '#/components/forms'
+import { TextField, TextAreaField, SelectField } from '#/components/forms'
 import { Button } from '#/components/ui/button'
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction, AlertDialogMedia } from '#/components/ui/alert-dialog'
 import { toast } from '#/components/ui/sonner'
@@ -12,7 +12,7 @@ import { Plus, Trash2 } from 'lucide-react'
 
 export const Route = createFileRoute('/admin/achievements')({ component: AchievementsPage })
 
-const initialForm = { title: '', eventName: '', organizer: '', date: '', description: '', url: '', sortOrder: 0 }
+const initialForm = { title: '', eventName: '', organizer: '', date: '', description: '', url: '', category: '', sortOrder: 0 }
 
 type ConfirmAction = { type: 'create' } | { type: 'update'; id: string } | { type: 'delete'; id: string } | null
 
@@ -46,7 +46,7 @@ function AchievementsPage() {
   function openCreate() { setEditing(null); setForm(initialForm); setErrors({}); setShowForm(true) }
   function openEdit(ach: Achievement) {
     setEditing(ach)
-    setForm({ title: ach.title, eventName: ach.eventName ?? '', organizer: ach.organizer ?? '', date: ach.date, description: ach.description ?? '', url: ach.url ?? '', sortOrder: ach.sortOrder ?? 0 })
+    setForm({ title: ach.title, eventName: ach.eventName ?? '', organizer: ach.organizer ?? '', date: ach.date, description: ach.description ?? '', url: ach.url ?? '', category: ach.category ?? '', sortOrder: ach.sortOrder ?? 0 })
     setErrors({}); setShowForm(true)
   }
   function closeForm() { setShowForm(false); setEditing(null); setForm(initialForm); setErrors({}) }
@@ -102,8 +102,8 @@ function AchievementsPage() {
       </div>
 
       {showForm && (
-        <div className="fixed inset-0 z-40 flex items-end md:items-center justify-center bg-black/50">
-          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-t-2xl md:rounded-2xl border bg-card p-4 md:p-6 shadow-lg">
+        <div className="fixed inset-0 z-[60] flex items-end md:items-center justify-center bg-black/50">
+          <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-t-2xl md:rounded-2xl border bg-card p-4 md:p-6 shadow-lg">
             <div className="mb-4 flex items-center justify-between">
             <h2 className="text-sm md:text-lg font-semibold">{editing ? 'Edit Achievement' : 'Add Achievement'}</h2>
             <Button type="button" size="xs" variant="ghost" onClick={closeForm} className="text-muted-foreground">✕</Button>
@@ -116,6 +116,15 @@ function AchievementsPage() {
               </div>
               <div className="grid gap-3 md:gap-4 sm:grid-cols-2">
                 <TextField label="Date" name="date" value={form.date} onChange={(v) => setForm({ ...form, date: v })} error={errors.date} placeholder="YYYY-MM-DD" />
+                <SelectField label="Category" name="category" value={form.category} onChange={(v) => setForm({ ...form, category: v })} options={[
+                  { value: 'competition', label: 'Competition' },
+                  { value: 'certification', label: 'Certification' },
+                  { value: 'award', label: 'Award' },
+                  { value: 'publication', label: 'Publication' },
+                  { value: 'other', label: 'Other' },
+                ]} placeholder="Select category" />
+              </div>
+              <div className="grid gap-3 md:gap-4 sm:grid-cols-2">
                 <TextField label="Sort Order" name="sortOrder" value={String(form.sortOrder)} onChange={(v) => setForm({ ...form, sortOrder: Number(v) || 0 })} />
               </div>
               <TextAreaField label="Description" name="description" value={form.description} onChange={(v) => setForm({ ...form, description: v })} rows={3} />

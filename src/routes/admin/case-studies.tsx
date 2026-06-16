@@ -2,18 +2,32 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { DataTable, usePagination } from '#/components/tables'
-import { TextField, TextAreaField, GalleryUpload } from '#/components/forms'
+import { TextField, TextAreaField, SelectField, DateField, GalleryUpload } from '#/components/forms'
 import type { GalleryItem } from '#/components/forms/GalleryUpload'
 import { Button } from '#/components/ui/button'
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction, AlertDialogMedia } from '#/components/ui/alert-dialog'
 import { toast } from '#/components/ui/sonner'
-import { listCaseStudies, createCaseStudy, updateCaseStudy, deleteCaseStudy } from '#/apis'
+import { listCaseStudies, createCaseStudy, updateCaseStudy, deleteCaseStudy, listProjects } from '#/apis'
 import type { CaseStudy } from '#/domain/ports'
 import { Plus, Trash2 } from 'lucide-react'
 
 export const Route = createFileRoute('/admin/case-studies')({ component: CaseStudiesPage })
 
-const initialForm = { projectId: '', contentMarkdown: '', galleryJsonb: [] as GalleryItem[] }
+type SectionItem = { title: string; description: string }
+
+const initialForm = {
+  projectId: '',
+  role: 'full-stack developer',
+  startDate: '',
+  endDate: '',
+  overview: '',
+  problems: [] as SectionItem[],
+  solutions: [] as SectionItem[],
+  features: [] as SectionItem[],
+  contributions: [] as SectionItem[],
+  results: [] as SectionItem[],
+  gallery: [] as GalleryItem[],
+}
 
 type ConfirmAction = { type: 'create' } | { type: 'update'; id: string } | { type: 'delete'; id: string } | null
 
@@ -26,7 +40,10 @@ function CaseStudiesPage() {
   const [confirm, setConfirm] = useState<ConfirmAction>(null)
 
   const { data: caseStudies = [], isLoading } = useQuery({ queryKey: ['caseStudies'], queryFn: () => listCaseStudies() })
+  const { data: projects = [] } = useQuery({ queryKey: ['projects'], queryFn: () => listProjects() })
   const pag = usePagination(caseStudies, 10)
+
+  const projectOptions = projects.map((p: { id: string; title: string }) => ({ value: p.id, label: p.title }))
 
   const createMutation = useMutation({
     mutationFn: () => createCaseStudy({ data: buildPayload() }),
@@ -45,14 +62,38 @@ function CaseStudiesPage() {
   })
 
   function buildPayload() {
-    return { projectId: form.projectId, contentMarkdown: form.contentMarkdown, galleryJsonb: form.galleryJsonb }
+    return {
+      projectId: form.projectId,
+      role: form.role,
+      startDate: form.startDate || null,
+      endDate: form.endDate || null,
+      overview: form.overview,
+      problems: form.problems,
+      solutions: form.solutions,
+      features: form.features,
+      contributions: form.contributions,
+      results: form.results,
+      gallery: form.gallery,
+    }
   }
 
   function openCreate() { setEditing(null); setForm(initialForm); setErrors({}); setShowForm(true) }
 
   function openEdit(cs: CaseStudy) {
     setEditing(cs)
-    setForm({ projectId: cs.projectId, contentMarkdown: cs.contentMarkdown, galleryJsonb: cs.galleryJsonb ?? [] })
+    setForm({
+      projectId: cs.projectId,
+      role: cs.role ?? 'full-stack developer',
+      startDate: cs.startDate ?? '',
+      endDate: cs.endDate ?? '',
+      overview: cs.overview ?? '',
+      problems: (cs.problems ?? []) as SectionItem[],
+      solutions: (cs.solutions ?? []) as SectionItem[],
+      features: (cs.features ?? []) as SectionItem[],
+      contributions: (cs.contributions ?? []) as SectionItem[],
+      results: (cs.results ?? []) as SectionItem[],
+      gallery: (cs.gallery ?? []) as GalleryItem[],
+    })
     setErrors({}); setShowForm(true)
   }
 
@@ -61,8 +102,7 @@ function CaseStudiesPage() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     const errs: Record<string, string> = {}
-    if (!form.projectId.trim()) errs.projectId = 'Project ID is required'
-    if (!form.contentMarkdown.trim()) errs.contentMarkdown = 'Content is required'
+    if (!form.projectId.trim()) errs.projectId = 'Project is required'
     setErrors(errs)
     if (Object.keys(errs).length > 0) return
     setConfirm(editing ? { type: 'update', id: editing.id } : { type: 'create' })
@@ -74,6 +114,40 @@ function CaseStudiesPage() {
     else if (confirm.type === 'update') updateMutation.mutate()
     else deleteMutation.mutate(confirm.id)
     setConfirm(null)
+  }
+
+  function updateSection(section: keyof typeof initialForm, index: number, field: keyof SectionItem, value: string) {
+    const items = [...(form[section] as SectionItem[])]
+    items[index] = { ...items[index], [field]: value }
+    setForm({ ...form, [section]: items })
+  }
+
+  function addSection(section: keyof typeof initialForm) {
+    setForm({ ...form, [section]: [...(form[section] as SectionItem[]), { title: '', description: '' }] })
+  }
+
+  function removeSection(section: keyof typeof initialForm, index: number) {
+    const items = (form[section] as SectionItem[]).filter((_, i) => i !== index)
+    setForm({ ...form, [section]: items })
+  }
+
+  function SectionEditor({ section, label }: { section: keyof typeof initialForm; label: string }) {
+    const items = form[section] as SectionItem[]
+    return (
+      <div className="space-y-2 border rounded-lg p-3">
+        <label className="text-sm font-medium">{label}</label>
+        {items.map((item, i) => (
+          <div key={i} className="flex flex-col gap-1 p-2 border rounded bg-muted/20">
+            <div className="flex items-center gap-2">
+              <TextField label="Title" name={`${section}[${i}].title`} value={item.title} onChange={(v) => updateSection(section, i, 'title', v)} />
+              <button type="button" onClick={() => removeSection(section, i)} className="shrink-0 mt-5 text-muted-foreground hover:text-destructive"><Trash2 className="size-4" /></button>
+            </div>
+            <TextAreaField label="Description" name={`${section}[${i}].description`} value={item.description} onChange={(v) => updateSection(section, i, 'description', v)} rows={2} />
+          </div>
+        ))}
+        <Button type="button" size="xs" variant="outline" onClick={() => addSection(section)}>+ Add Item</Button>
+      </div>
+    )
   }
 
   return (
@@ -90,8 +164,13 @@ function CaseStudiesPage() {
       <DataTable
         loading={isLoading}
         columns={[
-          { key: 'projectId' as keyof CaseStudy, header: 'Project ID' },
-          { key: 'contentMarkdown' as keyof CaseStudy, header: 'Content', render: (v) => <span className="line-clamp-2">{String(v).slice(0, 120)}{String(v).length > 120 ? '...' : ''}</span> },
+          { key: 'projectId' as keyof CaseStudy, header: 'Project', render: (_, r) => {
+            const p = projects.find((p: { id: string; title: string }) => p.id === r.projectId)
+            return <span>{p?.title ?? r.projectId}</span>
+          }},
+          { key: 'role' as keyof CaseStudy, header: 'Role' },
+          { key: 'startDate' as keyof CaseStudy, header: 'Start' },
+          { key: 'endDate' as keyof CaseStudy, header: 'End', render: (v) => <span>{String(v || 'Present')}</span> },
           { key: 'id' as keyof CaseStudy, header: 'Actions', render: (_, r) => (
             <div className="flex gap-2">
               <Button size="xs" variant="outline" onClick={() => openEdit(r)}>Edit</Button>
@@ -107,16 +186,26 @@ function CaseStudiesPage() {
       </div>
 
       {showForm && (
-        <div className="fixed inset-0 z-40 flex items-end md:items-center justify-center bg-black/50">
-          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-t-2xl md:rounded-2xl border bg-card p-4 md:p-6 shadow-lg">
+        <div className="fixed inset-0 z-60 flex items-end md:items-center justify-center bg-black/50">
+          <div className="max-h-[95vh] w-full max-w-4xl overflow-y-auto rounded-t-2xl md:rounded-2xl border bg-card p-4 md:p-6 shadow-lg">
             <div className="mb-4 flex items-center justify-between">
             <h2 className="text-sm md:text-lg font-semibold">{editing ? 'Edit Case Study' : 'Create Case Study'}</h2>
             <Button type="button" size="xs" variant="ghost" onClick={closeForm} className="text-muted-foreground">✕</Button>
           </div>
             <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
-              <TextField label="Project ID" name="projectId" value={form.projectId} onChange={(v) => setForm({ ...form, projectId: v })} error={errors.projectId} />
-              <TextAreaField label="Content (Markdown)" name="contentMarkdown" value={form.contentMarkdown} onChange={(v) => setForm({ ...form, contentMarkdown: v })} rows={8} error={errors.contentMarkdown} />
-              <GalleryUpload items={form.galleryJsonb} onChange={(items) => setForm({ ...form, galleryJsonb: items })} />
+              <SelectField label="Project" name="projectId" value={form.projectId} onChange={(v) => setForm({ ...form, projectId: v })} options={projectOptions} placeholder="Select project" error={errors.projectId} />
+              <TextField label="Role" name="role" value={form.role} onChange={(v) => setForm({ ...form, role: v })} />
+              <div className="grid gap-3 md:gap-4 sm:grid-cols-2">
+                <DateField label="Start Date" name="startDate" value={form.startDate} onChange={(v) => setForm({ ...form, startDate: v })} />
+                <DateField label="End Date" name="endDate" value={form.endDate} onChange={(v) => setForm({ ...form, endDate: v })} placeholder="Leave empty if current" />
+              </div>
+              <TextAreaField label="Overview" name="overview" value={form.overview} onChange={(v) => setForm({ ...form, overview: v })} rows={3} />
+              <SectionEditor section="problems" label="Problems" />
+              <SectionEditor section="solutions" label="Solutions" />
+              <SectionEditor section="features" label="Features" />
+              <SectionEditor section="contributions" label="Contributions" />
+              <SectionEditor section="results" label="Results" />
+              <GalleryUpload items={form.gallery} onChange={(items) => setForm({ ...form, gallery: items })} />
               <div className="flex justify-end gap-3">
                 <Button type="button" variant="outline" onClick={closeForm}>Cancel</Button>
                 <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>{editing ? 'Update' : 'Create'}</Button>

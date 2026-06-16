@@ -11,6 +11,7 @@ export const projectSchema = z.object({
   githubUrl: z.string().optional(),
   liveUrl: z.string().optional(),
   additionalLinks: z.array(z.object({ label: z.string(), url: z.string() })).optional(),
+  longDescription: z.string().optional(),
   sortOrder: z.number().int().optional(),
 })
 

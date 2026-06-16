@@ -7,6 +7,7 @@ export const achievementSchema = z.object({
   date: z.string().min(1, 'Date is required'),
   description: z.string().optional(),
   url: z.string().optional(),
+  category: z.string().optional(),
   sortOrder: z.number().int().optional(),
 })
 
