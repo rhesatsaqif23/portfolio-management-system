@@ -1,6 +1,9 @@
 import { pgTable, uuid, text, timestamp, boolean, integer, date, jsonb, pgEnum, varchar } from 'drizzle-orm/pg-core'
 
-export const skillCategoryEnum = pgEnum('skill_category', ['mobile', 'web', 'frontend', 'backend', 'database', 'devops', 'deployment', 'cloud', 'design', 'tools', 'other'])
+export const skillCategoryEnum = pgEnum('skill_category', ['Frontend', 'Backend', 'Mobile', 'Database', 'DevOps', 'Cloud & Deployment', 'Tools', 'Design'])
+export const expTypeEnum = pgEnum('exp_type', ['Work', 'Internship', 'Education', 'Organization', 'Volunteer'])
+export const projectCategoryEnum = pgEnum('project_category', ['Web App', 'Mobile App'])
+export const achievementCategoryEnum = pgEnum('achievement_category', ['Software Development', 'Hackathon', 'Photo & Video', 'Applied Technology', 'Others'])
 
 export const projectsTable = pgTable('projects', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -10,10 +13,11 @@ export const projectsTable = pgTable('projects', {
   thumbnailUrl: text('thumbnail_url'),
   techStacks: text('tech_stacks').array(),
   isFeatured: boolean('is_featured').default(false),
-  category: text('category'),
+  category: projectCategoryEnum('category'),
   githubUrl: text('github_url'),
   liveUrl: text('live_url'),
   additionalLinks: jsonb('additional_links').$type<{ label: string; url: string }[]>(),
+  longDescription: text('long_description'),
   sortOrder: integer('sort_order'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
@@ -26,7 +30,7 @@ export const experiencesTable = pgTable('experiences', {
   startDate: date('start_date').notNull(),
   endDate: date('end_date'),
   description: text('description').array(),
-  type: text('type').notNull(),
+  type: expTypeEnum('type').notNull(),
   imageUrl: text('image_url'),
   sortOrder: integer('sort_order'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
@@ -41,6 +45,7 @@ export const achievementsTable = pgTable('achievements', {
   date: date('date').notNull(),
   description: text('description'),
   url: text('url'),
+  category: achievementCategoryEnum('category'),
   sortOrder: integer('sort_order'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
@@ -87,8 +92,16 @@ export const statsTable = pgTable('stats', {
 export const caseStudiesTable = pgTable('case_studies', {
   id: uuid('id').defaultRandom().primaryKey(),
   projectId: uuid('project_id').references(() => projectsTable.id).notNull(),
-  contentMarkdown: text('content_markdown').notNull(),
-  galleryJsonb: jsonb('gallery_jsonb').$type<{ url: string; caption: string }[]>().default([]),
+  role: text('role').notNull().default('full-stack developer'),
+  startDate: date('start_date'),
+  endDate: date('end_date'),
+  overview: text('overview'),
+  problems: jsonb('problems').$type<{ title?: string; description?: string }[]>().default([]),
+  solutions: jsonb('solutions').$type<{ title?: string; description?: string }[]>().default([]),
+  features: jsonb('features').$type<{ icon?: string; title?: string; description?: string }[]>().default([]),
+  contributions: jsonb('contributions').$type<string[]>().default([]),
+  results: jsonb('results').$type<{ icon?: string; title?: string; description?: string }[]>().default([]),
+  gallery: jsonb('gallery').$type<{ url: string; caption: string }[]>().default([]),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 })

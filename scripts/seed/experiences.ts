@@ -14,7 +14,7 @@ const experiences = [
       'Developing gamification dashboards and integrating XR interfaces into spatial computing experiences.',
       'Collaborating with cross-functional teams including UI/UX designers and backend engineers to deliver client-facing web applications.',
     ],
-    type: 'work',
+    type: 'Internship',
     imageUrl: `${IMG}/ariverse.jpg`,
     sortOrder: 1,
   },
@@ -28,7 +28,7 @@ const experiences = [
       'Supporting the development of scholarship information systems, career mentoring tools, and certification management features.',
       'Collaborating with a distributed engineering team to deliver full-stack features for the platform.',
     ],
-    type: 'work',
+    type: 'Internship',
     imageUrl: `${IMG}/linkupcareer.png`,
     sortOrder: 2,
   },
@@ -42,7 +42,7 @@ const experiences = [
       'Developing Android and iOS applications with a focus on mobile performance optimization and system integration.',
       'Contributing to research publications and proof-of-concept prototypes for handheld device technologies.',
     ],
-    type: 'education',
+    type: 'Education',
     imageUrl: `${IMG}/mgm.jpg`,
     sortOrder: 3,
   },
@@ -56,7 +56,7 @@ const experiences = [
       'Built the frontend with Next.js and the backend with FastAPI, integrating a hybrid AI detection engine combining rule-based heuristics with ML prediction.',
       'Implemented a full admin triage workflow with analytics dashboards and SLA monitoring.',
     ],
-    type: 'education',
+    type: 'Education',
     imageUrl: `${IMG}/octosight.png`,
     sortOrder: 4,
   },
@@ -70,7 +70,7 @@ const experiences = [
       'Built admin content management system (CMS) dashboard for event management, including CRUD and API integration.',
       'Developed a form management system for event registration and internal questionnaires with multi-type questions, file uploads, and full CRUD with backend integration.',
     ],
-    type: 'organization',
+    type: 'Organization',
     imageUrl: `${IMG}/raion.png`,
     sortOrder: 5,
   },
@@ -84,7 +84,7 @@ const experiences = [
       'Continued development of ZELOW application using Flutter and Firebase through the Raion Revival program.',
       'Developed HearMe, an application integrating Gemini API and FastAPI during Raion Hackjam.',
     ],
-    type: 'organization',
+    type: 'Organization',
     imageUrl: `${IMG}/raion.png`,
     sortOrder: 6,
   },
@@ -98,7 +98,7 @@ const experiences = [
       'Organized and scheduled group photo hunting sessions to strengthen members\' portfolios.',
       "Encouraged member participation in photography competitions, producing award-winning works.",
     ],
-    type: 'organization',
+    type: 'Organization',
     imageUrl: `${IMG}/optiik.png`,
     sortOrder: 7,
   },
@@ -112,7 +112,7 @@ const experiences = [
       'Guided 43 students in understanding relational database concepts, SQL fundamentals, and query implementation.',
       'Designed enrichment tasks and practical exams, and evaluated students\' SQL queries and database designs.',
     ],
-    type: 'education',
+    type: 'Education',
     imageUrl: `${IMG}/filkom.png`,
     sortOrder: 8,
   },
@@ -126,7 +126,7 @@ const experiences = [
       'Executed video production as a cinematographer, collaborating with actors and production team members.',
       'Documented 7 competition categories with finalists from universities across Indonesia during competitions and awardings.',
     ],
-    type: 'organization',
+    type: 'Volunteer',
     imageUrl: `${IMG}/hology.png`,
     sortOrder: 9,
   },
@@ -140,7 +140,7 @@ const experiences = [
       'Engaged in discussions and hands-on learning sessions related to modern software development practices.',
       'Collaborated with peers on small-scale projects applying mobile and web development concepts.',
     ],
-    type: 'organization',
+    type: 'Organization',
     imageUrl: `${IMG}/gdsc.png`,
     sortOrder: 10,
   },
@@ -150,7 +150,7 @@ export async function seedExperiences() {
   console.log('Seeding experiences...')
   await db.delete(experiencesTable)
   for (const exp of experiences) {
-    await db.insert(experiencesTable).values(exp)
+    await db.insert(experiencesTable).values(exp as any)
     console.log(`  \u2713 ${exp.role} @ ${exp.orgName}`)
   }
   console.log(`  \u2192 ${experiences.length} experiences inserted\n`)

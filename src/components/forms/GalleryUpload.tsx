@@ -7,9 +7,10 @@ type GalleryUploadProps = {
   onChange: (items: GalleryItem[]) => void
   maxItems?: number
   bucket?: string
+  folder?: string
 }
 
-export function GalleryUpload({ items, onChange, maxItems = 10, bucket = 'case-study-images' }: GalleryUploadProps) {
+export function GalleryUpload({ items, onChange, maxItems = 10, bucket = 'case-study-images', folder }: GalleryUploadProps) {
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files
     if (!files?.length) return
@@ -18,7 +19,8 @@ export function GalleryUpload({ items, onChange, maxItems = 10, bucket = 'case-s
       for (const file of files) {
         const buffer = await file.arrayBuffer()
         const bytes = Array.from(new Uint8Array(buffer))
-        const path = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
+        const fileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
+        const path = folder ? `${folder}/${fileName}` : fileName
         const { uploadFile } = await import('#/apis')
         const result = await uploadFile({ data: { bucket, path, file: bytes } })
         onChange([...items, { url: result.url, caption: '' }])
@@ -32,11 +34,13 @@ export function GalleryUpload({ items, onChange, maxItems = 10, bucket = 'case-s
 
   async function removeItem(index: number) {
     const item = items[index]
-    const path = item.url.split('/').pop()
-    if (path) {
+    const pathParts = item.url.split('/')
+    const storageIndex = pathParts.indexOf(bucket)
+    const relativePath = storageIndex !== -1 ? pathParts.slice(storageIndex + 1).join('/') : item.url.split('/').pop()!
+    if (relativePath) {
       try {
         const { deleteFile } = await import('#/apis')
-        await deleteFile({ data: { bucket, path } })
+        await deleteFile({ data: { bucket, path: relativePath } })
       } catch {}
     }
     onChange(items.filter((_, i) => i !== index))

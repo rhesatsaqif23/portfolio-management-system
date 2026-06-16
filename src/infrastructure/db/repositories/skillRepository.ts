@@ -9,7 +9,7 @@ export const drizzleSkillRepository: ISkillRepository = {
   },
 
   async findByCategory(category: string): Promise<Skill[]> {
-    return db.select().from(skillsTable).where(eq(skillsTable.category, category as 'mobile' | 'web' | 'backend' | 'devops' | 'design' | 'other')).orderBy(skillsTable.sortOrder)
+    return db.select().from(skillsTable).where(eq(skillsTable.category, category as 'Frontend' | 'Backend' | 'Mobile' | 'Database' | 'DevOps' | 'Cloud & Deployment' | 'Tools' | 'Design')).orderBy(skillsTable.sortOrder)
   },
 
   async create(data: SkillInsert): Promise<Skill> {

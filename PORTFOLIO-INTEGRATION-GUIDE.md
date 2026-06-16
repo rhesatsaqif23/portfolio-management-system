@@ -1,6 +1,6 @@
-# Portfolio Frontend Integration Guide
+# Portfolio Frontend Integration Guide (Next.js)
 
-Consume data from the Portfolio CMS Supabase database into your portfolio website.
+Consume data from the Portfolio CMS Supabase database into your Next.js portfolio website.
 
 ---
 
@@ -14,17 +14,17 @@ npm install @supabase/supabase-js
 // lib/supabase.ts
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 ```
 
-Set these in your `.env`:
+Set these in your `.env.local`:
 
 ```
-VITE_SUPABASE_URL=https://ipkrjpftddtxwzmylxtf.supabase.co
-VITE_SUPABASE_ANON_KEY=<your-anon-key>
+NEXT_PUBLIC_SUPABASE_URL=https://ipkrjpftddtxwzmylxtf.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
 ```
 
 Get the anon key from **Supabase Dashboard → Settings → API**.
@@ -140,7 +140,7 @@ export async function listSkills(): Promise<Skill[]> {
 }
 ```
 
-**Icon source:** `icon_url` points to `https://skillicons.dev/icons?i=<name>` — render as an `<img>`.
+**Icon source:** `icon_url` points to `https://skillicons.dev/icons?i=<name>` — render with `next/image`.
 
 **Group by category for display:**
 
@@ -318,7 +318,6 @@ export async function listStats(): Promise<Stat[]> {
 
 ```ts
 const githubStats = stats.find(s => s.key === 'github_total_contributions')
-// { value: '630', subValue: '2023–2026' }
 ```
 
 Stat keys: `years_experience`, `projects_shipped`, `technologies_explored`, `main_focus`, `github_total_contributions`, `work_experience`, `education`, `gpa`, `personality_traits`
@@ -352,7 +351,22 @@ export async function listCaseStudies(): Promise<CaseStudy[]> {
 
 ---
 
-## 4. React Query Hooks (Recommended)
+## 4. TanStack Query Hooks (Recommended)
+
+Create a provider and hooks in your Next.js app:
+
+```ts
+// components/QueryProvider.tsx
+'use client'
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { useState } from 'react'
+
+export default function QueryProvider({ children }: { children: React.ReactNode }) {
+  const [queryClient] = useState(() => new QueryClient())
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+}
+```
 
 ```ts
 // hooks/usePortfolio.ts
@@ -407,20 +421,51 @@ export function useStats() {
 }
 ```
 
+Wrap your app:
+
+```ts
+// app/layout.tsx
+import QueryProvider from '@/components/QueryProvider'
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        <QueryProvider>{children}</QueryProvider>
+      </body>
+    </html>
+  )
+}
+```
+
 ---
 
-## 5. Sample Component Usage
+## 5. Sample Component Usage (Next.js)
 
 ```tsx
-function ProfileSection() {
+// app/page.tsx — or a client component
+'use client'
+
+import Image from 'next/image'
+import { useProfile, useSkills, useProjects, useExperiences, useAchievements, useStats } from '@/hooks/usePortfolio'
+
+export default function Home() {
   const { data: profile, isLoading } = useProfile()
 
-  if (isLoading) return <Skeleton />
+  if (isLoading) return <div className="skeleton" />
   if (!profile) return <p>No profile</p>
 
   return (
     <section>
-      {profile.avatarUrl && <img src={profile.avatarUrl} alt={profile.fullName} />}
+      {profile.avatarUrl && (
+        <Image
+          src={profile.avatarUrl}
+          alt={profile.fullName}
+          width={120}
+          height={120}
+          className="rounded-full"
+        />
+      )}
       <h1>{profile.fullName}</h1>
       <p>{profile.currentRole}</p>
       <p>{profile.bioShort}</p>
@@ -433,6 +478,29 @@ function ProfileSection() {
     </section>
   )
 }
+```
+
+**Skill icon example:**
+
+```tsx
+<Image
+  src={skill.iconUrl ?? '/fallback.svg'}
+  alt={skill.name}
+  width={48}
+  height={48}
+/>
+```
+
+**Project gallery with next/image:**
+
+```tsx
+<Image
+  src={thumbnailUrl}
+  alt={title}
+  width={640}
+  height={360}
+  className="rounded-lg object-cover"
+/>
 ```
 
 ---
@@ -451,3 +519,7 @@ Replace these hardcoded sections with API data:
 - [ ] **Social links** → `profile.github`, `profile.linkedin`, `profile.instagram`
 - [ ] **CV download** → `profile.cvUrl`
 - [ ] **Footer personality** → `stats.find(s => s.key === 'personality_traits')`
+
+---
+
+> **Note:** The CMS backend uses **Drizzle ORM** to manage the Supabase schema. Migrations are in `supabase/migrations/`. You don't need Drizzle on the frontend — just use `@supabase/supabase-js` to read data.

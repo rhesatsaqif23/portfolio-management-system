@@ -13,13 +13,14 @@ import { Plus, Trash2 } from 'lucide-react'
 export const Route = createFileRoute('/admin/experiences')({ component: ExperiencesPage })
 
 const expTypes = [
-  { value: 'work', label: 'Work' },
-  { value: 'organization', label: 'Organization' },
-  { value: 'volunteer', label: 'Volunteer' },
-  { value: 'education', label: 'Education' },
+  { value: 'Work', label: 'Work' },
+  { value: 'Internship', label: 'Internship' },
+  { value: 'Education', label: 'Education' },
+  { value: 'Organization', label: 'Organization' },
+  { value: 'Volunteer', label: 'Volunteer' },
 ]
 
-const initialForm = { orgName: '', role: '', startDate: '', endDate: '', description: [''] as string[], type: 'work', imageUrl: '', sortOrder: 0 }
+const initialForm = { orgName: '', role: '', startDate: '', endDate: '', description: [''] as string[], type: 'Work', imageUrl: '', sortOrder: 0 }
 
 type ConfirmAction = { type: 'create' } | { type: 'update'; id: string } | { type: 'delete'; id: string } | null
 
@@ -139,8 +140,8 @@ function ExperiencesPage() {
       </div>
 
       {showForm && (
-        <div className="fixed inset-0 z-40 flex items-end md:items-center justify-center bg-black/50">
-          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-t-2xl md:rounded-2xl border bg-card p-4 md:p-6 shadow-lg">
+        <div className="fixed inset-0 z-[60] flex items-end md:items-center justify-center bg-black/50">
+          <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-t-2xl md:rounded-2xl border bg-card p-4 md:p-6 shadow-lg">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-sm md:text-lg font-semibold">{editing ? 'Edit Experience' : 'Add Experience'}</h2>
               <Button type="button" size="xs" variant="ghost" onClick={closeForm} className="text-muted-foreground">✕</Button>
