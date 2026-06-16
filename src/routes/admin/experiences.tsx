@@ -14,9 +14,10 @@ export const Route = createFileRoute('/admin/experiences')({ component: Experien
 
 const expTypes = [
   { value: 'work', label: 'Work' },
+  { value: 'internship', label: 'Internship' },
+  { value: 'education', label: 'Education' },
   { value: 'organization', label: 'Organization' },
   { value: 'volunteer', label: 'Volunteer' },
-  { value: 'education', label: 'Education' },
 ]
 
 const initialForm = { orgName: '', role: '', startDate: '', endDate: '', description: [''] as string[], type: 'work', imageUrl: '', sortOrder: 0 }

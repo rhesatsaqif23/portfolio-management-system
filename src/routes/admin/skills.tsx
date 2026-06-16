@@ -14,17 +14,14 @@ import { Plus, Trash2 } from 'lucide-react'
 export const Route = createFileRoute('/admin/skills')({ component: SkillsPage })
 
 const categories = [
-  { value: 'mobile', label: 'Mobile' },
-  { value: 'web', label: 'Web' },
   { value: 'frontend', label: 'Frontend' },
   { value: 'backend', label: 'Backend' },
+  { value: 'mobile', label: 'Mobile' },
   { value: 'database', label: 'Database' },
   { value: 'devops', label: 'DevOps' },
-  { value: 'deployment', label: 'Deployment' },
-  { value: 'cloud', label: 'Cloud' },
-  { value: 'design', label: 'Design' },
+  { value: 'cloud', label: 'Cloud & Deployment' },
   { value: 'tools', label: 'Tools' },
-  { value: 'other', label: 'Other' },
+  { value: 'design', label: 'Design' },
 ]
 
 const initialForm = { name: '', category: 'web', iconUrl: '', sortOrder: 0 }

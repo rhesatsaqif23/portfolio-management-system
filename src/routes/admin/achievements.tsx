@@ -117,11 +117,11 @@ function AchievementsPage() {
               <div className="grid gap-3 md:gap-4 sm:grid-cols-2">
                 <TextField label="Date" name="date" value={form.date} onChange={(v) => setForm({ ...form, date: v })} error={errors.date} placeholder="YYYY-MM-DD" />
                 <SelectField label="Category" name="category" value={form.category} onChange={(v) => setForm({ ...form, category: v })} options={[
-                  { value: 'competition', label: 'Competition' },
-                  { value: 'certification', label: 'Certification' },
-                  { value: 'award', label: 'Award' },
-                  { value: 'publication', label: 'Publication' },
-                  { value: 'other', label: 'Other' },
+                  { value: 'Software Development', label: 'Software Development' },
+                  { value: 'Hackathon', label: 'Hackathon' },
+                  { value: 'Photo & Video', label: 'Photo & Video' },
+                  { value: 'Applied Technology', label: 'Applied Technology' },
+                  { value: 'Others', label: 'Others' },
                 ]} placeholder="Select category" />
               </div>
               <div className="grid gap-3 md:gap-4 sm:grid-cols-2">

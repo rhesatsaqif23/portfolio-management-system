@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const expTypeEnum = z.enum(['work', 'organization', 'volunteer', 'education'])
+export const expTypeEnum = z.enum(['work', 'internship', 'education', 'organization', 'volunteer'])
 
 export const experienceSchema = z.object({
   orgName: z.string().min(1, 'Organization name is required').max(200),
