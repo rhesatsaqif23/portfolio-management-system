@@ -51,6 +51,8 @@ export const drizzleProjectRepository: IProjectRepository = {
   },
 
   async delete(id: string): Promise<void> {
+    // Delete associated case study first (safety net for DBs without CASCADE)
+    await db.delete(caseStudiesTable).where(eq(caseStudiesTable.projectId, id))
     await db.delete(projectsTable).where(eq(projectsTable.id, id))
   },
 

@@ -30,13 +30,13 @@ function AdminLayout() {
       <SignedOut>
         <div className="page-wrap flex min-h-[calc(100vh-8rem)] items-center justify-center px-4 py-12">
           <section className="island-shell w-full max-w-md rounded-2xl text-center">
-            <h1 className="text-lg font-bold text-[var(--sea-ink)] md:text-xl">Access Denied</h1>
-            <p className="mt-2 text-xs text-[var(--sea-ink-soft)] md:text-sm">
+            <h1 className="text-lg font-bold text-(--sea-ink) md:text-xl">Access Denied</h1>
+            <p className="mt-2 text-xs text-(--sea-ink-soft) md:text-sm">
               You must be signed in to access the admin panel.
             </p>
             <a
               href="/auth/sign-in"
-              className="mt-4 inline-block rounded-full bg-[var(--sea-ink)] px-5 py-2 text-xs font-semibold text-[var(--sand)] no-underline md:px-6 md:py-2 md:text-sm"
+              className="mt-4 inline-block rounded-full bg-(--sea-ink) px-5 py-2 text-xs font-semibold text-(--sand) no-underline md:px-6 md:py-2 md:text-sm"
             >
               Sign In
             </a>
@@ -56,13 +56,13 @@ function AdminGate() {
     return (
       <div className="page-wrap flex min-h-[calc(100vh-8rem)] items-center justify-center px-4 py-12">
         <section className="island-shell w-full max-w-md rounded-2xl text-center">
-          <h1 className="text-lg font-bold text-[var(--sea-ink)] md:text-xl">Access Restricted</h1>
-          <p className="mt-2 text-xs text-[var(--sea-ink-soft)] md:text-sm">
+          <h1 className="text-lg font-bold text-(--sea-ink) md:text-xl">Access Restricted</h1>
+          <p className="mt-2 text-xs text-(--sea-ink-soft) md:text-sm">
             This admin panel is restricted to authorized users only.
           </p>
           <a
             href="/"
-            className="mt-4 inline-block rounded-full bg-[var(--sea-ink)] px-5 py-2 text-xs font-semibold text-[var(--sand)] no-underline md:px-6 md:py-2 md:text-sm"
+            className="mt-4 inline-block rounded-full bg-(--sea-ink) px-5 py-2 text-xs font-semibold text-(--sand) no-underline md:px-6 md:py-2 md:text-sm"
           >
             Go Home
           </a>
@@ -91,10 +91,10 @@ function AdminShell() {
 
   return (
     <div className="flex min-h-[calc(100vh-8rem)]">
-      <aside className={`fixed bottom-0 left-0 top-12 z-30 w-64 border-r border-[var(--line)] bg-[var(--card)] p-4 transition-transform duration-200 lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:block lg:w-52 xl:w-64`}>
+      <aside className={`fixed bottom-0 left-0 top-12 z-30 w-64 border-r border-(--line) bg-card p-4 transition-transform duration-200 lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:block lg:w-52 xl:w-64`}>
         <div className=" py-4 flex items-center justify-between lg:hidden">
-          <span className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">Navigation</span>
-          <button onClick={() => setSidebarOpen(false)} className="rounded p-1 text-white hover:bg-[var(--link-bg-hover)]">
+          <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Navigation</span>
+          <button onClick={() => setSidebarOpen(false)} className="rounded p-1 text-white hover:bg-(--link-bg-hover)">
             <PanelLeftClose className="size-4" />
           </button>
         </div>
@@ -110,10 +110,10 @@ function AdminShell() {
       )}
 
       <main className="flex-1 overflow-auto lg:ml-52 xl:ml-64 pb-20 lg:pb-0">
-        <div className="flex items-center justify-between border-b border-[var(--line)] px-4 py-2 lg:px-12 lg:py-3">
+        <div className="flex items-center justify-between border-b border-(--line) px-4 py-2 lg:px-12 lg:py-3">
           <div className="flex items-center gap-2">
             <button
-              className="rounded p-1 text-white hover:bg-[var(--link-bg-hover)] lg:hidden"
+              className="rounded p-1 text-white hover:bg-(--link-bg-hover) lg:hidden"
               onClick={() => setSidebarOpen(true)}
               aria-label="Open sidebar"
             >
@@ -129,12 +129,12 @@ function AdminShell() {
         </div>
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-30 flex items-center justify-between border-t border-[var(--line)] bg-[var(--card)] px-2 py-5 lg:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-30 flex items-center justify-between border-t border-(--line) bg-card px-2 py-5 lg:hidden">
         {sidebarLinks.map((link) => (
           <Link
             key={link.to}
             to={link.to}
-            className="flex flex-1 flex-col items-center justify-center gap-1 text-[10px] text-white no-underline transition hover:text-[var(--lagoon)]"
+            className="flex flex-1 flex-col items-center justify-center gap-1 text-[10px] text-white no-underline transition hover:text-(--lagoon)"
             activeProps={{ className: 'flex flex-1 flex-col items-center justify-center gap-1 text-[10px] no-underline text-[var(--lagoon)]' }}
           >
             <link.icon className="size-5" />
@@ -151,7 +151,7 @@ function SidebarLink({ to, label, icon: Icon, onClick }: { to: string; label: st
     <Link
       to={to}
       onClick={onClick}
-      className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm text-white no-underline transition hover:bg-[var(--link-bg-hover)]"
+      className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm text-white no-underline transition hover:bg-(--link-bg-hover)"
       activeProps={{ className: 'flex items-center gap-3 rounded-lg px-3 py-3 text-sm no-underline bg-[var(--link-bg-hover)] text-white font-semibold' }}
     >
       <Icon className="size-4" />

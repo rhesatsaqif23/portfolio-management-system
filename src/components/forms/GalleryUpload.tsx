@@ -1,4 +1,6 @@
-import { Upload, X } from 'lucide-react'
+import * as React from 'react';
+import { Upload, X } from 'lucide-react';
+import { toast } from '#/components/ui/sonner';
 
 export type GalleryItem = { url: string; caption: string }
 
@@ -11,28 +13,50 @@ type GalleryUploadProps = {
 }
 
 export function GalleryUpload({ items, onChange, maxItems = 10, bucket = 'case-study-images', folder }: GalleryUploadProps) {
+  const [isUploading, setIsUploading] = React.useState(false);
+
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files
     if (!files?.length) return
 
+    toast.info('Uploading image...')
+    setIsUploading(true)
     try {
+      let currentItems = [...items]
       for (const file of files) {
-        const buffer = await file.arrayBuffer()
-        const bytes = Array.from(new Uint8Array(buffer))
-        const fileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
-        const path = folder ? `${folder}/${fileName}` : fileName
-        const { uploadFile } = await import('#/apis')
-        const result = await uploadFile({ data: { bucket, path, file: bytes } })
-        onChange([...items, { url: result.url, caption: '' }])
+        const path = folder ? `${folder}/${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}` : file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
+        try {
+          const { uploadFile } = await import('#/apis')
+          const formData = new FormData()
+          formData.append('bucket', bucket)
+          formData.append('path', path)
+          formData.append('file', file)
+
+          const result = await uploadFile({ data: formData })
+          currentItems = [...currentItems, { url: result.url, caption: '' }]
+        } catch (err) {
+          console.error('Upload failed', err)
+          toast.error(err instanceof Error ? err.message : String(err))
+        }
       }
+      onChange(currentItems)
+      toast.success('Upload complete')
     } catch (err) {
       console.error('Upload failed', err)
+      toast.error(err instanceof Error ? err.message : String(err))
     } finally {
+      setIsUploading(false)
       if (e.target) e.target.value = ''
     }
   }
 
-  async function removeItem(index: number) {
+  function updateCaption(index: number, caption: string) {
+    const newItems = [...items]
+    newItems[index].caption = caption
+    onChange(newItems)
+  }
+
+  async function remove(index: number) {
     const item = items[index]
     const pathParts = item.url.split('/')
     const storageIndex = pathParts.indexOf(bucket)
@@ -41,46 +65,49 @@ export function GalleryUpload({ items, onChange, maxItems = 10, bucket = 'case-s
       try {
         const { deleteFile } = await import('#/apis')
         await deleteFile({ data: { bucket, path: relativePath } })
-      } catch {}
+      } catch (err) {
+        console.error('Delete failed', err)
+      }
     }
     onChange(items.filter((_, i) => i !== index))
   }
 
-  function updateCaption(index: number, caption: string) {
-    const next = items.map((item, i) => (i === index ? { ...item, caption } : item))
-    onChange(next)
-  }
-
   return (
-    <div className="space-y-3">
-      <label className="text-sm font-medium">Screenshots ({items.length}/{maxItems})</label>
-
-      <div className="grid gap-3 sm:grid-cols-2">
-        {items.map((item, i) => (
-          <div key={i} className="group relative rounded-lg border bg-card overflow-hidden">
-            <div className="flex items-center justify-center overflow-hidden bg-muted">
-              <img src={item.url} alt={`Screenshot ${i + 1}`} className="h-auto w-full object-cover" />
-            </div>
-            <div className="flex items-center gap-2 p-2">
-              <input
-                value={item.caption}
-                onChange={(e) => updateCaption(i, e.target.value)}
-                placeholder="Caption..."
-                className="flex h-8 w-full min-w-0 rounded border border-input bg-background px-2 text-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-              />
-              <button type="button" onClick={() => removeItem(i)} className="shrink-0 text-muted-foreground hover:text-destructive" title="Remove">
-                <X className="size-4" />
+    <div className="space-y-4">
+      {items.length > 0 && (
+        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+          {items.map((item, i) => (
+            <div key={i} className="group relative overflow-hidden rounded-lg border bg-card">
+              <div className="aspect-video w-full bg-muted">
+                <img src={item.url} alt="Gallery" className="h-full w-full object-cover" />
+              </div>
+              <div className="p-2">
+                <input
+                  value={item.caption}
+                  onChange={(e) => updateCaption(i, e.target.value)}
+                  placeholder="Add caption..."
+                  className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => remove(i)}
+                className="absolute right-2 top-2 rounded-md bg-black/50 p-1.5 text-white opacity-0 backdrop-blur-md transition-opacity hover:bg-black/70 group-hover:opacity-100"
+              >
+                <X className="h-4 w-4" />
               </button>
             </div>
-          </div>
-        ))}
-      </div>
-
+          ))}
+        </div>
+      )}
+      
       {items.length < maxItems && (
-        <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-3 py-1.5 text-sm font-medium shadow-xs hover:bg-accent hover:text-accent-foreground">
-          <Upload className="size-4" />
-          Add Image ({maxItems - items.length} left)
-          <input type="file" accept="image/*" multiple onChange={handleUpload} className="hidden" />
+        <label className={`flex h-32 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-border bg-card/50 transition-colors hover:border-primary/50 hover:bg-primary/5 ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+          <div className="flex flex-col items-center gap-2 text-muted-foreground">
+            <Upload className="h-6 w-6" />
+            <span className="text-sm font-medium">{isUploading ? 'Uploading...' : 'Add Image'}</span>
+          </div>
+          <input type="file" className="hidden" accept="image/*" multiple onChange={handleUpload} disabled={isUploading} />
         </label>
       )}
     </div>

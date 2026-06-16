@@ -1,56 +1,58 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useSignIn, useAuth } from '@clerk/clerk-react'
-import { useEffect, useState, type FormEvent } from 'react'
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useSignIn, useAuth } from "@clerk/clerk-react";
+import { useEffect, useState, type FormEvent } from "react";
 
-export const Route = createFileRoute('/auth/sign-in')({
+export const Route = createFileRoute("/auth/sign-in")({
   component: SignInPage,
-})
+});
 
 function SignInPage() {
-  const { isSignedIn } = useAuth()
-  const { signIn, isLoaded } = useSignIn()
-  const navigate = useNavigate()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+  const { isSignedIn } = useAuth();
+  const { signIn, isLoaded } = useSignIn();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (isSignedIn) {
-      navigate({ to: '/admin/dashboard' })
+      navigate({ to: "/admin/dashboard" });
     }
-  }, [isSignedIn, navigate])
+  }, [isSignedIn, navigate]);
 
   async function handleSubmit(e: FormEvent) {
-    e.preventDefault()
-    if (!isLoaded) return
-    setError('')
-    setLoading(true)
+    e.preventDefault();
+    if (!isLoaded) return;
+    setError("");
+    setLoading(true);
     try {
-      const result = await signIn.create({ identifier: email, password })
-      if (result.status === 'complete') {
-        await navigate({ to: '/admin/dashboard' })
+      const result = await signIn.create({ identifier: email, password });
+      if (result.status === "complete") {
+        await navigate({ to: "/admin/dashboard" });
       }
     } catch (err: unknown) {
       const msg =
-        err instanceof Error ? err.message : 'Something went wrong. Please try again.'
-      setError(msg)
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Please try again.";
+      setError(msg);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   async function signInWithGoogle() {
-    if (!isLoaded) return
-    setError('')
+    if (!isLoaded) return;
+    setError("");
     try {
       await signIn.authenticateWithRedirect({
-        strategy: 'oauth_google',
-        redirectUrl: window.location.origin + '/auth/sso-callback',
-        redirectUrlComplete: window.location.origin + '/admin/dashboard',
-      })
+        strategy: "oauth_google",
+        redirectUrl: window.location.origin + "/auth/sso-callback",
+        redirectUrlComplete: window.location.origin + "/admin/dashboard",
+      });
     } catch {
-      setError('Failed to sign in with Google.')
+      setError("Failed to sign in with Google.");
     }
   }
 
@@ -58,7 +60,9 @@ function SignInPage() {
     return (
       <main className="page-wrap flex min-h-[calc(100vh-8rem)] items-center justify-center px-4 py-12">
         <section className="island-shell w-full max-w-md rounded-2xl text-center">
-          <p className="text-xs text-[var(--sea-ink-soft)] md:text-sm">You are already signed in.</p>
+          <p className="text-xs text-[var(--sea-ink-soft)] md:text-sm">
+            You are already signed in.
+          </p>
           <a
             href="/admin/dashboard"
             className="mt-4 inline-block rounded-full bg-[var(--sea-ink)] px-5 py-2 text-xs font-semibold text-[var(--sand)] no-underline md:px-6 md:py-2 md:text-sm"
@@ -67,14 +71,14 @@ function SignInPage() {
           </a>
         </section>
       </main>
-    )
+    );
   }
 
   return (
     <main className="page-wrap flex min-h-[calc(100vh-8rem)] items-center justify-center px-4 py-12">
       <section className="island-shell w-full max-w-md rounded-2xl">
         <div className="mb-4 text-center md:mb-6">
-          <h1 className="display-title text-lg font-bold text-[var(--sea-ink)] md:text-2xl">
+          <h1 className="display-title text-lg font-bold text-(--sea-ink) md:text-2xl">
             Sign In
           </h1>
           <p className="mt-1 text-xs text-[var(--sea-ink-soft)] md:mt-2 md:text-sm">
@@ -84,7 +88,10 @@ function SignInPage() {
 
         <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
           <div>
-            <label htmlFor="email" className="block text-xs font-medium text-[var(--sea-ink)] md:text-sm">
+            <label
+              htmlFor="email"
+              className="block text-xs font-medium text-(--sea-ink) md:text-sm"
+            >
               Email
             </label>
             <input
@@ -99,7 +106,10 @@ function SignInPage() {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-xs font-medium text-[var(--sea-ink)] md:text-sm">
+            <label
+              htmlFor="password"
+              className="block text-xs font-medium text-(--sea-ink) md:text-sm"
+            >
               Password
             </label>
             <input
@@ -113,22 +123,22 @@ function SignInPage() {
             />
           </div>
 
-          {error && (
-            <p className="text-xs text-red-600 md:text-sm">{error}</p>
-          )}
+          {error && <p className="text-xs text-red-600 md:text-sm">{error}</p>}
 
           <button
             type="submit"
             disabled={loading}
             className="w-full rounded-full bg-[var(--sea-ink)] px-5 py-2 text-xs font-semibold text-[var(--sand)] transition hover:opacity-90 disabled:opacity-50 md:px-6 md:py-2 md:text-sm"
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
 
         <div className="my-3 flex items-center gap-3 md:my-4">
           <span className="h-px flex-1 bg-[var(--border)]" />
-          <span className="text-[10px] text-[var(--sea-ink-soft)] md:text-xs">OR</span>
+          <span className="text-[10px] text-[var(--sea-ink-soft)] md:text-xs">
+            OR
+          </span>
           <span className="h-px flex-1 bg-[var(--border)]" />
         </div>
 
@@ -159,5 +169,5 @@ function SignInPage() {
         </button>
       </section>
     </main>
-  )
+  );
 }

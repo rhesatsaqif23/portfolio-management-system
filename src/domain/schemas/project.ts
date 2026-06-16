@@ -10,9 +10,18 @@ export const projectSchema = z.object({
   techStacks: z.array(z.string()).optional(),
   isFeatured: z.boolean().default(false),
   category: projectCategoryEnum,
-  githubUrl: z.string().optional().or(z.literal('')),
-  liveUrl: z.string().optional().or(z.literal('')),
-  additionalLinks: z.array(z.object({ label: z.string(), url: z.string() })).optional(),
+  githubUrl: z.string().optional().or(z.literal('')).refine(
+    (v) => !v || /^https?:\/\/[^\s/$.?#]+\.[^\s]+$/.test(v),
+    'Enter a valid URL (e.g. https://github.com/username/repo)'
+  ),
+  liveUrl: z.string().optional().or(z.literal('')).refine(
+    (v) => !v || /^https?:\/\/[^\s/$.?#]+\.[^\s]+$/.test(v),
+    'Enter a valid URL (e.g. https://example.com)'
+  ),
+  additionalLinks: z.string().nullable().optional().or(z.literal('')).refine(
+    (v) => !v || /^https?:\/\/[^\s/$.?#]+\.[^\s]+$/.test(v),
+    'Enter a valid URL (e.g. https://example.com)'
+  ),
   longDescription: z.string().optional(),
   sortOrder: z.number().int().optional(),
 })

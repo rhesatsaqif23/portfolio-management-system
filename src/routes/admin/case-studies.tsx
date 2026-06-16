@@ -1,6 +1,6 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { createFileRoute } from '@tanstack/react-router';
+import React, { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DataTable, usePagination } from '#/components/tables'
 import { TextField, TextAreaField, SelectField, DateField, GalleryUpload } from '#/components/forms'
 import type { GalleryItem } from '#/components/forms/GalleryUpload'
@@ -9,7 +9,7 @@ import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, 
 import { toast } from '#/components/ui/sonner'
 import { listCaseStudies, createCaseStudy, updateCaseStudy, deleteCaseStudy, listProjects } from '#/apis'
 import type { CaseStudy } from '#/domain/ports'
-import { Plus, Trash2 } from 'lucide-react'
+import { Plus, Trash2, X } from 'lucide-react'
 
 export const Route = createFileRoute('/admin/case-studies')({ component: CaseStudiesPage })
 
@@ -44,21 +44,23 @@ function CaseStudiesPage() {
   const { data: projects = [] } = useQuery({ queryKey: ['projects'], queryFn: () => listProjects() })
   const pag = usePagination(caseStudies, 10)
 
-  const projectOptions = projects.map((p: { id: string; title: string }) => ({ value: p.id, label: p.title }))
+  const usedProjectIds = new Set(caseStudies.filter((cs: CaseStudy) => cs.projectId !== editing?.projectId).map((cs: CaseStudy) => cs.projectId))
+  const projectOptions = projects.filter((p: { id: string }) => !usedProjectIds.has(p.id)).map((p: { id: string; title: string }) => ({ value: p.id, label: p.title }))
+  const hasNoProjectsAvailable = projectOptions.length === 0 && !editing
 
   const createMutation = useMutation({
-    mutationFn: () => createCaseStudy({ data: buildPayload() }),
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['caseStudies'] }); toast.success('Case study created'); closeForm() },
+    mutationFn: (payload: Record<string, unknown>) => createCaseStudy({ data: payload }),
+    onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: ['caseStudies'] }); toast.success('Case study created'); closeForm() },
     onError: (err) => toast.error(err instanceof Error ? err.message : typeof err === 'string' ? err : JSON.stringify(err)),
   })
   const updateMutation = useMutation({
-    mutationFn: () => updateCaseStudy({ data: { id: editing!.id, ...buildPayload() } }),
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['caseStudies'] }); toast.success('Case study updated'); closeForm() },
+    mutationFn: () => updateCaseStudy({ data: { id: editing!.id, data: buildPayload() } }),
+    onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: ['caseStudies'] }); toast.success('Case study updated'); closeForm() },
     onError: (err) => toast.error(err instanceof Error ? err.message : typeof err === 'string' ? err : JSON.stringify(err)),
   })
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteCaseStudy({ data: id }),
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['caseStudies'] }); toast.success('Case study deleted') },
+    onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: ['caseStudies'] }); toast.success('Case study deleted') },
     onError: (err) => toast.error(err instanceof Error ? err.message : typeof err === 'string' ? err : JSON.stringify(err)),
   })
 
@@ -78,7 +80,11 @@ function CaseStudiesPage() {
     }
   }
 
-  function openCreate() { setEditing(null); setForm(initialForm); setErrors({}); setShowForm(true) }
+  function clearError(field: string) {
+    if (errors[field]) setErrors((prev) => { const next = { ...prev }; delete next[field]; return next })
+  }
+
+  function openCreate() { setEditing(null); setForm(initialForm); setErrors({}); setOpenSections(new Set()); setShowForm(true) }
 
   function openEdit(cs: CaseStudy) {
     setEditing(cs)
@@ -95,7 +101,7 @@ function CaseStudiesPage() {
       results: (cs.results ?? []) as SectionItem[],
       gallery: (cs.gallery ?? []) as GalleryItem[],
     })
-    setErrors({}); setShowForm(true)
+    setErrors({}); setOpenSections(new Set()); setShowForm(true)
   }
 
   function closeForm() { setShowForm(false); setEditing(null); setForm(initialForm); setErrors({}); setOpenSections(new Set()) }
@@ -127,12 +133,34 @@ function CaseStudiesPage() {
       return
     }
     if (Object.keys(cleaned).length) setForm((prev) => ({ ...prev, ...cleaned }))
+
+    if (editing) {
+      const payload = buildPayload()
+      const editingPayload = {
+        projectId: editing.projectId,
+        role: editing.role ?? '',
+        startDate: editing.startDate || null,
+        endDate: editing.endDate || null,
+        overview: editing.overview ?? '',
+        problems: editing.problems ?? [],
+        solutions: editing.solutions ?? [],
+        features: editing.features ?? [],
+        contributions: editing.contributions ?? [],
+        results: editing.results ?? [],
+        gallery: editing.gallery ?? [],
+      }
+      if (JSON.stringify(payload) === JSON.stringify(editingPayload)) {
+        toast.info('No data changed')
+        closeForm()
+        return
+      }
+    }
     setConfirm(editing ? { type: 'update', id: editing.id } : { type: 'create' })
   }
 
   function executeConfirm() {
     if (!confirm) return
-    if (confirm.type === 'create') createMutation.mutate()
+    if (confirm.type === 'create') createMutation.mutate(buildPayload())
     else if (confirm.type === 'update') updateMutation.mutate()
     else deleteMutation.mutate(confirm.id)
     setConfirm(null)
@@ -146,15 +174,20 @@ function CaseStudiesPage() {
     })
   }
 
+  function openSection(section: string) {
+    setOpenSections((prev) => { const next = new Set(prev); next.add(section); return next })
+  }
+
   function updateSection(section: keyof typeof initialForm, index: number, field: keyof SectionItem, value: string) {
     const items = [...(form[section] as SectionItem[])]
     items[index] = { ...items[index], [field]: value }
     setForm({ ...form, [section]: items })
+    clearError(`${section}Items`)
   }
 
   function addSection(section: keyof typeof initialForm) {
     setForm({ ...form, [section]: [...(form[section] as SectionItem[]), { title: '', description: '' }] })
-    setOpenSections((prev) => { const next = new Set(prev); next.add(section); return next })
+    openSection(section)
   }
 
   function removeSection(section: keyof typeof initialForm, index: number) {
@@ -164,6 +197,7 @@ function CaseStudiesPage() {
 
   function addString(section: 'contributions') {
     setForm({ ...form, [section]: [...(form[section] as string[]), ''] })
+    openSection(section)
   }
 
   function updateString(section: 'contributions', index: number, value: string) {
@@ -208,9 +242,10 @@ function CaseStudiesPage() {
 
   function StringListEditor({ section, label }: { section: 'contributions'; label: string }) {
     const items = form[section] as string[]
+    const isOpen = openSections.has(section)
     return (
-      <details className="border rounded-lg">
-        <summary className="cursor-pointer select-none px-3 py-2 text-sm font-medium hover:bg-muted/20 rounded-t-lg">{label} ({items.length})</summary>
+      <details className="border rounded-lg" open={isOpen}>
+        <summary onClick={(e) => { e.preventDefault(); toggleSection(section) }} className="cursor-pointer select-none px-3 py-2 text-sm font-medium hover:bg-muted/20 rounded-t-lg">{label} ({items.length})</summary>
         <div className="space-y-3 p-3 border-t">
           {items.map((item, i) => (
             <div key={i} className="flex items-center gap-2">
@@ -237,55 +272,75 @@ function CaseStudiesPage() {
       </div>
 
       <div className="overflow-x-auto">
-      <DataTable
-        loading={isLoading}
-        columns={[
-          { key: 'projectId' as keyof CaseStudy, header: 'Project', render: (_, r) => {
-            const p = projects.find((p: { id: string; title: string }) => p.id === r.projectId)
-            return <span>{p?.title ?? r.projectId}</span>
-          }},
-          { key: 'role' as keyof CaseStudy, header: 'Role' },
-          { key: 'startDate' as keyof CaseStudy, header: 'Start' },
-          { key: 'endDate' as keyof CaseStudy, header: 'End', render: (v) => <span>{String(v || 'Present')}</span> },
-          { key: 'contributions' as keyof CaseStudy, header: 'Contrib.', render: (v) => <span>{Array.isArray(v) ? v.length : 0} items</span> },
-          { key: 'id' as keyof CaseStudy, header: 'Actions', render: (_, r) => (
-            <div className="flex gap-2">
-              <Button size="xs" variant="outline" onClick={() => openEdit(r)}>Edit</Button>
-              <Button size="xs" variant="destructive" onClick={() => setConfirm({ type: 'delete', id: r.id })}>Delete</Button>
-            </div>
-          )},
-        ]}
-        data={pag.paginatedData}
-        page={pag.page}
-        totalPages={pag.totalPages}
-        onPageChange={pag.setPage}
-      />
+        <DataTable
+          loading={isLoading}
+          columns={[
+            {
+              key: 'projectId' as keyof CaseStudy, header: 'Project', render: (_, r) => {
+                const p = projects.find((p: { id: string; title: string }) => p.id === r.projectId)
+                return <span>{p?.title ?? r.projectId}</span>
+              }
+            },
+            { key: 'role' as keyof CaseStudy, header: 'Role' },
+            { key: 'startDate' as keyof CaseStudy, header: 'Start' },
+            { key: 'endDate' as keyof CaseStudy, header: 'End', render: (v) => <span>{String(v || 'Present')}</span> },
+            { key: 'contributions' as keyof CaseStudy, header: 'Contrib.', render: (v) => <span>{Array.isArray(v) ? v.length : 0} items</span> },
+            {
+              key: 'id' as keyof CaseStudy, header: 'Actions', render: (_, r) => (
+                <div className="flex gap-2">
+                  <Button size="xs" variant="outline" onClick={() => openEdit(r)}>Edit</Button>
+                  <Button size="xs" variant="destructive" onClick={() => setConfirm({ type: 'delete', id: r.id })}>Delete</Button>
+                </div>
+              )
+            },
+          ]}
+          data={pag.paginatedData}
+          page={pag.page}
+          totalPages={pag.totalPages}
+          onPageChange={pag.setPage}
+        />
       </div>
 
       {showForm && (
         <div className="fixed inset-0 z-60 flex items-end md:items-center justify-center bg-black/50">
           <div className="max-h-[95vh] w-full max-w-4xl overflow-y-auto rounded-t-2xl md:rounded-2xl border bg-card p-4 md:p-6 shadow-lg">
             <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-sm md:text-lg font-semibold">{editing ? 'Edit Case Study' : 'Create Case Study'}</h2>
-            <Button type="button" size="xs" variant="ghost" onClick={closeForm} className="text-muted-foreground">✕</Button>
-          </div>
+              <h2 className="text-sm md:text-lg font-semibold">{editing ? 'Edit Case Study' : 'Create Case Study'}</h2>
+              <Button type="button" size="sm" variant="ghost" onClick={closeForm} className="flex h-9 w-9 items-center justify-center rounded-md border border-border text-muted-foreground hover:text-foreground"><X className="h-5 w-5" /></Button>
+            </div>
             <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
-              <SelectField label="Project" name="projectId" value={form.projectId} onChange={(v) => setForm({ ...form, projectId: v })} options={projectOptions} placeholder="Select project" error={errors.projectId} required />
-              <TextField label="Role" name="role" value={form.role} onChange={(v) => setForm({ ...form, role: v })} placeholder="e.g. Full Stack Developer" error={errors.role} required />
+              {hasNoProjectsAvailable ? (
+                <div className="space-y-1">
+                  <label className="text-sm font-medium">Project <span className="text-destructive ml-0.5">*</span></label>
+                  <div className="h-9 rounded-md border border-input bg-muted px-3 py-1.5 text-sm text-muted-foreground cursor-not-allowed">No project available, create new in projects</div>
+                </div>
+              ) : (
+                <SelectField label="Project" name="projectId" value={form.projectId} onChange={(v) => { setForm({ ...form, projectId: v }); clearError('projectId') }} options={projectOptions} placeholder="Select project" error={errors.projectId} required />
+              )}
+              <TextField label="Role" name="role" value={form.role} onChange={(v) => { setForm({ ...form, role: v }); clearError('role') }} placeholder="e.g. Full Stack Developer" error={errors.role} required />
               <div className="grid gap-3 md:gap-4 sm:grid-cols-2">
                 <DateField label="Start Date" name="startDate" value={form.startDate} onChange={(v) => setForm({ ...form, startDate: v })} />
-                <DateField label="End Date" name="endDate" value={form.endDate} onChange={(v) => setForm({ ...form, endDate: v })} placeholder="Leave empty if current" error={errors.endDate} />
+                <DateField label="End Date" name="endDate" value={form.endDate} onChange={(v) => { setForm({ ...form, endDate: v }); clearError('endDate') }} placeholder="Leave empty if current" error={errors.endDate} />
               </div>
-              <TextAreaField label="Overview" name="overview" value={form.overview} onChange={(v) => setForm({ ...form, overview: v })} rows={3} placeholder="Brief overview of the project and your role..." error={errors.overview} required />
+              <TextAreaField label="Overview" name="overview" value={form.overview} onChange={(v) => { setForm({ ...form, overview: v }); clearError('overview') }} rows={3} placeholder="Brief overview of the project and your role..." error={errors.overview} required />
               <SectionEditor section="problems" label="Problems" />
               <SectionEditor section="solutions" label="Solutions" />
               <SectionEditor section="features" label="Features" showIcon />
               <StringListEditor section="contributions" label="Contributions" />
               <SectionEditor section="results" label="Results" showIcon />
-              <GalleryUpload items={form.gallery} onChange={(items) => setForm({ ...form, gallery: items })} folder={form.projectId || undefined} />
+              {(() => {
+                const selectedProject = projects.find((p) => p.id === form.projectId)
+                const folderName = selectedProject?.slug || form.projectId || undefined
+                return (
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Gallery</label>
+                    <GalleryUpload items={form.gallery} onChange={(items) => setForm({ ...form, gallery: items })} folder={folderName} />
+                  </div>
+                )
+              })()}
               <div className="flex justify-end gap-3">
                 <Button type="button" variant="outline" onClick={closeForm}>Cancel</Button>
-                <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>{editing ? 'Update' : 'Create'}</Button>
+                <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending || hasNoProjectsAvailable}>{editing ? 'Update' : 'Create'}</Button>
               </div>
             </form>
           </div>

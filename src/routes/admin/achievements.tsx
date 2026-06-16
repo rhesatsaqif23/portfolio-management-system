@@ -7,9 +7,9 @@ import { Button } from '#/components/ui/button'
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction, AlertDialogMedia } from '#/components/ui/alert-dialog'
 import { toast } from '#/components/ui/sonner'
 import { listAchievements, createAchievement, updateAchievement, deleteAchievement } from '#/apis'
-import { normalizeUrl } from '#/lib/utils'
+import { normalizeUrl, isValidUrl } from '#/lib/utils'
 import type { Achievement } from '#/domain/ports'
-import { Plus, Trash2 } from 'lucide-react'
+import { Plus, Trash2, X } from 'lucide-react'
 
 export const Route = createFileRoute('/admin/achievements')({ component: AchievementsPage })
 
@@ -30,17 +30,17 @@ function AchievementsPage() {
 
   const createMutation = useMutation({
     mutationFn: (payload: Record<string, unknown>) => createAchievement({ data: payload }),
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['achievements'] }); toast.success('Achievement created'); closeForm() },
+    onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: ['achievements'] }); toast.success('Achievement created'); closeForm() },
     onError: (err) => toast.error(err instanceof Error ? err.message : typeof err === 'string' ? err : JSON.stringify(err)),
   })
   const updateMutation = useMutation({
     mutationFn: (payload: { id: string; data: Record<string, unknown> }) => updateAchievement({ data: payload }),
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['achievements'] }); toast.success('Achievement updated'); closeForm() },
+    onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: ['achievements'] }); toast.success('Achievement updated'); closeForm() },
     onError: (err) => toast.error(err instanceof Error ? err.message : typeof err === 'string' ? err : JSON.stringify(err)),
   })
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteAchievement({ data: id }),
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['achievements'] }); toast.success('Achievement deleted') },
+    onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: ['achievements'] }); toast.success('Achievement deleted') },
     onError: (err) => toast.error(err instanceof Error ? err.message : typeof err === 'string' ? err : JSON.stringify(err)),
   })
 
@@ -55,12 +55,17 @@ function AchievementsPage() {
   }
   function closeForm() { setShowForm(false); setEditing(null); setForm(initialForm); setErrors({}) }
 
+  function clearError(field: string) {
+    if (errors[field]) setErrors((prev) => { const next = { ...prev }; delete next[field]; return next })
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     const errs: Record<string, string> = {}
     if (!form.title.trim()) errs.title = 'Title is required'
     if (!form.date.trim()) errs.date = 'Date is required'
     if (!form.category.trim()) errs.category = 'Category is required'
+    if (form.url && !isValidUrl(form.url)) errs.url = 'Enter a valid URL with a domain (e.g. https://example.com)'
     setErrors(errs)
     if (Object.keys(errs).length > 0) return
     setConfirm(editing ? { type: 'update', id: editing.id } : { type: 'create' })
@@ -71,7 +76,7 @@ function AchievementsPage() {
     if (confirm.type === 'delete') { deleteMutation.mutate(confirm.id); setConfirm(null); return }
     const data = { ...form, url: normalizeUrl(form.url) }
     if (confirm.type === 'create') {
-      const { sortOrder, ...createPayload } = data
+      const { sortOrder: _sortOrder, ...createPayload } = data
       createMutation.mutate(createPayload)
     } else {
       updateMutation.mutate({ id: editing!.id, data })
@@ -116,17 +121,17 @@ function AchievementsPage() {
           <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-t-2xl md:rounded-2xl border bg-card p-4 md:p-6 shadow-lg">
             <div className="mb-4 flex items-center justify-between">
             <h2 className="text-sm md:text-lg font-semibold">{editing ? 'Edit Achievement' : 'Create Achievement'}</h2>
-            <Button type="button" size="xs" variant="ghost" onClick={closeForm} className="text-muted-foreground">✕</Button>
+            <Button type="button" size="sm" variant="ghost" onClick={closeForm} className="flex h-9 w-9 items-center justify-center rounded-md border border-border text-muted-foreground hover:text-foreground"><X className="h-5 w-5" /></Button>
           </div>
             <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
-              <TextField label="Title" name="title" value={form.title} onChange={(v) => setForm({ ...form, title: v })} error={errors.title} required />
+              <TextField label="Title" name="title" value={form.title} onChange={(v) => { setForm({ ...form, title: v }); clearError('title') }} placeholder="e.g. Juara 1 Lomba Hackathon" error={errors.title} required />
               <div className="grid gap-3 md:gap-4 sm:grid-cols-2">
                 <TextField label="Event Name" name="eventName" value={form.eventName} onChange={(v) => setForm({ ...form, eventName: v })} placeholder="e.g. Hackathon 2026" />
                 <TextField label="Organizer" name="organizer" value={form.organizer} onChange={(v) => setForm({ ...form, organizer: v })} placeholder="e.g. Universitas Gadjah Mada" />
               </div>
               <div className="grid gap-3 md:gap-4 sm:grid-cols-2">
-                <DateField label="Date" name="date" value={form.date} onChange={(v) => setForm({ ...form, date: v })} error={errors.date} required />
-                <SelectField label="Category" name="category" value={form.category} onChange={(v) => setForm({ ...form, category: v })} options={[
+                <DateField label="Date" name="date" value={form.date} onChange={(v) => { setForm({ ...form, date: v }); clearError('date') }} error={errors.date} required />
+                <SelectField label="Category" name="category" value={form.category} onChange={(v) => { setForm({ ...form, category: v }); clearError('category') }} options={[
                   { value: 'Software Development', label: 'Software Development' },
                   { value: 'Hackathon', label: 'Hackathon' },
                   { value: 'Photo & Video', label: 'Photo & Video' },
@@ -138,7 +143,7 @@ function AchievementsPage() {
                 <TextField label="Sort Order" name="sortOrder" value={String(form.sortOrder)} onChange={(v) => setForm({ ...form, sortOrder: Number(v) || 0 })} placeholder="Auto-incremented on create" />
               </div>
               <TextAreaField label="Description" name="description" value={form.description} onChange={(v) => setForm({ ...form, description: v })} rows={3} placeholder="Describe the achievement" />
-              <TextField label="URL" name="url" value={form.url} onChange={(v) => setForm({ ...form, url: v })} placeholder="https://example.com" />
+              <TextField label="URL" name="url" value={form.url} onChange={(v) => { setForm({ ...form, url: v }); clearError('url') }} placeholder="https://example.com" error={errors.url} />
               <div className="flex justify-end gap-3">
                 <Button type="button" variant="outline" onClick={closeForm}>Cancel</Button>
                 <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>{editing ? 'Update' : 'Create'}</Button>
