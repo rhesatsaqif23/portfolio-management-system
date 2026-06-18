@@ -20,7 +20,7 @@ import { toast } from "#/components/ui/sonner";
 import { listSkills, createSkill, updateSkill, deleteSkill } from "#/apis";
 import { normalizeUrl } from "#/lib/utils";
 import type { Skill } from "#/domain/ports";
-import { Plus, Trash2, X } from "lucide-react";
+import { Plus, Trash2, X, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/skills")({
   component: SkillsPage,
@@ -71,6 +71,7 @@ function SkillsPage() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["skills"] });
       toast.success("Skill created");
+      setConfirm(null);
       closeForm();
     },
     onError: (err) =>
@@ -88,6 +89,7 @@ function SkillsPage() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["skills"] });
       toast.success("Skill updated");
+      setConfirm(null);
       closeForm();
     },
     onError: (err) =>
@@ -104,6 +106,7 @@ function SkillsPage() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["skills"] });
       toast.success("Skill deleted");
+      setConfirm(null);
     },
     onError: (err) =>
       toast.error(
@@ -117,21 +120,17 @@ function SkillsPage() {
 
   async function uploadPending(iconUrl: string) {
     if (!pendingIcon) return iconUrl;
-    const fileBase64 = await new Promise<string>((resolve) => {
-      const reader = new FileReader()
-      reader.onload = () => resolve((reader.result as string).split(',')[1])
-      reader.readAsDataURL(pendingIcon)
-    })
     const path = `${Date.now()}-${pendingIcon.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
     const { replaceFile } = await import("#/apis");
-    const result = await replaceFile({
-      data: {
-        bucket: "skill-icons",
-        path,
-        oldPath: iconUrl ? iconUrl.split("/").pop() : undefined,
-        fileBase64,
-      },
-    });
+    const formData = new FormData();
+    formData.append("bucket", "tech-stack");
+    formData.append("path", path);
+    if (iconUrl) {
+      const oldPath = iconUrl.split("/").pop();
+      if (oldPath) formData.append("oldPath", oldPath);
+    }
+    formData.append("file", pendingIcon);
+    const result = await replaceFile({ data: formData });
     setPendingIcon(null);
     return result.url;
   }
@@ -192,16 +191,20 @@ function SkillsPage() {
     if (!confirm) return;
     if (confirm.type === "delete") {
       deleteMutation.mutate(confirm.id);
-      setConfirm(null);
       return;
     }
-    const iconUrl = normalizeUrl(await uploadPending(form.iconUrl));
-    const payload = { ...form, iconUrl };
-    if (confirm.type === "create") {
-      const { sortOrder: _sortOrder, ...createPayload } = payload;
-      createMutation.mutate(createPayload);
-    } else updateMutation.mutate({ id: editing!.id, data: payload });
-    setConfirm(null);
+    try {
+      const iconUrl = normalizeUrl(await uploadPending(form.iconUrl));
+      const payload = { ...form, iconUrl };
+      if (confirm.type === "create") {
+        const { sortOrder: _sortOrder, ...createPayload } = payload;
+        createMutation.mutate(createPayload);
+      } else {
+        updateMutation.mutate({ id: editing!.id, data: payload });
+      }
+    } catch {
+      toast.error("Failed to upload icon");
+    }
   }
 
   return (
@@ -351,7 +354,7 @@ function SkillsPage() {
       <AlertDialog
         open={!!confirm}
         onOpenChange={(o) => {
-          if (!o) setConfirm(null);
+          if (!o && !createMutation.isPending && !updateMutation.isPending && !deleteMutation.isPending) setConfirm(null);
         }}
       >
         <AlertDialogContent size="sm">
@@ -379,22 +382,43 @@ function SkillsPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setConfirm(null)}>
+            <AlertDialogCancel
+              disabled={createMutation.isPending || updateMutation.isPending || deleteMutation.isPending}
+            >
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
-              onClick={executeConfirm}
+              onClick={(e) => {
+                e.preventDefault();
+                executeConfirm();
+              }}
+              disabled={createMutation.isPending || updateMutation.isPending || deleteMutation.isPending}
               className={
                 confirm?.type === "delete"
                   ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   : ""
               }
             >
-              {confirm?.type === "delete"
-                ? "Delete"
-                : confirm?.type === "create"
-                  ? "Create"
-                  : "Update"}
+              {(confirm?.type === "create" && createMutation.isPending) ||
+              (confirm?.type === "update" && updateMutation.isPending) ||
+              (confirm?.type === "delete" && deleteMutation.isPending) ? (
+                <>
+                  <Loader2 className="size-4 animate-spin" />
+                  {confirm?.type === "delete"
+                    ? "Deleting..."
+                    : confirm?.type === "create"
+                      ? "Creating..."
+                      : "Updating..."}
+                </>
+              ) : (
+                <>
+                  {confirm?.type === "delete"
+                    ? "Delete"
+                    : confirm?.type === "create"
+                      ? "Create"
+                      : "Update"}
+                </>
+              )}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
